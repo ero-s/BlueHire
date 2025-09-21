@@ -1,12 +1,10 @@
-import Appbar from "./components/Appbar";
-import Students from "./components/Students";
 import "./App.css";
+import LoginSignup from "./Pages/LoginSignup";
 
 function App() {
   return (
     <>
-      <Appbar />
-      <Students />
+      <LoginSignup/>
     </>
   );
 }
