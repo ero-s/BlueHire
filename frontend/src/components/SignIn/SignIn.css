@@ -1,0 +1,63 @@
+.signin{
+    display: flex;
+    flex-direction: column;
+    background: #ffffff;
+    max-height: 60vh;
+    max-width: 45vh;
+    align-items: center;
+    padding: 20px 50px;
+    padding-bottom: 50px;
+    font-family: "Inter", sans-serif;
+    color: #26466F;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.8); 
+}
+
+.signin-name{
+    font-size: 27px;
+    font-weight: 600;
+    margin-top: -20px;
+    margin-bottom: 20px;
+}
+
+.field label{
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    margin-bottom: 2px;
+    font-size: 13px;
+    margin-left: 5px;
+}
+
+.field{
+    margin-bottom: 20px;
+}
+
+input{
+    height: 25px;
+    width: 30vh;
+    padding: 1px 10px;
+    border-radius: 20px;
+    border: 2px solid #89A1B0;  
+    outline: none; 
+}
+
+.signin-btn{
+    border-radius: 20px;
+    padding: 7px;
+    background-color: #4D7EAF;
+    color: #ffffff;
+    border: none;
+    width: 33vh;
+    margin-top: 15px;
+}
+
+/* Effects */
+
+.signin input:hover,
+.signin select:hover {
+    border: 2px solid #1980c0;  
+}
+
+.signin-btn:hover{
+    background-color: #609cd8;
+}

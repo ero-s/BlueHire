@@ -1,5 +1,7 @@
 import React from 'react'
 import Signup from '../Components/Signup/Signup'
+import Login from '../Components/SignIn/SignIn';
+import Logo from '../Components/Logo/Logo';
 import signupCard from "../Components/Assets/signup_card.png";
 
 const LoginSignup = () => {
@@ -16,7 +18,8 @@ const LoginSignup = () => {
           overflow: "hidden"
       }}
     >
-        <Signup/>
+        {/* <Signup/> */}
+        <Login/>
     </div>
   )
 }

@@ -2,6 +2,7 @@ import React from 'react'
 import { useState } from 'react'
 import './Signup.css'
 import logo from '../Assets/logo.png'
+import Logo from '../Logo/Logo'
 
 const Signup = () => {
     const [username, setUsername] = useState("");
@@ -20,15 +21,7 @@ const Signup = () => {
   return (
     <div className='signup'>
         <div className="signup-left">
-            <div className="logo">
-                <div className="logo-img">
-                    <img src={logo} alt="" />
-                </div>
-                <div className="name">
-                    <h1 className='signup-bluecolor'>Blue</h1>
-                    <h1 className='signup-hirecolor'>Hire</h1>
-                </div>
-            </div>
+            <Logo/>
             <div className="welcome-message">
                 <h1>Welcome!</h1>
                 <p>
@@ -41,7 +34,7 @@ const Signup = () => {
         <div className="signup-right">
             <h1>Create An Account</h1>
 
-            <form onSubmit={handleSubmit} className="signup-form">
+            <form onSubmit={handleSubmit}>
                 <div className="field">
                     <label>Username</label>
                     <input 
@@ -79,7 +72,7 @@ const Signup = () => {
                 </div>
 
                 <div className="field">
-                    <label>Upload Government ID</label>
+                    <label>Government ID</label>
                     <input
                         type="file"
                         id="govId"
@@ -97,7 +90,7 @@ const Signup = () => {
                         onClick={() => document.getElementById('govId')?.click()}
                         className="upload-btn"
                     >
-                        Choose File
+                        Upload File
                     </button>
                     <span id="fileName"></span>
                     </div>

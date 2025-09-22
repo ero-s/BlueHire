@@ -1,0 +1,21 @@
+img{
+    height: 35px;
+}
+
+.logo {
+    display: flex;
+    gap: 12px; 
+    font-size: 15px;
+}
+
+.name {
+  display: flex;      
+}
+
+.signup-bluecolor{
+    color: #122b6f;
+}
+
+.signup-hirecolor{
+    color: #3b3c40;
+}

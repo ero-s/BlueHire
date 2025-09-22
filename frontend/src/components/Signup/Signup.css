@@ -1,10 +1,11 @@
 .signup {
   display: flex;
   background: #ffffff;
-  height: 60vh;   
-  width: 90vh;   
+  max-height: 60vh;   
+  max-width: 90vh;   
   box-shadow: 0 12px 40px rgba(0, 0, 0, 0.8); 
   padding: 20px;
+  padding-bottom: 30px;
   font-family: "Inter", sans-serif;
   font-optical-sizing: auto;
   font-style: normal;
@@ -23,16 +24,6 @@ img{
     text-align: left;
 }
 
-.signup-left .logo {
-    display: flex;
-    gap: 12px; 
-    font-size: 15px;
-}
-
-.signup-left .name {
-  display: flex;      
-}
-
 .signup-left .welcome-message {
   padding: 0 40px;
   position: relative;
@@ -48,14 +39,6 @@ img{
 .welcome-message p{
     text-align: justify;
     font-size: 16px;
-}
-
-.signup-bluecolor{
-    color: #122b6f;
-}
-
-.signup-hirecolor{
-    color: #3b3c40;
 }
 
 .signup-right{
@@ -81,13 +64,18 @@ img{
 .signup-right label{
     font-size: 13px;
     margin-bottom: 2px;
+    margin-left: 5px;
 }
 
-.signup-right input, select{
-    border-radius: 20px;
-    padding: 5px 10px;
-    border: 2px solid #89A1B0;  
-    outline: none; 
+.signup-right input,
+.signup-right select {
+  border-radius: 20px;
+  border: 2px solid #89A1B0;  
+  outline: none; 
+  padding: 5px 10px; 
+  width: 100%;         
+  box-sizing: border-box; 
+  height: 30px;
 }
 
 .upload-btn{
@@ -96,7 +84,7 @@ img{
     background-color: #818589;
     color: #ffffff;
     border: none;
-    margin-bottom: 5px;
+    margin-bottom: 10px;
 }
 
 .register-btn{
