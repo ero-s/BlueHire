@@ -13,7 +13,7 @@ const SignIn = () => {
 
   return (
     <div className="signin">
-        <Logo/>
+        <Logo size={35} textSize={30} />
         <div className="signin-name">Sign In</div>
         <form onSubmit={handleSubmit}>
           <div className="field">

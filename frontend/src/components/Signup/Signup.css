@@ -16,18 +16,19 @@
   flex: 1; 
 }
 
-img{
-    height: 35px;
-}
-
 .signup-left{
     text-align: left;
+}
+
+.signup-logo{
+    position: relative;
+    top: -20px;
 }
 
 .signup-left .welcome-message {
   padding: 0 40px;
   position: relative;
-  top: -15px;  
+  top: -20vh;  
   color: #1A2F4A;
 }
 

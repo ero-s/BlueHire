@@ -1,23 +1,23 @@
-.signin{
+.signin {
     display: flex;
     flex-direction: column;
     background: #ffffff;
     max-height: 60vh;
     max-width: 45vh;
     align-items: center;
-    padding: 20px 50px;
-    padding-bottom: 50px;
+    padding: 0 50px 50px 50px; 
     font-family: "Inter", sans-serif;
     color: #26466F;
-    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.8); 
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.8);
 }
 
-.signin-name{
+.signin-name {
     font-size: 27px;
     font-weight: 600;
-    margin-top: -20px;
-    margin-bottom: 20px;
+    margin-bottom: 20px; 
+    margin-top: -100px;
 }
+
 
 .field label{
     display: flex;

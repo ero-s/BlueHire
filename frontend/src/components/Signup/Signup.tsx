@@ -21,7 +21,9 @@ const Signup = () => {
   return (
     <div className='signup'>
         <div className="signup-left">
-            <Logo/>
+            <div className="signup-logo">
+                <Logo size={35} textSize={30}/>
+            </div>
             <div className="welcome-message">
                 <h1>Welcome!</h1>
                 <p>

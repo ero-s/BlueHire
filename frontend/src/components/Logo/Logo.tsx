@@ -1,19 +1,22 @@
-import React from 'react'
-import logo from "../Assets/logo.png"
-import "./Logo.css"
+import React from 'react';
+import logo from "../Assets/logo.png";
+import "./Logo.css";
 
-const Logo = () => {
-  return (
-    <div className="logo">
-        <div className="logo-img">
-            <img src={logo} alt="" />
-        </div>
-        <div className="name">
-            <h1 className='signup-bluecolor'>Blue</h1>
-            <h1 className='signup-hirecolor'>Hire</h1>
-        </div>
-    </div>
-  )
+interface LogoProps {
+  size?: number;     
+  textSize?: number; 
 }
 
-export default Logo
+const Logo: React.FC<LogoProps> = ({ size = 35, textSize = 15 }) => {
+  return (
+    <div className="logo" style={{ gap: '12px', fontSize: `${textSize}px` }}>
+      <img src={logo} alt="BlueHire Logo" style={{ height: `${size}px` }} />
+      <div className="name">
+        <span className='signup-bluecolor'>Blue</span>
+        <span className='signup-hirecolor'>Hire</span>
+      </div>
+    </div>
+  );
+};
+
+export default Logo;

@@ -1,10 +1,12 @@
 import "./App.css";
-import LoginSignup from "./Pages/LoginSignup";
+import NavBar from "./Components/NavBar/NavBar";
+import Landing from "./Pages/Landing";
 
 function App() {
   return (
     <>
-      <LoginSignup/>
+      <NavBar />
+      <Landing/>
     </>
   );
 }
