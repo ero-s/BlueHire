@@ -1,0 +1,99 @@
+.about{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    text-align: center;
+    margin: 0;
+    position: relative;
+    top: -55vh;
+    font-family: "Inter", sans-serif;
+    font-optical-sizing: auto;
+    font-style: normal;
+}
+
+.about-upperleft{
+    display: flex;
+    padding: 7vh 37vh 7vh 12vh;
+    background-color: #D9D9D9;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0vh 30vh 30vh 0vh;
+    box-shadow: 0px 8px 12px rgba(0, 0, 0, 0.3);
+    position: relative;
+    right: 48vh;
+}
+
+.about-text{
+    margin-right: -10vh;
+    font-size: 8vh;
+    font-weight: 500;
+    color: black;
+}
+
+.about-name{
+    display: flex;
+    font-size: 5vh;
+}
+
+.about-blue{
+    color: #215991;
+}
+
+.about-hire{
+    color: #3b3c40;
+}
+
+.about-upperright p{
+    color: black;
+    text-align: right;
+    font-size: 10.5vh;
+    font-weight: 700;
+    margin-bottom: 10vh
+}
+
+.about-upperright{
+    position: relative;
+    left: 48vh;
+    top: -29vh;
+}
+
+.about-lower{
+    display: flex;
+}
+
+.about-lowerleft p{
+    font-size: 4vh;
+    font-weight: 500;
+    line-height: 6vh;
+    color: black;
+}
+
+.about-lowerleft{
+    width: 90vh;
+    position: relative;
+    right: -37vh;
+    top: -20vh;
+}
+
+.background{
+    width: 160vh;
+    height: 50vh;
+    background: #26466F;
+    position: relative;
+    right: -35vh;
+    bottom: 17vh;
+    border-radius: 13vh 0vh 0vh 13vh;
+    box-shadow: -10px 12px 16px rgba(0, 0, 0, 0.4);
+}
+
+.model2-img{
+    position: relative;
+    right: 85vh;
+    top: -37vh;
+}
+
+img {
+  width: 130%;
+  height: auto;
+}
