@@ -1,6 +1,8 @@
 import React from 'react'
 import "./About.css"
 import model2 from "../Assets/model2.png"
+import vision from "../Assets/vision.png"
+import coreValues from "../Assets/coreValues.png"
 
 const About = () => {
   return (
@@ -25,9 +27,26 @@ const About = () => {
                 <div className="about-lowerleft">
                     <p>BlueHire is a trusted digital <br />  platform that connects <br /> clients with verified local <br /> workers. It helps clients <br /> easily find reliable service <br /> providers while giving <br /> workers more opportunities <br /> to showcase their skills and <br /> earn fairly.</p>
                 </div>
-                <div className="background"></div>
+                <span className="background"></span>
                 <div className="model2-img">
                     <img src={model2} alt="Carpenter Guy Model" />
+                </div>
+            </div>
+            <div className="about-mission">
+                <div className="mission">
+                    <div className="mission-text">
+                        <h1 className="our">Our</h1>
+                        <h1 className="mission">Mission</h1>
+                    </div>
+                    <p>To provide a reliable platform where clients can find skilled, verified <br /> workers quickly and securely, while empowering workers with more <br /> opportunities.</p>
+                </div>
+            </div>
+            <div className="about-visioncore">
+                <div className="about-vision">
+                    <img src={vision} alt="Vision Card" />
+                </div>
+                <div className="about-corevalues">
+                    <img src={coreValues} alt="Core Values Card" />
                 </div>
             </div>
         </div>

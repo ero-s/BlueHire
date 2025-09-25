@@ -47,15 +47,15 @@
 .about-upperright p{
     color: black;
     text-align: right;
-    font-size: 10.5vh;
-    font-weight: 700;
+    font-size: 10vh;
+    font-weight: 650;
     margin-bottom: 10vh
 }
 
 .about-upperright{
     position: relative;
     left: 48vh;
-    top: -29vh;
+    top: -27vh;
 }
 
 .about-lower{
@@ -97,3 +97,69 @@ img {
   width: 130%;
   height: auto;
 }
+
+.mission-text{
+    display: flex;
+    gap: 5vh;
+    justify-content: center;
+    align-items: center;
+    font-size: 7.5vh;
+    font-style: italic;
+    position: relative;
+    top: -13vh;
+}
+
+.our{
+    color: #bac9d8;
+}
+
+.mission{
+    color: #26466F;
+}
+
+.mission p{
+    color: black;
+    text-align: center;
+    font-size: 4vh;
+    font-weight: 500;
+    line-height: 6vh;
+    position: relative;
+    left: 7vh;
+    top: -8vh;
+    margin-bottom: 4vh;
+}
+
+.about-visioncore{
+    display: flex;
+    gap: 20vh;
+    justify-content: center;
+    align-items: center;
+}
+
+.about-vision, .about-corevalues{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.about-vision img{
+  width: 68vh;
+  background: rgba(77, 126, 175, 0.7);
+  border-radius: 5vh;
+  box-shadow: 5px 8px 10px rgba(0,0,0,0.3);
+}
+
+.about-corevalues img {
+  width: 65vh;
+  background: rgba(137, 161, 176, 0.7);
+  border-radius: 5vh;
+  box-shadow: 5px 8px 10px rgba(0,0,0,0.3);
+}
+
+/* Effects */
+
+.about-visioncore img:hover{
+    transform: scale(1.05);
+    transition: all 0.3s ease-in-out;
+}
+
