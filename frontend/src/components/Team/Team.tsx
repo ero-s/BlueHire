@@ -8,7 +8,7 @@ const Team = () => {
   return (
     <div>
         <div className="team">
-            <h1 className='meet'>Meet The Team</h1>
+            <h1 className='meet'>Meet Our Team</h1>
             <div className="developers">
                 <div className="developer1">
                     <Developers  
