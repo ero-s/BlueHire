@@ -3,6 +3,7 @@ import Hero from '../Components/Hero/Hero'
 import landingImage from "../Components/Assets/landingbg.png"
 import About from '../Components/About/About'
 import Team from '../Components/Team/Team'
+import Contacts from '../Components/Contacts/Contacts'
 
 const Landing = () => {
   return (
@@ -21,6 +22,7 @@ const Landing = () => {
       <Hero />
       <About />
       <Team />
+      <Contacts />
     </div>
   )
 }
