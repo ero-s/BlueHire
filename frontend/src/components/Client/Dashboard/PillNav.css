@@ -38,6 +38,7 @@
   height: var(--nav-h);
   background: var(--base, #000);
   border-radius: 9999px;
+  margin-left: 16px; /* Add this line */
 }
 
 .pill-logo {
@@ -144,6 +145,7 @@
   background: var(--base, #000);
   border-radius: 50px;
   z-index: 4;
+  display: none;
 }
 
 .desktop-only {
