@@ -1,5 +1,5 @@
 .pill-nav-container {
-  position: absolute;
+  position: relative;
   top: 1em;
   z-index: 99;
 }

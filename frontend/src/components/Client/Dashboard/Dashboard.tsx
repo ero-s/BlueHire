@@ -1,11 +1,14 @@
-import PillNav from "./PillNav";
+import Header from "./Header";
+import WelcomeSection from "./WelcomeSection";
+import StatCard from "./StatCard";
+import PostJobButton from "./PostJobButton";
+import TotalSpentCard from "./TotalSpentCard";
+import PendingRequests from "./PendingRequests";
+import Footer from "./Footer";
 import logo from "../../../assets/logo.jpg";
-import SplitText from "./SplitText";
 
 export default function Dashboard() {
-  const handleAnimationComplete = () => {
-    console.log("All letters have animated!");
-  };
+  const chartData = [30, 50, 70, 90, 95, 85, 60, 40, 55, 75, 85, 100];
 
   return (
     <div
@@ -13,55 +16,58 @@ export default function Dashboard() {
         margin: "0",
         padding: "0",
         fontFamily: "Arial, sans-serif",
-        position: "relative",
-        height: "100vh",
+        minHeight: "100vh",
         backgroundColor: "#f3f4f6",
-        overflow: "hidden",
+        display: "flex",
+        flexDirection: "column",
+        width: "100%",
       }}
     >
-      <div style={{ padding: "0 2rem" }}>
-        <PillNav
-          logo={logo}
-          logoAlt="Company Logo"
-          items={[
-            { label: "Dashboard", href: "/" },
-            { label: "Bookings", href: "/bookings" },
-            { label: "Settings", href: "/settings" },
-            { label: "Transactions", href: "/transactions" },
-          ]}
-          activeHref="/"
-          className="custom-nav"
-          ease="power2.easeOut"
-          baseColor="grey"
-          pillColor="#ffffff"
-          hoveredPillTextColor="#ffffff"
-          pillTextColor="#000000"
-        />
-      </div>
+      <Header logo={logo} userName="Juan Dela Cruz" />
 
+      <WelcomeSection userName="Juan" />
+
+      {/* Main Content */}
       <div
         style={{
-          marginTop: "50px",
-          padding: "0 2rem",
-          fontSize: "48px",
-          fontWeight: "700",
-          color: "#1f2937",
+          flex: 1,
+          padding: "2rem 3rem",
+          display: "flex",
+          gap: "2rem",
+          width: "100%",
+          boxSizing: "border-box",
         }}
       >
-        <SplitText
-          text="Welcome back, John Doe!"
-          className="welcome-text"
-          delay={100}
-          duration={0.6}
-          ease="power3.out"
-          splitType="chars"
-          from={{ opacity: 0, y: 40 }}
-          to={{ opacity: 1, y: 0 }}
-          threshold={0.1}
-          textAlign="left"
-          onLetterAnimationComplete={handleAnimationComplete}
-        />
+        {/* Left Section - Stats and Chart */}
+        <div
+          style={{
+            flex: "2",
+            display: "flex",
+            flexDirection: "column",
+            gap: "1.5rem",
+          }}
+        >
+          {/* Stats Cards Row */}
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "1fr 1fr 1fr",
+              gap: "1.5rem",
+            }}
+          >
+            <StatCard label="Ongoing Jobs" value={0} />
+            <StatCard label="Past Hires" value={0} />
+            <PostJobButton />
+          </div>
+
+          <TotalSpentCard total={0} chartData={chartData} />
+        </div>
+
+        {/* Right Section - Pending Requests */}
+        <PendingRequests count={5} />
       </div>
+
+      <Footer />
     </div>
   );
 }
