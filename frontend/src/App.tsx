@@ -1,12 +1,11 @@
 import Appbar from "./components/Appbar";
 import Students from "./components/Students";
-import "./App.css";
+import Dashboard from "./components/Client/Dashboard/Dashboard";
 
 function App() {
   return (
     <>
-      <Appbar />
-      <Students />
+      <Dashboard />
     </>
   );
 }
