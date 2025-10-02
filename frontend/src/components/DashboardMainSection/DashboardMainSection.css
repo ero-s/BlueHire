@@ -30,6 +30,10 @@
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.12);
 }
 
+.card:active {
+  transform: scale(0.95);
+}
+
 /* Sizes */
 .small-card {
   width: 250px;
