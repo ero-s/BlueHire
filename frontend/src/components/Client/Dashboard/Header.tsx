@@ -50,6 +50,7 @@ export default function Header({ logo, userName }: HeaderProps) {
             justifyContent: "center",
             cursor: "pointer",
             boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
+            marginTop: "30px",
           }}
         >
           <span style={{ fontSize: "20px" }}>✉</span>
@@ -66,6 +67,7 @@ export default function Header({ logo, userName }: HeaderProps) {
             justifyContent: "center",
             cursor: "pointer",
             boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
+            marginTop: "30px",
           }}
         >
           <span style={{ fontSize: "20px" }}>🔔</span>
@@ -81,6 +83,7 @@ export default function Header({ logo, userName }: HeaderProps) {
             gap: "8px",
             cursor: "pointer",
             boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
+            marginTop: "30px",
           }}
         >
           <img

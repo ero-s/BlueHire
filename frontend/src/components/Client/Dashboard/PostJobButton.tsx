@@ -1,24 +1,19 @@
+import { useNavigate } from "react-router-dom";
+
 export default function PostJobButton() {
+  const navigate = useNavigate();
+
   return (
     <button
-      style={{
-        background: "#3b82f6",
-        color: "white",
-        border: "none",
-        borderRadius: "16px",
-        padding: "2rem",
-        fontSize: "18px",
-        fontWeight: "600",
-        cursor: "pointer",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        gap: "8px",
-        boxShadow: "0 4px 12px rgba(59, 130, 246, 0.3)",
-      }}
-      onClick={() => console.log("Post New Job clicked")}
+      onClick={() => navigate("/post-job")}
+      className="
+        bg-blue-500 text-white font-semibold text-lg 
+        px-8 py-6 rounded-2xl shadow-md hover:shadow-lg 
+        flex items-center justify-center gap-2 transition-all
+        hover:bg-blue-600 active:scale-95
+      "
     >
-      <span style={{ fontSize: "24px" }}>+</span>
+      <span className="text-2xl">+</span>
       Post New Job!
     </button>
   );
