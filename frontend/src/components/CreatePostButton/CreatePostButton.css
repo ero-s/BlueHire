@@ -1,0 +1,14 @@
+.create-post-btn {
+  border: none;
+  border-radius: 20px;
+  padding: 0.5rem 1.5rem;
+  background-color: #646cff;
+  color: white;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.create-post-btn:hover {
+  background-color: #535bf2;
+}
