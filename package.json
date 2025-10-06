@@ -5,5 +5,9 @@
     "@mui/icons-material": "^7.3.2",
     "@mui/material": "^7.3.2",
     "lucide-react": "^0.544.0"
+    "react-router-dom": "^7.9.1"
+  },
+  "devDependencies": {
+    "@types/react-router-dom": "^5.3.3"
   }
 }
