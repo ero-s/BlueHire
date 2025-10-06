@@ -1,0 +1,112 @@
+.signup {
+  display: flex;
+  background: #ffffff;
+  max-height: 60vh;   
+  max-width: 90vh;   
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.8); 
+  padding: 20px;
+  padding-bottom: 30px;
+  font-family: "Inter", sans-serif;
+  font-optical-sizing: auto;
+  font-style: normal;
+}
+
+.signup > .signup-left,
+.signup > .signup-right {
+  flex: 1; 
+}
+
+.signup-left{
+    text-align: left;
+}
+
+.signup-logo{
+    position: relative;
+    top: -20px;
+}
+
+.signup-left .welcome-message {
+  padding: 0 40px;
+  position: relative;
+  top: -20vh;  
+  color: #1A2F4A;
+}
+
+.welcome-message h1{
+    font-size: 50px;
+    margin-bottom: 10px;
+}
+
+.welcome-message p{
+    text-align: justify;
+    font-size: 16px;
+}
+
+.signup-right{
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    padding-right: 30px;
+    color: #26466F;
+}
+
+.signup-right h1{
+    text-align: center;
+    margin-bottom: 5px;
+}
+
+.signup-right .field{
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    margin-bottom: 10px;
+}
+
+.signup-right label{
+    font-size: 13px;
+    margin-bottom: 2px;
+    margin-left: 5px;
+}
+
+.signup-right input,
+.signup-right select {
+  border-radius: 20px;
+  border: 2px solid #89A1B0;  
+  outline: none; 
+  padding: 5px 10px; 
+  width: 100%;         
+  box-sizing: border-box; 
+  height: 30px;
+}
+
+.upload-btn{
+    border-radius: 20px;
+    padding: 7px;
+    background-color: #818589;
+    color: #ffffff;
+    border: none;
+    margin-bottom: 10px;
+}
+
+.register-btn{
+    border-radius: 20px;
+    padding: 7px;
+    background-color: #4D7EAF;
+    color: #ffffff;
+    border: none;
+}
+
+/* Effects */
+
+.signup-right input:hover,
+.signup-right select:hover {
+    border: 2px solid #1980c0;  
+}
+
+.upload-btn:hover{
+    background-color: #9fa0a0;
+}
+
+.register-btn:hover{
+    background-color: #609cd8;
+}

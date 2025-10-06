@@ -1,12 +1,12 @@
-import Appbar from "./components/Appbar";
-import Students from "./components/Students";
 import "./App.css";
+import NavBar from "./Components/NavBar/NavBar";
+import Landing from "./Pages/Landing";
 
 function App() {
   return (
     <>
-      <Appbar />
-      <Students />
+      <NavBar />
+      <Landing/>
     </>
   );
 }

@@ -1,0 +1,71 @@
+.developer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;   
+  color: black;
+  margin: 0 auto;
+}
+
+.developer-profile,
+.developer-profile * {
+  font-family: "Inter", sans-serif;
+}
+
+
+.developer-profile {
+  width: 25vh; 
+  padding: 4vh 1vh;
+  background: linear-gradient(to bottom, #91acc6 40%, rgb(235, 235, 235) 40%);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  border-radius: 2vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center; 
+  text-align: center;
+}
+
+
+.developer-profile h1 {
+  font-size: 2.2vh;
+  text-align: center;
+  margin-bottom: 0.5vh;
+}
+
+.developer-profile h1, 
+.developer-profile p{
+    color: rgb(255, 255, 255);
+    text-align: center;
+}
+
+.developer-bio p{
+    width: 80%;
+    color: rgb(15, 15, 15);
+    line-height: 2.5vh;
+    font-size: 1.5vh;
+    position: relative;
+    left: 2.4vh;
+}
+
+.developer-role p {
+  font-size: 1.5vh;
+  position: relative;
+  left: 7vh;
+}
+
+.developer-pic {
+  width: 60%;
+  height: auto;
+  border-radius: 50%;
+  border: 8px solid rgb(245, 242, 242);
+  margin: 2vh 0;
+}
+
+.developer-contacts{
+    display: flex;
+}
+
+.developer-contacts img{
+    width: 3vh;
+    height: auto;
+    margin: 2vh 1vh;
+}
