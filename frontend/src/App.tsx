@@ -5,6 +5,10 @@ import NavBar from "./components/NavBar/NavBar";
 import BookingJobManagementUppersSection from "./components/BookingJobManagementUpperSection/BookingJobManagementUpperSection";
 import BookingJobManagementMainSection from "./components/BookingJobManagementMainSection/BookingJobManagementMainSection";
 // import JobDetails from "./components/JobDetailsMainSection/JobDetails";
+import DashboardUpperSection from "./components/DashboardUpperSection/DashboardUpperSection";
+import DashboardMainSection from "./components/DashboardMainSection/DashboardMainSection";  
+import NavBar from "./Components/NavBar/NavBar";
+import Landing from "./Pages/Landing";
 
 function App() {
   return (
@@ -12,6 +16,10 @@ function App() {
       <NavBar/>
       <BookingJobManagementUppersSection/>
       <BookingJobManagementMainSection/>
+      <DashboardUpperSection/>
+      <DashboardMainSection/> 
+      <NavBar />
+      <Landing/>
     </>
   );
 }
