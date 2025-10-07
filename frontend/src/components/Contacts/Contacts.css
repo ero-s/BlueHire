@@ -1,0 +1,237 @@
+.contacts{
+    margin: 0 auto;
+    padding: 10vh;
+    margin-top: 30vh;
+    font-family: "Gabarito", sans-serif;
+}
+
+.contacts-bg {
+  display: flex;
+  gap: 40vh;
+  background-image: url('../../Components/Assets/contact_bg.png');
+  background-size: 90% 50vh;   
+  background-position: center;
+  background-repeat: no-repeat;
+  height: 65vh;    
+}
+
+.contacts-bg h1 {
+    display: flex;
+    text-align: center;
+    padding: 20vh 0 0 20vh;
+    font-size: 4rem;
+    color: white;
+    text-align: left;
+    font-weight: 100;
+}
+
+.contacts-bg img{
+    width: auto;
+    height: 35vh;
+    margin-top: 9vh;
+}
+
+.contact-msg{
+    display: flex;
+    position: relative;
+    bottom: 17vh;
+    left: 20vh;
+}
+
+.contact-msg h1{
+    font-family: "Golos Text", sans-serif;
+    font-weight: 100;
+    font-size: 35px;
+    word-spacing: 1vh;
+    letter-spacing: 0.1vh;
+}
+
+.bluehire-txt h1{
+    font-family: "Inter", sans-serif;
+    font-weight: 700;
+}
+
+.bluehire-txt{
+    display: flex;
+    padding: 0 2vh;
+}
+
+.bluehire-txt .blue{
+    color: #215991;
+}
+
+.bluehire-txt .hire{
+    color: #3b3c40;
+}
+
+.contact-lower{
+    display: flex;
+    position: relative;
+    bottom: 10vh;
+    gap: 5vh;
+}
+
+.contact-left{
+    margin-left: 20vh;
+    text-align: left;
+    width: 30%;
+}
+
+.contact-left .contact-left-header{
+    font-size: 40px;
+    margin: 3vh 0;
+}
+
+.contact-left-desc p{
+    color: black;
+    font-size: 17px;
+    line-height: 3vh;
+}
+
+.icons{
+    display: flex;
+    flex-direction: column;
+    margin: 5vh 0;
+    gap: 3vh;
+}
+
+.contact-icons{
+    display: flex;
+    align-items: center;
+}
+
+.contact-icons h1{
+    font-size: 20px;
+    font-weight: 200;
+    color: #26466F;
+}
+
+.contact-icons p{
+    color: #818589;
+}
+
+.details{
+    display: flex;
+    flex-direction: column;
+    line-height: 2.5vh;
+    padding-top: 5px;
+}
+
+.contact-icons img{
+    width: 10%;
+}
+
+hr{
+    border: 1px solid rgb(30, 30, 30);
+}
+
+.contact-right{
+    background-color: #5A7692;
+    border-radius: 20px;
+    width: 51%;
+    padding-top: 3vh;
+    padding-bottom: 7vh;
+    display: flex;
+}
+
+.contact-right .name-email{
+    display: flex;
+    justify-content: center;
+    align-items: start;
+    gap: 20vh;
+    margin-right: 6vh;
+}
+
+.contact-right .name-email input{
+    width: 140%;
+    height: 5vh;
+}
+
+.contact-right input{
+    background-color: #ECF6FF;
+    border-radius: 10px;
+    border: none;
+    outline: none;
+    padding: 1px 10px;
+}
+
+.contact-right .field{
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+}
+
+.contact-right label{
+    margin-bottom: 3px;
+    font-family: "Gabarito", sans-serif;
+    color: rgb(255, 255, 255);
+}
+
+.contact-right .phone-message{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-left: 6.5vh;
+}
+
+.phone-input, 
+.message-input{
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    margin-top: 2vh;
+}
+
+.phone-input input{
+    width: 80vh;
+    height: 5vh;
+}
+
+.message-input textarea {
+  width: 80vh;
+  height: 15vh;
+  resize: none; 
+  background-color: #ECF6FF;
+  border-radius: 10px;
+  border: none;
+  outline: none;
+  padding: 10px;
+  font-family: "Gabarito", sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+  overflow-wrap: break-word; 
+  word-wrap: break-word;
+}
+
+
+.contact-right .name-email input::placeholder,
+.phone-input input::placeholder,
+.message-input textarea::placeholder {
+    font-family: "Gabarito", sans-serif;
+    font-size: 15px;
+    color: #AABDD0; 
+    font-style: italic;
+    opacity: 1;       
+}
+
+
+.contact-btn{
+    color: #ffffff;
+    border: 3px solid #D1DEEB;
+    border-radius: 5px;
+    padding: 3px 15px;
+    position: relative;
+    top: 3vh;
+    right: 35vh;
+}
+
+/* Effects */
+
+.contact-btn:hover{
+    color: #5A7692;
+    border: none;
+    background: white;
+    padding: 5.5px 18px;
+    border-radius: 5px;
+}

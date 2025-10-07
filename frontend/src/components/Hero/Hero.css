@@ -1,0 +1,84 @@
+.hero{
+    display: flex;
+    font-family: "Inter", sans-serif;
+    font-optical-sizing: auto;
+    font-style: normal;
+}
+
+
+.hero-left{
+    font-weight: 700;
+    text-align: left;
+    position: relative;
+    top: 25vh;
+    left: 15vh;
+}
+
+.hero-msg{
+    font-size: 4.2vh;
+    font-style: italic;
+    line-height: 12vh;
+    letter-spacing: 3px;
+    color: #ffffff;
+    margin: 0;
+}
+
+.skilled-msg, .opportunities-msg{
+    color: #9BDDFB;
+}
+
+p{  
+    font-weight: 400;
+    font-size: 15px;
+    line-height: 3vh;
+    color: #ffffff;
+    padding-right: 14vh;
+    text-align: justify;
+}
+
+.hero-msg{
+    margin-bottom: 3vh;
+}
+
+.first-msg{
+    display: flex;
+    gap: 1vh;
+}
+
+.design{
+    width: 135vh;
+    height: auto;
+    position: relative;
+    bottom: 4vh;
+}
+
+.model{
+    width: 80vh;
+    height: auto;
+    position: relative;
+    left: 13vh;
+    bottom: 85vh;
+}
+
+.joinnow-btn{
+    background: #9BDDFB;
+    border-radius: 50px;
+    border: 2px solid white;   
+    box-shadow: 0 8px 10px rgba(0, 0, 0, 0.4);
+    color: #26466F;
+    font-weight: 600;
+    font-size: 18px;
+    padding: 10px 40px;
+    position: relative;
+    top: 4vh;
+}
+
+/* Effects */
+
+.joinnow-btn:hover {
+    background: #ffffff;
+    border: 2px solid #9BDDFB;  
+    cursor: pointer;
+    transform: scale(1.05);
+    transition: all 0.3s ease;
+}

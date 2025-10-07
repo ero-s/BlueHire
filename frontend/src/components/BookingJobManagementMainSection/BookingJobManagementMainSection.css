@@ -1,0 +1,158 @@
+.booking-main-wrapper {
+  display: flex;
+  justify-content: center;
+  padding: 2rem 1rem;
+  background-color: #f7f7f7; /* Light background to make box pop */
+}
+
+.booking-main-container {
+  background: white;
+  border-radius: 1rem;
+  padding: 1.5rem;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+  border: 1px solid #e5e7eb;
+  max-width: 1780px; /* Prevent full width */
+  width: 100%;
+}
+
+.booking-main-container {
+  background: white;
+  border-radius: 1rem;
+  padding: 1.5rem;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+}
+
+.section-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+.table-wrapper {
+  overflow-x: auto;
+}
+
+.booking-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+}
+
+.booking-table th {
+  text-align: left;
+  font-weight: 600;
+  color: #6b7280;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #e5e7eb;
+  background: #f9fafb;
+}
+
+.booking-table td {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.status {
+  font-weight: 500;
+}
+
+.status.pending {
+  color: #f59e0b;
+}
+
+.status.ongoing {
+  color: #3b82f6;
+}
+
+.status.completed {
+  color: #10b981;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.btn {
+  padding: 0.3rem 0.75rem;
+  border-radius: 0.4rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  border: none;
+  transition: background 0.2s;
+}
+
+.btn.accept {
+  background: #16C098;
+  color: #008767;
+  border-color: #00B087;
+}
+
+.btn.accept:hover {
+  background: #22c55e;
+}
+
+.btn.decline {
+  background: #FFC5C5;
+  color: #DF0404;
+}
+
+.btn.decline:hover {
+  background: #ef4444;
+}
+
+.btn.mark-completed {
+  background: #3b82f6;
+  color: white;
+}
+
+.btn.mark-completed:hover {
+  background: #2563eb;
+}
+
+.btn.view-details,
+.btn.view-review {
+  background: #e5e7eb;
+  color: #374151;
+}
+
+.btn.view-details:hover,
+.btn.view-review:hover {
+  background: #d1d5db;
+}
+
+.pagination {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 1rem;
+  font-size: 0.9rem;
+  color: #6b7280;
+}
+
+.pagination-buttons {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.pagination-buttons button {
+  padding: 0.3rem 0.6rem;
+  border: 1px solid #d1d5db;
+  background: white;
+  border-radius: 0.3rem;
+  cursor: pointer;
+  font-size: 0.85rem;
+}
+
+.pagination-buttons button.active {
+  background: #3b82f6;
+  color: white;
+  border-color: #3b82f6;
+}
+
+.pagination-buttons button:hover {
+  background: #f3f4f6;
+}

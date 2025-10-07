@@ -1,0 +1,26 @@
+img {
+    height: 35px; /* fixes image size */
+}
+
+.logo {
+    display: flex;
+    gap: 12px; 
+    font-size: 15px;
+    margin: 0;
+}
+
+.name {
+    display: flex;    
+    font-family: "Inter", sans-serif;
+    font-optical-sizing: auto;
+    font-style: normal;  
+    font-weight: 700;
+}
+
+.signup-bluecolor {
+    color: #215991;
+}
+
+.signup-hirecolor {
+    color: #3b3c40;
+}
