@@ -1,7 +1,6 @@
 import React from 'react'
 import { useState } from 'react'
-import './Signup.css'
-import logo from '../Assets/logo.png'
+import '../LandingComponents.css'
 import Logo from '../Logo/Logo'
 
 const Signup = () => {

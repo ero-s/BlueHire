@@ -1,6 +1,6 @@
 import React from 'react';
 import logo from "../Assets/logo.png";
-import "./Logo.css";
+import "../LandingComponents.css";
 
 interface LogoProps {
   size?: number;     

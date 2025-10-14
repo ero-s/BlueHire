@@ -5,6 +5,10 @@ import { Routes, Route } from "react-router-dom"; // <-- Import this
 import "./components/Client/Client.css";
 import ReviewsAndRatings from "./components/ReviewsAndRatings/Reviews&Ratings";
 import EarningsAndReports from "./components/EarningsandReports/Earnings&Reports";
+import Landing from "./Pages/Landing";
+import NavBarLanding from "./components/LandingComponents/NavBarLanding/NavBarLanding";
+import SignIn from "./components/LandingComponents/SignIn/SignIn";
+import SigninSignup from "./Pages/SigninSignup";
 // import NavBar from "./components/NavBar/NavBar";
 // // import DashboardUpperSection from "./components/DashboardUpperSection/DashboardUpperSection";
 // // import DashboardMainSection from "./components/DashboardMainSection/DashboardMainSection";

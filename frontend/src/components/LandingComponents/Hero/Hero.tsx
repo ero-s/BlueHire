@@ -1,5 +1,5 @@
 import React from 'react'
-import "../Hero/Hero.css"
+import "../LandingComponents.css"
 import model from "../Assets/model.png"
 import design from "../Assets/designbg.png"
 

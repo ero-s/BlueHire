@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import Logo from '../Logo/Logo'
-import "../SignIn/SignIn.css"
+import "../LandingComponents.css"
 
 const SignIn = () => {
   const [username, setUsername] = useState("");

@@ -1,5 +1,5 @@
 import React from 'react'
-import "./About.css"
+import "../LandingComponents.css"
 import model2 from "../Assets/model2.png"
 import vision from "../Assets/vision.png"
 import coreValues from "../Assets/coreValues.png"
