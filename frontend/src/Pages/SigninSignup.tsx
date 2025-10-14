@@ -1,9 +1,9 @@
 import React from 'react'
-import Signup from '../Components/Signup/Signup'
-import Login from '../Components/SignIn/SignIn';
-import Logo from '../Components/Logo/Logo';
+import Signup from '../components/LandingComponents/Signup/Signup'
+import Login from '../components/LandingComponents/SignIn/SignIn';
+import Logo from '../components/LandingComponents/Logo/Logo';
 import signupCard from "../Components/Assets/signup_card.png";
-import SignIn from '../Components/SignIn/SignIn';
+import SignIn from '../components/LandingComponents/SignIn/SignIn';
 
 const LoginSignup = () => {
   return (
