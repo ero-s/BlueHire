@@ -1,10 +1,9 @@
-import Appbar from "./components/Appbar";
-import Students from "./components/Students";
 import Dashboard from "./components/Client/Dashboard/Dashboard";
 import SettingsPage from "./components/Client/Settings/SettingsPage";
 import JobRequestForm from "./components/Client/Dashboard/JobRequestForm";
 import { Routes, Route } from "react-router-dom"; // <-- Import this
 import "./components/Client/Client.css";
+
 
 function Bookings() {
   return <div className="p-10 text-center text-xl">Bookings Page</div>;

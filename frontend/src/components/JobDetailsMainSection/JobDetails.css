@@ -1,0 +1,123 @@
+.job-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f3f4f6;
+  padding: 1rem;
+}
+
+.job-form {
+  background: white;
+  border-radius: 1rem;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  padding: 2rem;
+  width: 100%;
+  max-width: 400px;
+}
+
+.job-title {
+  text-align: center;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1e3a8a;
+  margin-bottom: 1.5rem;
+}
+
+.form-group {
+  margin-bottom: 1rem;
+  position: relative;
+}
+
+.form-group label {
+  display: block;
+  font-weight: 500;
+  margin-bottom: 0.25rem;
+}
+
+.required {
+  color: red;
+}
+
+.form-group input,
+.form-group textarea {
+  width: 100%;
+  border: 1px solid #d1d5db;
+  border-radius: 0.5rem;
+  padding: 0.5rem;
+  outline: none;
+  transition: border 0.2s, box-shadow 0.2s;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+}
+
+.form-group textarea {
+  min-height: 60px;
+  resize: vertical;
+}
+
+.char-count {
+  text-align: right;
+  font-size: 0.75rem;
+  color: #6b7280;
+  margin-top: 0.25rem;
+}
+
+.input-icon {
+  display: flex;
+  align-items: center;
+  border: 1px solid #d1d5db;
+  border-radius: 0.5rem;
+  padding: 0.5rem;
+}
+
+.input-icon .icon {
+  margin-right: 0.5rem;
+  color: #6b7280;
+}
+
+.input-icon input {
+  flex: 1;
+  border: none;
+  outline: none;
+}
+
+.status-slider {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.status-value {
+  font-weight: 600;
+  color: #3174A5;
+}
+
+.update-btn {
+  width: 100%;
+  background: #4D7EAF;
+  color: white;
+  padding: 0.5rem;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background 0.2s;
+}
+
+.update-btn:hover {
+  background: #1d4ed8;
+}
+
+.form-group input[type="text"]:not(.input-icon input) {
+  height: 42px;
+  padding: 0.5rem 0.75rem;
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+}
+

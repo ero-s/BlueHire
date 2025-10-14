@@ -1,0 +1,129 @@
+.dashboard-main {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Row Layout */
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 40px;
+  flex-wrap: wrap;
+}
+
+/* Card Base */
+.card {
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
+  padding: 16px;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  align-items: center;
+  justify-content: center;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.12);
+}
+
+.card:active {
+  transform: scale(0.95);
+}
+
+/* Sizes */
+.small-card {
+  width: 250px;
+  height: 200px;
+}
+
+.large-card {
+  width: 566px;
+  height: 200px;
+}
+
+.card h3 {
+  width: 100%;
+  text-align: center;
+  margin-bottom: 12px; /* space before number box */
+}
+
+
+/* Ongoing & Completed Jobs */
+.stat-box {
+  width: 225px;
+  height: 68px;
+  font-size: 100px;
+  color: #26466f;
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+/* Job Requests Table */
+.job-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 12px;
+  font-size: 14px;
+}
+
+.job-table th,
+.job-table td {
+  padding: 6px 10px;
+  border-bottom: 1px solid #eee;
+  text-align: left;
+}
+
+.job-table th:first-child,
+.job-table td:first-child {
+  text-align: center;
+  width: 30px;
+}
+
+/* Recent Reviews */
+.review-box {
+  display: flex;
+  gap: 16px;
+  margin-top: 12px;
+}
+
+.profile-pic {
+  width: 71px;
+  height: 71px;
+  border-radius: 50%;
+}
+
+.review-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.review-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.review-name {
+  font-size: 24px;
+  font-weight: bold;
+  color: #26466f;
+}
+
+.review-stats {
+  text-align: right;
+  font-size: 14px;
+  color: #555;
+}
+
+.review-comment {
+  margin-top: 8px;
+  font-size: 14px;
+  color: #333;
+}
