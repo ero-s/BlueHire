@@ -1,5 +1,5 @@
 import React, { useState }from 'react'
-import './Contacts.css'
+import '../LandingComponents.css'
 import agent from '../Assets/agent.png'
 import ig_icon from '../Assets/contact_ig_icon.png'
 import email_icon from '../Assets/contact_email_icon.png'
