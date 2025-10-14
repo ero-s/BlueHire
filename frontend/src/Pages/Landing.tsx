@@ -1,9 +1,9 @@
 import React from 'react'
-import Hero from '../Components/Hero/Hero'
-import landingImage from "../Components/Assets/landingbg.png"
-import About from '../Components/About/About'
-import Team from '../Components/Team/Team'
-import Contacts from '../Components/Contacts/Contacts'
+import Hero from '../components/Hero/Hero'
+import landingImage from "../components/Assets/landingbg.png"
+import About from '../components/About/About'
+import Team from '../components/Team/Team'
+import Contacts from '../components/Contacts/Contacts'
 
 const Landing = () => {
   return (
