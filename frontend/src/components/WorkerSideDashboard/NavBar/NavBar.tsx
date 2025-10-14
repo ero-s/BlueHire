@@ -1,6 +1,6 @@
 import "./NavBar.css";
-import BlueHireLogo from "../../assets/BlueHireLogo.png";
-import ProfilePic from "../../assets/profile.png";
+import BlueHireLogo from "../../../assets/BlueHireLogo.png";
+import ProfilePic from "../../../assets/profile.png";
 import { MessageSquare, Bell } from "lucide-react";
 
 export default function NavBar() {

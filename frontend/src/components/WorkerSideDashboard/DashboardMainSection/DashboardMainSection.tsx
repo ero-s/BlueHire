@@ -1,8 +1,15 @@
 import React from "react";
 import "./DashboardMainSection.css";
 // import { useNavigate } from "react-router-dom";
-import BlueHireLogo from "../../assets/BlueHireLogo.png";
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
+import BlueHireLogo from "../../../assets/BlueHireLogo.png";
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  Tooltip,
+  ResponsiveContainer,
+} from "recharts";
 
 const sampleData = [
   { name: "Mon", value: 10 },
@@ -75,7 +82,9 @@ const DashboardMainSection: React.FC = () => {
             </thead>
             <tbody>
               <tr>
-                <td><input type="checkbox" /></td>
+                <td>
+                  <input type="checkbox" />
+                </td>
                 <td>Jane Doe</td>
                 <td>Cleaning</td>
                 <td>NYC</td>
@@ -83,7 +92,9 @@ const DashboardMainSection: React.FC = () => {
                 <td>Pending</td>
               </tr>
               <tr>
-                <td><input type="checkbox" /></td>
+                <td>
+                  <input type="checkbox" />
+                </td>
                 <td>John Smith</td>
                 <td>Plumbing</td>
                 <td>LA</td>
