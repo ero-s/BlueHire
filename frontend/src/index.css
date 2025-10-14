@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 /* Optional global styles */
-body {
+/* body {
   @apply bg-gray-50 text-gray-900 antialiased;
 }
 
@@ -12,4 +12,4 @@ h1, h2, h3, h4, h5, h6 {
 }
 a {
   @apply text-blue-600 hover:text-blue-800;
-}
+} */
