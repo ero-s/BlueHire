@@ -1,12 +1,12 @@
-import React from 'react';
-import './BlueHireNavbar.css';
-import logo from "../Assets/logo.png";
-import mailIcon from './bell.svg';          
-import bellIcon from './mail.svg';          
-import profilePic from '../Assets/shervin_img.png'; 
+import React from "react";
+import "./BlueHireNavbar.css";
+import logo from "../../assets/logo.jpg";
+import bellIcon from "../../components/EarningsandReports/bell.svg";
+import mailIcon from "../../components/EarningsandReports/mail.svg";
+import profilePic from "../LandingComponents/Assets/shervin_img.png";
 
 const BlueHireNavbar: React.FC = () => {
-    return (
+  return (
     <nav className="navbar">
       <div className="navbar-left">
         <img src={logo} alt="BlueHire Logo" className="navbar-logo" />
@@ -16,10 +16,18 @@ const BlueHireNavbar: React.FC = () => {
         </span>
       </div>
       <div className="navbar-menu">
-        <a href="#" className="navbar-menu-item">Dashboard</a>
-        <a href="#" className="navbar-menu-item">Posts</a>
-        <a href="#" className="navbar-menu-item">Settings</a>
-        <a href="#" className="navbar-menu-item">Transactions</a>
+        <a href="#" className="navbar-menu-item">
+          Dashboard
+        </a>
+        <a href="#" className="navbar-menu-item">
+          Posts
+        </a>
+        <a href="#" className="navbar-menu-item">
+          Settings
+        </a>
+        <a href="#" className="navbar-menu-item">
+          Transactions
+        </a>
       </div>
       <div className="navbar-actions">
         <div className="navbar-icon">
@@ -29,7 +37,11 @@ const BlueHireNavbar: React.FC = () => {
           <img src={mailIcon} alt="Mail" />
         </div>
         <div className="navbar-profile">
-          <img src={profilePic} alt="Jose P. Rizal" className="navbar-profile-pic" />
+          <img
+            src={profilePic}
+            alt="Jose P. Rizal"
+            className="navbar-profile-pic"
+          />
           <div className="navbar-profile-info">
             <span className="navbar-profile-name">Jose P. Rizal</span>
             <span className="navbar-profile-role">Janitor</span>
