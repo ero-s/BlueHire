@@ -4,6 +4,7 @@ import JobRequestForm from "./components/Client/Dashboard/JobRequestForm";
 import { Routes, Route } from "react-router-dom"; // <-- Import this
 import "./components/Client/Client.css";
 import Landing from "./Pages/Landing";
+import NavBarLanding from "./components/LandingComponents/NavBarLanding/NavBarLanding";
 // import NavBar from "./components/NavBar/NavBar";
 // // import DashboardUpperSection from "./components/DashboardUpperSection/DashboardUpperSection";
 // // import DashboardMainSection from "./components/DashboardMainSection/DashboardMainSection";
@@ -52,7 +53,9 @@ export default function App() {
     // //   <DashboardMainSection />
     // //   <Landing />
     // // </> */}
-
-    <Landing/>
+    <>
+      <NavBarLanding/>
+      <Landing/>
+    </>
   );
 }
