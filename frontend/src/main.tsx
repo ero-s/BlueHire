@@ -12,10 +12,4 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
       <App />
     </BrowserRouter>
   </React.StrictMode>
-createRoot(document.getElementById("root") as HTMLElement).render(
-  <StrictMode>
-    <BrowserRouter>
-      <App />
-    </BrowserRouter>
-  </StrictMode>
 );
