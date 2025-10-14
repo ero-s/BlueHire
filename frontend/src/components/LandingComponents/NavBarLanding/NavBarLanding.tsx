@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import '../NavBarLanding/NavrBarLanding.css';
+import '../LandingComponents.css';
 import Logo from '../Logo/Logo';
 
 const Navbar = () => {
