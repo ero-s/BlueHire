@@ -1,5 +1,5 @@
 import React from "react";
-import "./Developers.css";
+import "../LandingComponents.css";
 import ig_icon from "../Assets/ig_icon.png";
 import fb_icon from "../Assets/fb_icon.png";
 import tel_icon from "../Assets/tel_icon.png";

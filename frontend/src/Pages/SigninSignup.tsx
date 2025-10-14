@@ -1,11 +1,10 @@
 import React from 'react'
-import Signup from '../Components/Signup/Signup'
-import Login from '../Components/SignIn/SignIn';
-import Logo from '../Components/Logo/Logo';
-import signupCard from "../Components/Assets/signup_card.png";
-import SignIn from '../Components/SignIn/SignIn';
+import Signup from '../components/LandingComponents/Signup/Signup'
+import SignIn from '../components/LandingComponents/SignIn/SignIn';
+import Logo from '../components/LandingComponents/Logo/Logo';
+import signupCard from "../components/LandingComponents/Assets/signup_card.png";
 
-const LoginSignup = () => {
+const SigninSignup = () => {
   return (
     <div 
         style={{
@@ -19,10 +18,9 @@ const LoginSignup = () => {
           overflow: "hidden"
       }}
     >
-        <Signup/>
-        {/* <SignIn/> */}
+        <SignIn/>
     </div>
   )
 }
 
-export default LoginSignup
+export default SigninSignup
