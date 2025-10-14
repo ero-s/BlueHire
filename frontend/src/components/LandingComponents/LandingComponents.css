@@ -1,0 +1,171 @@
+
+/* ----------- NAVBARLANDING -----------*/
+
+.navbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0px 20px;
+    height: 8vh;
+    box-shadow: 0 1px 10px -2px black;
+    background: #ffffff;
+    font-family: "Inter", sans-serif;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000;
+}
+
+.navbar .nav-logo{
+    position: relative;
+    bottom: 0;
+}
+
+.nav-menu {
+    display: flex;
+    align-items: center;
+    list-style: none;
+    gap: 40px;
+    padding: 0;
+    font-size: 15px;
+}
+
+
+.nav-menu li {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.nav-menu hr {
+    border: none;
+    width: 100%;
+    height: 2px;
+    border-radius: 5px;
+    background: rgb(49, 44, 123);
+    margin-top: 3px;
+}
+
+.nav-signup-btn button {
+    padding: 6px 16px;
+    border: none;
+    border-radius: 6px;
+    background-color: #295f95;
+    color: #fff;
+    cursor: pointer;
+    font-size: 14px;
+    margin: 0 40px;
+}
+
+/* Effects */
+
+.nav-signup-btn button:hover {
+    background: #4190df;
+    cursor: pointer;
+}
+
+.nav-menu li:hover {
+    transform: scale(1.05);
+    transition: all 0.3s ease;
+}
+
+
+
+
+
+/* ----------- HERO -----------*/
+
+.hero{
+    display: flex;
+    font-family: "Inter", sans-serif;
+    font-optical-sizing: auto;
+    font-style: normal;
+}
+
+
+.hero-left{
+    font-weight: 700;
+    text-align: left;
+    position: relative;
+    top: 25vh;
+    left: 15vh;
+}
+
+.hero-msg h1{
+    font-size: 9vh;
+    font-style: italic;
+    line-height: 12vh;
+    letter-spacing: 3px;
+    color: #ffffff;
+    margin: 0;
+}
+
+.hero-msg .skilled-msg, 
+.hero-msg .opportunities-msg{
+    color: #9BDDFB;
+}
+
+p{  
+    font-weight: 500;
+    font-size: 15px;
+    line-height: 3vh;
+    color: #ffffff;
+    padding-right: 14vh;
+    text-align: justify;
+}
+
+.hero-msg{
+    margin-bottom: 3vh;
+}
+
+.first-msg{
+    display: flex;
+    gap: 1vh;
+}
+
+.design{
+    width: 350vh;
+    height: auto;
+    position: relative;
+    top: 4.2vh;
+
+}
+
+.model{
+    width: 80vh;
+    height: auto;
+    position: relative;
+    left: 37vh;
+    bottom: 76vh;
+}
+
+.joinnow-btn{
+    background: #9BDDFB;
+    border-radius: 50px;
+    border: 2px solid white;   
+    box-shadow: 0 8px 10px rgba(0, 0, 0, 0.4);
+    color: #26466F;
+    font-weight: 600;
+    font-size: 18px;
+    padding: 10px 40px;
+    position: relative;
+    top: 4vh;
+}
+
+/* Effects */
+
+.joinnow-btn:hover {
+    background: #ffffff;
+    border: 2px solid #9BDDFB;  
+    cursor: pointer;
+    transform: scale(1.05);
+    transition: all 0.3s ease;
+}
+
+
+
+
+/* ----------- HERO -----------*/
