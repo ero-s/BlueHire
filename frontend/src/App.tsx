@@ -5,6 +5,8 @@ import { Routes, Route } from "react-router-dom"; // <-- Import this
 import "./components/Client/Client.css";
 import Landing from "./Pages/Landing";
 import NavBarLanding from "./components/LandingComponents/NavBarLanding/NavBarLanding";
+import SignIn from "./components/LandingComponents/SignIn/SignIn";
+import SigninSignup from "./Pages/SigninSignup";
 // import NavBar from "./components/NavBar/NavBar";
 // // import DashboardUpperSection from "./components/DashboardUpperSection/DashboardUpperSection";
 // // import DashboardMainSection from "./components/DashboardMainSection/DashboardMainSection";
@@ -29,33 +31,29 @@ function Transactions() {
 
 export default function App() {
   return (
-    // <Routes>
-    //   <Route path="/" element={<Dashboard />} />
-    //   <Route path="/post-job" element={<JobRequestForm />} />
-    //   <Route path="/bookings" element={<Bookings />} />
-    //   <Route path="/settings" element={<SettingsPage />} />
-    //   <Route path="/transactions" element={<Transactions />} />
-    //   {/* Optional 404 */}
-    //   <Route
-    //     path="*"
-    //     element={
-    //       <div className="p-10 text-center text-xl text-red-600">
-    //         404 - Page Not Found
-    //       </div>
-    //     }
-    //   />
-    // </Routes>
-    // // <>
-    // //   <NavBar />
-    // //   <BookingJobManagementUppersSection />
-    // //   <BookingJobManagementMainSection />
-    // //   <DashboardUpperSection />
-    // //   <DashboardMainSection />
-    // //   <Landing />
-    // // </> */}
-    <>
-      <NavBarLanding/>
-      <Landing/>
-    </>
+    <Routes>
+      <Route path="/" element={<Dashboard />} />
+      <Route path="/post-job" element={<JobRequestForm />} />
+      <Route path="/bookings" element={<Bookings />} />
+      <Route path="/settings" element={<SettingsPage />} />
+      <Route path="/transactions" element={<Transactions />} />
+      {/* Optional 404 */}
+      <Route
+        path="*"
+        element={
+          <div className="p-10 text-center text-xl text-red-600">
+            404 - Page Not Found
+          </div>
+        }
+      />
+    </Routes>
+    // <>
+    //   <NavBar />
+    //   <BookingJobManagementUppersSection />
+    //   <BookingJobManagementMainSection />
+    //   <DashboardUpperSection />
+    //   <DashboardMainSection />
+    //   <Landing />
+    // </> */}
   );
 }
