@@ -84,46 +84,86 @@
   width: 30px;
 }
 
-/* Recent Reviews */
-.review-box {
+/* Title centered on top */
+.review-title {
+  text-align: center;
+  font-size: 22px;
+  font-weight: bold;
+  margin-bottom: 20px;
+  color: #26466f;
+}
+
+/* Container for left + right sections */
+.review-container {
   display: flex;
-  gap: 16px;
-  margin-top: 12px;
 }
 
-.profile-pic {
-  width: 71px;
-  height: 71px;
+/* Profile picture */
+.review-profile-pic {
+  width: 85px;
+  height: 85px;
   border-radius: 50%;
+  object-fit: cover;
 }
 
-.review-info {
+/* Container for name, total spent, and total reviews */
+.profile-details {
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  width: 180px;
+  padding-top: 10px;
+  padding-left: 10px;
+}
+
+/* Text styles */
+.reviewer-name {
+  font-size: 18px;
+  font-weight: 600;
+  color: #26466f;
+  justify-content: center;
+   width: max-content;
+}
+
+.reviewer-spent,
+.reviewer-reviews {
+  font-size: 14px;
+  color: #555;
+  width: max-content;
+}
+
+/* Right column - review section */
+.review-right {
   flex: 1;
   display: flex;
   flex-direction: column;
-  justify-content: center;
 }
 
+/* Stars and date row */
 .review-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  margin-bottom: 8px;
 }
 
-.review-name {
-  font-size: 24px;
-  font-weight: bold;
-  color: #26466f;
+.review-stars {
+  font-size: 18px;
 }
 
-.review-stats {
-  text-align: right;
-  font-size: 14px;
-  color: #555;
+.review-date {
+  font-size: 13px;
+  color: #777;
+}
+
+/* Review text */
+.review-body {
+ 
 }
 
 .review-comment {
-  margin-top: 8px;
-  font-size: 14px;
+  font-size: 15px;
   color: #333;
+  width: 100%;
 }
+
