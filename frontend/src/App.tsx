@@ -1,39 +1,44 @@
-import Dashboard from "./components/Client/Dashboard/Dashboard";
-import SettingsPage from "./components/Client/Settings/SettingsPage";
-import JobRequestForm from "./components/Client/Dashboard/JobRequestForm";
-import { Routes, Route } from "react-router-dom"; // <-- Import this
-import "./components/Client/Client.css";
-import EarningsAndReports from "./components/EarningsandReports/Earnings&Reports";
-import Landing from "./Pages/Landing";
-import NavBarLanding from "./components/LandingComponents/NavBarLanding/NavBarLanding";
-import SignIn from "./components/LandingComponents/SignIn/SignIn";
-import SigninSignup from "./Pages/SigninSignup";
-import ReviewsAndRatings from "./components/ReviewsAndRatings/Reviews&Ratings";
+// import Dashboard from "./components/Client/Dashboard/Dashboard";
+// import SettingsPage from "./components/Client/Settings/SettingsPage";
+// import JobRequestForm from "./components/Client/Dashboard/JobRequestForm";
+// import { Routes, Route } from "react-router-dom"; 
+// import "./components/Client/Client.css";
+import BookingJobManagement from "./Pages/BookingJobManagement";
+// import JobDetails from "./Pages/JobDetail";
+// import EarningsAndReports from "./components/EarningsandReports/Earnings&Reports";
+// import Landing from "./Pages/Landing";
+// import NavBarLanding from "./components/LandingComponents/NavBarLanding/NavBarLanding";
+// import SignIn from "./components/LandingComponents/SignIn/SignIn";
+// import SigninSignup from "./Pages/SigninSignup";
+// import ReviewsAndRatings from "./components/ReviewsAndRatings/Reviews&Ratings";
 // import NavBar from "./components/NavBar/NavBar";
-// // import DashboardUpperSection from "./components/DashboardUpperSection/DashboardUpperSection";
-// // import DashboardMainSection from "./components/DashboardMainSection/DashboardMainSection";
-// import BookingJobManagementUppersSection from "./components/BookingJobManagementUpperSection/BookingJobManagementUpperSection";
-// import BookingJobManagementMainSection from "./components/BookingJobManagementMainSection/BookingJobManagementMainSection";
+// import DashboardUpperSection from "./components/DashboardUpperSection/DashboardUpperSection";
+// import DashboardMainSection from "./components/DashboardMainSection/DashboardMainSection";
+// import BookingJobManagementUpperSection from "./components/WorkerSide/BookingJobManagementUpperSection/BookingJobManagementUpperSection";
+// import BookingJobManagementMainSection from "./components/WorkerSide/BookingJobManagementMainSection/BookingJobManagementMainSection";
 // // import JobDetails from "./components/JobDetailsMainSection/JobDetails";
 // import DashboardUpperSection from "./components/DashboardUpperSection/DashboardUpperSection";
 // import DashboardMainSection from "./components/DashboardMainSection/DashboardMainSection";
 // import Landing from "./Pages/Landing";
 
-function Bookings() {
-  return <div className="p-10 text-center text-xl">Bookings Page</div>;
-}
+// function Bookings() {
+//   return <div className="p-10 text-center text-xl">Bookings Page</div>;
+// }
 
-function AppSettings() {
-  return <div className="p-10 text-center text-xl">Settings Page</div>;
-}
+// function AppSettings() {
+//   return <div className="p-10 text-center text-xl">Settings Page</div>;
+// }
 
-function Transactions() {
-  return <div className="p-10 text-center text-xl">Transactions Page</div>;
-}
+// function Transactions() {
+//   return <div className="p-10 text-center text-xl">Transactions Page</div>;
+// }
 
 export default function App() {
   return (
-    <ReviewsAndRatings />
+    <BookingJobManagement />
+    // <JobDetails />
+    // <Landing />
+    // <ReviewsAndRatings />
     // <Routes>
     //   <Route path="/" element={<Dashboard />} />
     //   <Route path="/post-job" element={<JobRequestForm />} />
@@ -52,11 +57,8 @@ export default function App() {
     // </Routes>
     // <>
     //   <NavBar />
-    //   <BookingJobManagementUppersSection />
+    //   <BookingJobManagementUpperSection />
     //   <BookingJobManagementMainSection />
-    //   <DashboardUpperSection />
-    //   <DashboardMainSection />
-    //   <Landing />
-    // </> */}
+    //   </>
   );
 }
