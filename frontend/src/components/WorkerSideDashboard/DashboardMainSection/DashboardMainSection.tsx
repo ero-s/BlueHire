@@ -1,7 +1,7 @@
 import React from "react";
 import "./DashboardMainSection.css";
 // import { useNavigate } from "react-router-dom";
-import BlueHireLogo from "../../../assets/BlueHireLogo.png";
+import ProfilePic from "../../../assets/profile.png";
 import {
   BarChart,
   Bar,
@@ -105,29 +105,38 @@ const DashboardMainSection: React.FC = () => {
           </table>
         </div>
 
-        {/* Recent Reviews */}
-        <div
-          className="card large-card"
-          // onClick={() => navigate("/recent-reviews")}
-        >
-          <h3>Recent Reviews</h3>
-          <div className="review-box">
-            <img src={BlueHireLogo} alt="BlueHire Logo" className="logo-img" />
-            <div className="review-info">
-              <div className="review-header">
-                <span className="review-name">Sarah Lee</span>
-                <div className="review-stats">
-                  <p>Total Spent: $520</p>
-                  <p>Total Reviews: 8</p>
-                  <p>⭐⭐⭐⭐☆</p>
-                </div>
-              </div>
-              <p className="review-comment">
-                "Great service! The worker was professional and on time."
-              </p>
-            </div>
-          </div>
-        </div>
+       {/* Recent Reviews */}
+<div className="card large-card">
+  <h3 className="review-title">Recent Reviews</h3>
+
+  <div className="review-container">
+
+    {/* Left: Profile Section */}
+    <div className="picture-section">
+      <img src={ProfilePic} alt="Profile Pic" className="review-profile-pic" />
+    </div>
+
+    {/* Left: Profile details */}
+      <div className="profile-details">
+        <p className="reviewer-name">Sarah Lee</p>
+        <p className="reviewer-spent">Total Spent: $520</p>
+        <p className="reviewer-reviews">Total Reviews: 8</p>
+      </div>
+
+    {/* Right: Review Section */}
+    <div className="review-right">
+      <div className="review-header">
+        <div className="review-stars">⭐⭐⭐⭐☆</div>
+        <div className="review-date">Oct 14, 2025</div>
+      </div>
+      <div className="review-body">
+        <p className="review-comment">"The worker was professional and on time."</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
       </div>
     </div>
   );

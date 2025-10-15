@@ -35,10 +35,12 @@ import DashboardMainSection from "./components/WorkerSideDashboard/DashboardMain
 //   return <div className="p-10 text-center text-xl">Transactions Page</div>;
 // }
 
+import WorkerDashboard from "./Pages/WorkerDashboard";
+
 export default function App() {
   return (
     <>
-      <Landing />
+      <WorkerDashboard />
     </>
     // <Landing />
     // <Routes>
