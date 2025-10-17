@@ -30,6 +30,11 @@ public class PaymentService {
         return paymentRepository.save(payment);
     }
 
+    public Payment getPaymentById(int id) {
+        return paymentRepository.findById(id)
+        .orElseThrow(() -> new NoSuchElementException("Payment with ID " + id + " not found."));
+    }
+
     public List<Payment> getAllPayments(){
         return paymentRepository.findAll();
     }
@@ -42,8 +47,7 @@ public class PaymentService {
         payment.setPaymentMethod(newPayment.getPaymentMethod());
         payment.setReceiptNo(newPayment.getReceiptNo());
         payment.setStatus(newPayment.getStatus());
-        payment.setBooking(newPayment.getBooking()); 
-
+        payment.setBooking(newPayment.getBooking());
         return paymentRepository.save(payment);
     }
 

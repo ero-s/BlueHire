@@ -22,6 +22,11 @@ public class BookingService {
         return bookingRepository.findAll();
     }
 
+    public Booking getBookingById(int id) {
+        return bookingRepository.findById(id)
+        .orElseThrow(() -> new NoSuchElementException("Booking with ID " + id + " not found."));
+    }
+
     public Booking updateBooking(int id, Booking newBooking) {
         Booking booking = bookingRepository.findById(id)
         .orElseThrow(() -> new NoSuchElementException("Booking with ID " + id + " not found."));
@@ -32,7 +37,9 @@ public class BookingService {
         booking.setScheduledDateTime(newBooking.getScheduledDateTime());
         booking.setServiceCategory(newBooking.getServiceCategory());
         booking.setStatus(newBooking.getStatus());
-
+        booking.setClient(newBooking.getClient());
+        booking.setWorker(newBooking.getWorker());
+        
         return bookingRepository.save(booking);
     }
 

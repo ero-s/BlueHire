@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.austine.StudentSystem_.model.Administrator;
 import com.austine.StudentSystem_.service.AdministratorService;
+
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
@@ -28,6 +29,11 @@ public class AdministratorController {
         return administratorService.createAdministrator(administrator);
     }
 
+    @GetMapping("/get/{id}")
+    public Administrator getAdministratorByID(@PathVariable int id) {
+        return administratorService.getAdministratorById(id);
+    }
+    
     @GetMapping("/getAll")
     public List<Administrator> getAllAdministrators(){
         return administratorService.getAllAdministrators();
