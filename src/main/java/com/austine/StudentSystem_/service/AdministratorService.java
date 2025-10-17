@@ -17,6 +17,11 @@ public class AdministratorService {
         return administratorRepository.save(administrator);
     }
 
+    public Administrator getAdministratorById(int id) {
+        return administratorRepository.findById(id)
+        .orElseThrow(() -> new NoSuchElementException("Administrator with ID " + id + " not found."));
+    }
+
     public List<Administrator> getAllAdministrators() {
         return administratorRepository.findAll();
     }
@@ -25,10 +30,19 @@ public class AdministratorService {
         Administrator administrator = administratorRepository.findById(id)
         .orElseThrow(() -> new NoSuchElementException("Administrator with ID " + id + " not found."));
         
-        // No other fields to update for now unless Administrator inherits from User
+        administrator.setName(newAdministrator.getName());
+        administrator.setEmail(newAdministrator.getEmail());
+        administrator.setContactNumber(newAdministrator.getContactNumber());
+        administrator.setAddress(newAdministrator.getAddress());
+        administrator.setUsername(newAdministrator.getUsername());
+        administrator.setPassword(newAdministrator.getPassword());
+        administrator.setRole(newAdministrator.getRole());
+        administrator.setVerified(newAdministrator.getVerified());
+        administrator.setPhotoURL(newAdministrator.getPhotoURL());
         
         return administratorRepository.save(administrator);
     }
+    
     public String deleteAdministrator(int id) {
         String msg = "";
         if(administratorRepository.findById(id).isPresent()){

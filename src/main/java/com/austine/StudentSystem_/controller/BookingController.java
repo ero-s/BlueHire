@@ -27,6 +27,11 @@ public class BookingController {
         return bookingService.createBooking(booking);
     }
 
+    @GetMapping("/get/{id}")
+    public Booking getBookingByID(@PathVariable int id) {
+        return bookingService.getBookingById(id);
+    }
+    
     @GetMapping("/getAll")
     public List<Booking> getAllBookings() {
         return bookingService.getAllBookings();
@@ -38,7 +43,7 @@ public class BookingController {
     }
 
     @DeleteMapping("/delete/{id}")
-    public String deleteAdministrator(@PathVariable int id) {
+    public String deleteBooking(@PathVariable int id) {
         return bookingService.deleteBooking(id);
     }
 }

@@ -31,6 +31,13 @@ public class Booking {
     private LocalDateTime createdAt;
 
     // Booking likely has relationships in a full implementation
+    @ManyToOne
+    @JoinColumn(name = "client", nullable = false)
+    private Client client;
+
+    @ManyToOne
+    @JoinColumn(name = "worker", nullable = false)
+    private Worker worker;
 
     public enum Status {
         Pending,
@@ -105,5 +112,21 @@ public class Booking {
 
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public Client getClient() {
+        return client;
+    }
+    
+    public void setClient(Client client) {
+        this.client = client;
+    }
+
+    public Worker getWorker() {
+        return worker;
+    }
+
+    public void setWorker(Worker worker) {
+        this.worker = worker;
     }
 }

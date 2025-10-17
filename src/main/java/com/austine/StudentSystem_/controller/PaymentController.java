@@ -28,6 +28,11 @@ public class PaymentController {
         return paymentService.createPayment(payment);
     }
 
+    @GetMapping("/get/{id}")
+    public Payment getPaymentById(@PathVariable int id) {
+        return paymentService.getPaymentById(id);
+    }
+    
     @GetMapping("/getAll")
     public List<Payment> getAllPayments() {
         return paymentService.getAllPayments();
@@ -39,7 +44,7 @@ public class PaymentController {
     }
 
     @DeleteMapping("/delete/{id}")
-    public String deleteAdministrator(@PathVariable int id) {
+    public String deletePayment(@PathVariable int id) {
         return paymentService.deletePayment(id);
     }
 }
