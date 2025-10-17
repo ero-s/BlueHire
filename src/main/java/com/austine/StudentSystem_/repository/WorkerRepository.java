@@ -6,5 +6,4 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface WorkerRepository extends JpaRepository<Worker, Integer> {
-    public Worker getWorker(Integer id);
 }

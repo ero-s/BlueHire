@@ -8,18 +8,35 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping(method = RequestMethod.GET, path = "/api/client")
+@RequestMapping("/api/client")
 public class ClientController {
     @Autowired
     private ClientService clientService;
 
+    @PostMapping("/postClient")
+    public Client postClient(@RequestBody Client client) {
+        return clientService.postClientRecord(client);
+    }
+
     @GetMapping("/getAllClients")
-    public List<Client> getClients() {
+    public List<Client> getAllClients() {
         return clientService.getAllClients();
     }
 
-    @PostMapping("postClient")
-    public Client postClient(@RequestBody Client client) {
-        return clientService.postClientRecord(client);
+    @GetMapping("/getClient/{id}")
+    public Client getClientById(@PathVariable Integer id) {
+        return clientService.getClientByID(id)
+                .orElseThrow(() -> new RuntimeException("Client not found with ID " + id));
+    }
+
+    @PutMapping("/updateClient/{id}")
+    public Client updateClient(@PathVariable Integer id, @RequestBody Client client) {
+        return clientService.updateClient(id, client);
+    }
+
+    @DeleteMapping("/deleteClient/{id}")
+    public String deleteClient(@PathVariable Integer id) {
+        clientService.deleteClient(id);
+        return "Client with ID " + id + " deleted successfully.";
     }
 }
