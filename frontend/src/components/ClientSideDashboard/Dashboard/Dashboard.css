@@ -1,32 +1,27 @@
+/* --- Original Styles (unchanged) --- */
 .dashboard {
-  /* Theme variables (scoped to dashboard only) */
+  /* Theme variables */
   --primary-blue: #3b82f6;
   --primary-blue-hover: #2563eb;
   --primary-blue-light: #60a5fa;
-
   --bg-main: #f5f5f7;
   --bg-white: #ffffff;
   --bg-card: #ffffff;
   --bg-hover: #f9fafb;
-
   --text-primary: #1f2937;
   --text-secondary: #6b7280;
   --text-light: #9ca3af;
   --text-white: #ffffff;
-
   --border-light: #e5e7eb;
   --border-medium: #d1d5db;
-
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
   --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.08);
   --shadow-lg: 0 4px 16px rgba(0, 0, 0, 0.1);
-
   --spacing-xs: 0.5rem;
   --spacing-sm: 1rem;
   --spacing-md: 1.5rem;
   --spacing-lg: 2rem;
   --spacing-xl: 3rem;
-
   --radius-sm: 8px;
   --radius-md: 12px;
   --radius-lg: 16px;
@@ -42,13 +37,45 @@
   flex-direction: column;
 }
 
-/* Scoped descendants */
 .dashboard .card {
   background: var(--bg-card);
   border-radius: var(--radius-lg);
   padding: var(--spacing-lg);
   box-shadow: var(--shadow-sm);
   transition: box-shadow 0.2s ease;
+}
+
+.profileCard {
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+  min-height: 100vh;
+  background-color: #f3f4f6;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.dashboard-card-main {
+  flex: 1;
+  padding: 2rem 3rem;
+  display: flex;
+  gap: 2rem;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.dashboard-left-side {
+  flex: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.dashboard-card-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 1.5rem;
 }
 
 .dashboard .card:hover {
@@ -78,4 +105,44 @@
   background: var(--primary-blue-hover);
   transform: translateY(-1px);
   box-shadow: var(--shadow-md);
+}
+
+
+/* --- NEW: Responsive Styles --- */
+
+/* For tablets and smaller desktops (<= 1024px) */
+@media (max-width: 1024px) {
+  .dashboard-card-main {
+    /* Change the main layout to stack vertically */
+    flex-direction: column;
+    padding: 1.5rem; /* Reduce padding */
+  }
+
+  .dashboard-card-row {
+    /* Change from 3 columns to 2 columns */
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+/* For mobile devices (<= 768px) */
+@media (max-width: 768px) {
+  .dashboard-card-main {
+    padding: 1rem; /* Further reduce padding for mobile */
+  }
+
+  .dashboard-card-row {
+    /* Stack all cards in a single column */
+    grid-template-columns: 1fr;
+  }
+
+  .dashboard .card {
+    /* Reduce padding inside cards on mobile */
+    padding: var(--spacing-md);
+  }
+
+  .dashboard .btn {
+    /* Make buttons slightly smaller on mobile */
+    padding: 10px 20px;
+    font-size: 13px;
+  }
 }

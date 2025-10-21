@@ -1,17 +1,11 @@
+import "./PendingRequests.css"
 interface PendingRequestsProps {
   count: number;
 }
 
 export default function PendingRequests({ count }: PendingRequestsProps) {
   return (
-    <div
-      style={{
-        flex: "1",
-        background: "white",
-        padding: "2rem",
-        borderRadius: "16px",
-        boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
-      }}
+    <div className="pending-requests-container"
     >
       <p style={{ fontSize: "14px", color: "#6b7280", marginBottom: "1.5rem" }}>
         Pending Requests

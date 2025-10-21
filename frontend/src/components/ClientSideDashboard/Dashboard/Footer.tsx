@@ -1,13 +1,7 @@
+import "./Footer.css"
 export default function Footer() {
   return (
-    <footer
-      style={{
-        background: "white",
-        padding: "3rem",
-        borderTop: "1px solid #e5e7eb",
-        width: "100%",
-        boxSizing: "border-box",
-      }}
+    <footer className="footer-container"
     >
       <div
         style={{
@@ -17,12 +11,7 @@ export default function Footer() {
         }}
       >
         <div>
-          <h3
-            style={{
-              fontSize: "16px",
-              fontWeight: "600",
-              marginBottom: "1rem",
-            }}
+          <h3 className={"footer-header"}
           >
             BlueHire
           </h3>
@@ -31,12 +20,7 @@ export default function Footer() {
           </p>
         </div>
         <div>
-          <h3
-            style={{
-              fontSize: "16px",
-              fontWeight: "600",
-              marginBottom: "1rem",
-            }}
+          <h3 className={"footer-header"}
           >
             Platform
           </h3>
@@ -44,11 +28,7 @@ export default function Footer() {
             <li style={{ marginBottom: "0.5rem" }}>
               <a
                 href="#"
-                style={{
-                  color: "#6b7280",
-                  textDecoration: "none",
-                  fontSize: "14px",
-                }}
+                className={"footer-ref"}
               >
                 Browse Events
               </a>
@@ -56,11 +36,7 @@ export default function Footer() {
             <li style={{ marginBottom: "0.5rem" }}>
               <a
                 href="#"
-                style={{
-                  color: "#6b7280",
-                  textDecoration: "none",
-                  fontSize: "14px",
-                }}
+                className={"footer-ref"}
               >
                 Create Post
               </a>
@@ -68,11 +44,7 @@ export default function Footer() {
             <li>
               <a
                 href="#"
-                style={{
-                  color: "#6b7280",
-                  textDecoration: "none",
-                  fontSize: "14px",
-                }}
+                className={"footer-ref"}
               >
                 Categories
               </a>
@@ -80,12 +52,7 @@ export default function Footer() {
           </ul>
         </div>
         <div>
-          <h3
-            style={{
-              fontSize: "16px",
-              fontWeight: "600",
-              marginBottom: "1rem",
-            }}
+          <h3 className={"footer-header"}
           >
             Support
           </h3>
@@ -93,11 +60,7 @@ export default function Footer() {
             <li style={{ marginBottom: "0.5rem" }}>
               <a
                 href="#"
-                style={{
-                  color: "#6b7280",
-                  textDecoration: "none",
-                  fontSize: "14px",
-                }}
+                className={"footer-ref"}
               >
                 Help Center
               </a>
@@ -105,11 +68,7 @@ export default function Footer() {
             <li style={{ marginBottom: "0.5rem" }}>
               <a
                 href="#"
-                style={{
-                  color: "#6b7280",
-                  textDecoration: "none",
-                  fontSize: "14px",
-                }}
+                className={"footer-ref"}
               >
                 Contact Us
               </a>
@@ -117,11 +76,7 @@ export default function Footer() {
             <li>
               <a
                 href="#"
-                style={{
-                  color: "#6b7280",
-                  textDecoration: "none",
-                  fontSize: "14px",
-                }}
+                className={"footer-ref"}
               >
                 Guidelines
               </a>
@@ -129,12 +84,7 @@ export default function Footer() {
           </ul>
         </div>
         <div>
-          <h3
-            style={{
-              fontSize: "16px",
-              fontWeight: "600",
-              marginBottom: "1rem",
-            }}
+          <h3 className={"footer-header"}
           >
             Connect
           </h3>

@@ -1,33 +1,35 @@
 import PillNav from "./PillNav";
-import SearchBar from "./SearchBar";
+import "./Header.css";
+import { LuBell, LuMail } from "react-icons/lu";
+import profileImg from "../../../assets/profile.png";
+import React from "react";
+import UserMenu from "./UserMenu";
+import SearchBar from "./SearchBar.tsx";
 
 interface HeaderProps {
   logo: string;
   userName: string;
 }
 
+const navItems = [
+  { label: "Dashboard", href: "/" },
+  { label: "Bookings", href: "/bookings" },
+  { label: "Settings", href: "/settings" },
+  { label: "Transactions", href: "/transactions" },
+];
+
 export default function Header({ logo, userName }: HeaderProps) {
+  const handleBellClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+    console.log("Bell clicked!");
+  };
+
   return (
-    <div
-      style={{
-        padding: "1em 3rem 0 3rem",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-between",
-        gap: "2rem",
-        width: "100%",
-        boxSizing: "border-box",
-      }}
-    >
+    <div className={"header-format"}>
       <PillNav
         logo={logo}
         logoAlt="Company Logo"
-        items={[
-          { label: "Dashboard", href: "/" },
-          { label: "Bookings", href: "/bookings" },
-          { label: "Settings", href: "/settings" },
-          { label: "Transactions", href: "/transactions" },
-        ]}
+        items={navItems}
         activeHref="/"
         className="custom-nav"
         ease="power2.easeOut"
@@ -36,65 +38,23 @@ export default function Header({ logo, userName }: HeaderProps) {
         hoveredPillTextColor="#ffffff"
         pillTextColor="#000000"
       />
-      <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
+
+      <div className={"right-side-header"}>
         <SearchBar />
-        <button
-          style={{
-            width: "40px",
-            height: "40px",
-            borderRadius: "50%",
-            background: "white",
-            border: "none",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            cursor: "pointer",
-            boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
-            marginTop: "30px",
-          }}
-        >
-          <span style={{ fontSize: "20px" }}>✉</span>
+
+        <button className={"btn-header"} type="button">
+          <LuMail size={22} className={"icon"} />
         </button>
+
         <button
-          style={{
-            width: "40px",
-            height: "40px",
-            borderRadius: "50%",
-            background: "white",
-            border: "none",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            cursor: "pointer",
-            boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
-            marginTop: "30px",
-          }}
+          className={"btn-header"}
+          type={"button"}
+          onClick={handleBellClick}
         >
-          <span style={{ fontSize: "20px" }}>🔔</span>
+          <LuBell size={22} className={"icon"} />
         </button>
-        <button
-          style={{
-            padding: "8px 16px",
-            borderRadius: "50px",
-            background: "white",
-            border: "none",
-            display: "flex",
-            alignItems: "center",
-            gap: "8px",
-            cursor: "pointer",
-            boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
-            marginTop: "30px",
-          }}
-        >
-          <img
-            src={logo}
-            alt="Profile"
-            style={{ width: "24px", height: "24px", borderRadius: "50%" }}
-          />
-          <span style={{ fontSize: "14px", fontWeight: "500" }}>
-            {userName}
-          </span>
-        </button>
+
+        <UserMenu profileImg={profileImg} />
       </div>
     </div>
   );

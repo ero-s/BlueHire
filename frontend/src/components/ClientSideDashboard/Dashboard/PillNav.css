@@ -1,7 +1,7 @@
 .pill-nav-container {
   position: relative;
   top: 1em;
-  z-index: 99;
+  z-index: 1;
 }
 
 @media (max-width: 768px) {
@@ -20,6 +20,7 @@
   display: flex;
   align-items: center;
   box-sizing: border-box;
+  z-index: 1;
 }
 
 @media (max-width: 768px) {
@@ -51,6 +52,9 @@
   align-items: center;
   justify-content: center;
   overflow: hidden;
+  position: relative;
+  z-index: 1;
+  pointer-events: auto;
 }
 
 .pill-logo img {
