@@ -13,6 +13,7 @@ import ReviewsAndRatings from "./components/ReviewsAndRatings/Reviews&Ratings";
 import NavBar from "./components/WorkerSideDashboard/NavBar/NavBar";
 import DashboardUpperSection from "./components/WorkerSideDashboard/DashboardUpperSection/DashboardUpperSection";
 import DashboardMainSection from "./components/WorkerSideDashboard/DashboardMainSection/DashboardMainSection";
+import ManageAccount from "./Pages/ManageAccount";
 // import NavBar from "./components/NavBar/NavBar";
 // // import DashboardUpperSection from "./components/DashboardUpperSection/DashboardUpperSection";
 // // import DashboardMainSection from "./components/DashboardMainSection/DashboardMainSection";
@@ -40,7 +41,7 @@ import WorkerDashboard from "./Pages/WorkerDashboard";
 export default function App() {
   return (
     <>
-      <WorkerDashboard />
+      <ManageAccount />
     </>
     // <Landing />
     // <Routes>
