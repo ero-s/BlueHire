@@ -1,0 +1,111 @@
+/* Import this file in your Settings.tsx component */
+
+/* --- Main Page Layout --- */
+.settings-page {
+    min-height: 100vh;
+    /* Uses --bg-main from your dashboard styles */
+    background-color: #f5f5f7;
+    /* Uses dashboard's main padding */
+    padding: 2rem 3rem;
+    box-sizing: border-box;
+}
+
+/* --- Centered Content Wrapper --- */
+.settings-content {
+    /* Matches Tailwind 'max-w-6xl' (72rem) and 'mx-auto' */
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* --- Page Title --- */
+.settings-title {
+    /* Matches 'text-4xl font-bold text-gray-900 mb-10' */
+    font-size: 2.25rem;
+    line-height: 2.5rem;
+    font-weight: 700;
+    color: #1f2937;
+    margin-bottom: 2.5rem;
+}
+
+/* --- Card Grid (Mirrors .dashboard-card-row) --- */
+.settings-card-grid {
+    display: grid;
+    /* Matches 'lg:grid-cols-3' */
+    grid-template-columns: repeat(3, 1fr);
+    /* Matches 'gap-6' (1.5rem) */
+    gap: 1.5rem;
+}
+
+/* --- Setting Card (Mirrors .dashboard .card) --- */
+.setting-card {
+    /* --- Base Card Styles --- */
+    background: #ffffff;
+    /* Using dashboard's --spacing-lg (2rem) for consistency */
+    padding: 2rem;
+    border-radius: 16px; /* --radius-lg */
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05); /* --shadow-sm */
+    transition: box-shadow 0.2s ease;
+    cursor: pointer;
+
+    /* --- Internal Card Layout (from your component) --- */
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem; /* Approx 'space-x-3' */
+}
+
+.setting-card:hover {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08); /* --shadow-md */
+}
+
+/* --- Card Content --- */
+.setting-card-icon {
+    color: #374151; /* text-gray-700 */
+}
+
+.setting-card-text h3 {
+    /* Matches 'font-semibold text-gray-900' */
+    font-weight: 600;
+    color: #1f2937;
+    margin: 0 0 0.25rem 0; /* Small margin-bottom */
+}
+
+.setting-card-text p {
+    /* Matches 'text-sm text-gray-500' */
+    font-size: 0.875rem;
+    color: #6b7280;
+    margin: 0;
+}
+
+
+/* --- Responsive Styles (From dashboard.css) --- */
+
+/* For tablets and smaller desktops (<= 1024px) */
+@media (max-width: 1024px) {
+    .settings-page {
+        /* Reduce padding */
+        padding: 1.5rem;
+    }
+
+    .settings-card-grid {
+        /* Change from 3 columns to 2 columns */
+        /* Matches 'sm:grid-cols-2' */
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* For mobile devices (<= 768px) */
+@media (max-width: 768px) {
+    .settings-page {
+        padding: 1rem; /* Further reduce padding */
+    }
+
+    .settings-card-grid {
+        /* Stack all cards in a single column */
+        grid-template-columns: 1fr;
+    }
+
+    .setting-card {
+        /* Reduce padding inside cards on mobile */
+        padding: 1.5rem; /* --spacing-md */
+    }
+}

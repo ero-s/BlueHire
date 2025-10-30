@@ -13,8 +13,7 @@ interface HeaderProps {
 
 const navItems = [
   { label: "Dashboard", href: "/" },
-  { label: "Bookings", href: "/bookings" },
-  { label: "Settings", href: "/settings" },
+  { label: "Bookings", href: "/jobposts" },
   { label: "Transactions", href: "/transactions" },
 ];
 
@@ -54,7 +53,7 @@ export default function Header({ logo, userName }: HeaderProps) {
           <LuBell size={22} className={"icon"} />
         </button>
 
-        <UserMenu profileImg={profileImg} />
+        <UserMenu className={"btn-header-profile"} profileImg={profileImg} />
       </div>
     </div>
   );

@@ -53,6 +53,8 @@
 
 .btn-header-profile:hover{
     background: #3B82F6;
+    height: 100px;
+    width: 100px;
     color: white;
 }
 .avatar {

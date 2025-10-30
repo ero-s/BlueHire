@@ -35,7 +35,22 @@
   line-height: 1.6;
   display: flex;
   flex-direction: column;
+
 }
+
+/* Add these to your dashboard.css file */
+
+.welcome-text {
+  position: relative;
+  z-index: 1;
+  font-size: 2.25rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 0.25rem;
+  line-height: 1.2;
+}
+
+.dashboard-welcome
 
 .dashboard .card {
   background: var(--bg-card);
@@ -43,6 +58,7 @@
   padding: var(--spacing-lg);
   box-shadow: var(--shadow-sm);
   transition: box-shadow 0.2s ease;
+
 }
 
 .profileCard {
