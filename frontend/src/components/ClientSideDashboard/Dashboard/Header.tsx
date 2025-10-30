@@ -14,6 +14,7 @@ interface HeaderProps {
 const navItems = [
   { label: "Dashboard", href: "/" },
   { label: "Bookings", href: "/jobposts" },
+  { label: "Workers", href: "/findworkers" },
   { label: "Transactions", href: "/transactions" },
 ];
 

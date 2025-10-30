@@ -4,6 +4,7 @@ import ProfilePage from "../components/ClientSideDashboard/Profile/ProfilePage";
 import JobRequestForm from "../components/ClientSideDashboard/Dashboard/JobRequestForm";
 import JobPosts from "../components/ClientSideDashboard/JobPosts/JobPostsPage.tsx";
 import Landing from "./Landing.tsx";
+import FindWorkers from "../components/ClientSideDashboard/FindWorkers/FindWorkers";
 import { Routes, Route } from "react-router-dom";
 import "../components/ClientSideDashboard/Client.css";
 export default function ClientDashboard() {
@@ -15,6 +16,7 @@ export default function ClientDashboard() {
       <Route path="/profile" element={<ProfilePage />} />
       <Route path="/landing" element={<Landing />} />
       <Route path="/jobposts" element={<JobPosts />} />
+      <Route path="/findworkers" element={<FindWorkers />} />
       {/* Optional 404 */}
       <Route
         path="*"
