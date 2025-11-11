@@ -52,26 +52,23 @@ import WorkerDashboard from "./Pages/WorkerDashboard";
 
 export default function App() {
   return (
-    <>
-      <WorkerDashboard />
-    </>
-    // <Landing />
-    // <Routes>
-    //   <Route path="/" element={<Dashboard />} />
-    //   <Route path="/post-job" element={<JobRequestForm />} />
-    //   <Route path="/bookings" element={<Bookings />} />
-    //   <Route path="/settings" element={<SettingsPage />} />
-    //   <Route path="/transactions" element={<Transactions />} />
-    //   {/* Optional 404 */}
-    //   <Route
-    //     path="*"
-    //     element={
-    //       <div className="p-10 text-center text-xl text-red-600">
-    //         404 - Page Not Found
-    //       </div>
-    //     }
-    //   />
-    // </Routes>
+    <Routes>
+      <Route path="/" element={<Landing />} />
+      <Route path="/dashboard" element={<Dashboard />} />
+      <Route path="/post-job" element={<JobRequestForm />} />
+      <Route path="/bookings" element={<Bookings />} />
+      <Route path="/settings" element={<SettingsPage />} />
+      <Route path="/transactions" element={<Transactions />} />
+      {/* Optional 404 */}
+      <Route
+        path="*"
+        element={
+          <div className="p-10 text-center text-xl text-red-600">
+            404 - Page Not Found
+          </div>
+        }
+      />
+    </Routes>
     // <>
     //   <NavBar />
     //   <BookingJobManagementUpperSection />
