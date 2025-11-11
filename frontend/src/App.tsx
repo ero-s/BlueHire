@@ -56,9 +56,8 @@ export default function App() {
       <Route path="/" element={<Landing />} />
       <Route path="/dashboard" element={<Dashboard />} />
       <Route path="/post-job" element={<JobRequestForm />} />
-      <Route path="/bookings" element={<Bookings />} />
+      <Route path="/bookings" element={<BookingJobManagement />} />
       <Route path="/settings" element={<SettingsPage />} />
-      <Route path="/transactions" element={<Transactions />} />
       {/* Optional 404 */}
       <Route
         path="*"

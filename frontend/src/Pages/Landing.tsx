@@ -4,7 +4,7 @@ import About from '../components/LandingComponents/About/About'
 import Team from '../components/LandingComponents/Team/Team'
 import Contacts from '../components/LandingComponents/Contacts/Contacts'
 import NavBarLanding from '../components/LandingComponents/NavBarLanding/NavBarLanding'
-import Footer from '../components/Client/Dashboard/Footer'
+import Footer from '../components/ClientSideDashboard/Dashboard/Footer'
 
 const Landing: React.FC = () => {
   return (
