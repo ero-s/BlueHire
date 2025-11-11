@@ -1,22 +1,29 @@
 import React from 'react';
 import logo from "../Assets/logo.png";
-import "../LandingComponents.css";
 
 interface LogoProps {
-  size?: number;     
-  textSize?: number; 
+  variant?: 'sm' | 'md' | 'lg';
 }
 
-const Logo: React.FC<LogoProps> = ({ size = 35, textSize = 15 }) => {
+const Logo: React.FC<LogoProps> = ({ variant = 'md' }) => {
+  const sizeClasses = {
+    sm: { img: 'h-6', text: 'text-lg' },
+    md: { img: 'h-8', text: 'text-2xl' },
+    lg: { img: 'h-10', text: 'text-3xl' },
+  };
+
+  const selectedSize = sizeClasses[variant];
+
   return (
-    <div className="logo" style={{ gap: '12px', fontSize: `${textSize}px` }}>
-      <img src={logo} alt="BlueHire Logo" style={{ height: `${size}px` }} />
-      <div className="name">
-        <span className='signup-bluecolor'>Blue</span>
-        <span className='signup-hirecolor'>Hire</span>
+    <div className="flex items-center gap-3">
+      <img src={logo} alt="BlueHire Logo" className={`${selectedSize.img} rounded-full`} />
+      <div className={`font-bold font-sans ${selectedSize.text}`}>
+        <span className='text-blue-700'>Blue</span>
+        <span className='text-gray-700'>Hire</span>
       </div>
     </div>
   );
 };
 
 export default Logo;
+

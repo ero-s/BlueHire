@@ -32,7 +32,8 @@ function Transactions() {
 export default function App() {
   return (
     <Routes>
-      <Route path="/" element={<Dashboard />} />
+      <Route path="/" element={<Landing />} />
+      <Route path="/dashboard" element={<Dashboard />} />
       <Route path="/post-job" element={<JobRequestForm />} />
       <Route path="/bookings" element={<Bookings />} />
       <Route path="/settings" element={<SettingsPage />} />
