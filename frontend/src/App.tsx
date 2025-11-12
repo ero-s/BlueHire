@@ -9,7 +9,6 @@ import BookingJobManagement from "./Pages/BookingJobManagement";
 // import Landing from "./Pages/Landing";
 // import NavBarLanding from "./components/LandingComponents/NavBarLanding/NavBarLanding";
 // import SignIn from "./components/LandingComponents/SignIn/SignIn";
-// import SigninSignup from "./Pages/SigninSignup";
 // import ReviewsAndRatings from "./components/ReviewsAndRatings/Reviews&Ratings";
 import Dashboard from "./components/ClientSideDashboard/Dashboard/Dashboard";
 import SettingsPage from "./components/ClientSideDashboard/Settings/SettingsPage";
@@ -20,7 +19,7 @@ import EarningsAndReports from "./components/EarningsandReports/Earnings&Reports
 import Landing from "./Pages/Landing";
 import NavBarLanding from "./components/LandingComponents/NavBarLanding/NavBarLanding";
 import SignIn from "./components/LandingComponents/SignIn/SignIn";
-import SigninSignup from "./Pages/SigninSignup";
+import SignUp from "./components/LandingComponents/Signup/Signup";
 import ReviewsAndRatings from "./components/ReviewsAndRatings/Reviews&Ratings";
 
 import NavBar from "./components/WorkerSideDashboard/NavBar/NavBar";
@@ -48,7 +47,7 @@ import DashboardMainSection from "./components/WorkerSideDashboard/DashboardMain
 //   return <div className="p-10 text-center text-xl">Transactions Page</div>;
 // }
 
-import WorkerDashboard from "./Pages/WorkerDashboard";
+//import WorkerDashboard from "./Pages/WorkerDashboard";
 
 export default function App() {
   return (
@@ -58,6 +57,8 @@ export default function App() {
       <Route path="/post-job" element={<JobRequestForm />} />
       <Route path="/bookings" element={<BookingJobManagement />} />
       <Route path="/settings" element={<SettingsPage />} />
+      <Route path="/signin" element={<SignIn />} />
+      <Route path="/signup" element={<SignUp />} />
       {/* Optional 404 */}
       <Route
         path="*"
@@ -68,10 +69,5 @@ export default function App() {
         }
       />
     </Routes>
-    // <>
-    //   <NavBar />
-    //   <BookingJobManagementUpperSection />
-    //   <BookingJobManagementMainSection />
-    //   </>
   );
 }
