@@ -84,7 +84,7 @@ const SignUp: React.FC = () => {
             </Link>
 
             <div className="my-4">
-              <h1 className="text-3xl font-bold">Welcome!</h1>
+              <h1 className="text-3xl font-bold lg:mt-0 mt-24 ">Welcome!</h1>
               <p className="mt-4 text-gray-200">
                 Create your account to start connecting with opportunities.
               </p>
