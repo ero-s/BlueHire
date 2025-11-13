@@ -14,7 +14,7 @@ export default function ProfileBio() {
   const displayedBio = showFullBio ? userBio : `${userBio.slice(0, bioLimit)}${userBio.length > bioLimit ? '...' : ''}`;
 
   return (
-    <div className="flex items-center justify-center w-full bg-red-100 font-sans">
+    <div className="flex items-center justify-center w-full  font-sans">
       <div className="w-[338px] h-[614px] rounded-[20px] bg-white shadow-lg border border-gray-200 p-10 flex flex-col items-center">
         
         {/* Profile Picture */}

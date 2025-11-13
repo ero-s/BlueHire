@@ -26,7 +26,7 @@ export default function PaymentPreference() {
       
       {/* Payment Preferences Card Container */}
       <div className="
-        w-[880px] h-[159px] 
+        w-full max-w-[880px]
         rounded-[20px] 
         bg-white 
         shadow-lg 

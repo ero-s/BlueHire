@@ -15,6 +15,8 @@ const ManageAccount: React.FC = () => {
         paddingTop: "15vh", // space for fixed navbar
         paddingLeft: "60px",
         paddingRight: "60px",
+        paddingBottom: "60px", 
+        boxSizing: "border-box",
       }}
     >
       {/* Top Navigation Bar */}
@@ -26,6 +28,7 @@ const ManageAccount: React.FC = () => {
           gap: "30px",
           display: "flex",
           flexDirection: "row",
+          justifyContent: "center",
         }}
       >
       <div>
