@@ -1,30 +1,36 @@
 package com.appdevf2.bluehire.model;
 
-import jakarta.persistence.DiscriminatorValue;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 
 @Entity
-@DiscriminatorValue("CLIENT")
-public class Client extends User{
-    // @Id
-    // @GeneratedValue(strategy = GenerationType.IDENTITY)
-    // private int clientId;
+@Table(name = "client")
+public class Client {
 
-    public Client() {
-        super();
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int clientID;
+
+    // Reference to the User table
+    @OneToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
+    public Client() {}
+
+    public Client(User user) {
+        this.user = user;
     }
 
-    // public Client(int clientId) {
-    //     super();
-    //     this.clientId = clientId;
-    // }
-    // public int getClientId() {
-    //     return clientId;
-    // }
-    // public void setClientId(int clientId) {
-    //     this.clientId = clientId;
-    // }
+    // Getters and setters
+    public int getClientID() {
+        return clientID;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
 }

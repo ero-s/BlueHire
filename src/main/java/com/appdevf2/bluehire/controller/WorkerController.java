@@ -16,19 +16,19 @@ public class WorkerController {
 
     @PostMapping("/postWorker")
     public Worker postWorker(@RequestBody Worker worker) {
-        return workerService.postWorkerRecord(worker);
+        return workerService.createWorker(worker);
     }
 
     @GetMapping("/getAllWorkers")
     public List<Worker> getAllWorkers() {
-        return workerService.getAllWorkerRecord();
+        return workerService.getAllWorkers();
     }
 
-    @GetMapping("/getWorker/{id}")
+   @GetMapping("/getWorker/{id}")
     public Worker getWorkerById(@PathVariable Integer id) {
-        return workerService.getWorkerById(id)
-                .orElseThrow(() -> new RuntimeException("Worker not found with ID " + id));
+        return workerService.getWorkerById(id);
     }
+
 
     @PutMapping("/updateWorker/{id}")
     public Worker updateWorker(@PathVariable Integer id, @RequestBody Worker worker) {

@@ -6,6 +6,8 @@ import org.springframework.web.bind.annotation.*;
 import com.appdevf2.bluehire.model.Client;
 import com.appdevf2.bluehire.service.ClientService;
 
+
+
 import java.util.List;
 
 @RestController
@@ -16,7 +18,7 @@ public class ClientController {
 
     @PostMapping("/postClient")
     public Client postClient(@RequestBody Client client) {
-        return clientService.postClientRecord(client);
+        return clientService.createClient(client);
     }
 
     @GetMapping("/getAllClients")
@@ -26,9 +28,9 @@ public class ClientController {
 
     @GetMapping("/getClient/{id}")
     public Client getClientById(@PathVariable Integer id) {
-        return clientService.getClientByID(id)
-                .orElseThrow(() -> new RuntimeException("Client not found with ID " + id));
+        return clientService.getClientById(id);
     }
+
 
     @PutMapping("/updateClient/{id}")
     public Client updateClient(@PathVariable Integer id, @RequestBody Client client) {
