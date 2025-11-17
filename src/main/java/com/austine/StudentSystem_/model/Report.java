@@ -11,13 +11,21 @@ public class Report {
     private Long reportID;
 
     private String description;
-
     private LocalDateTime submittedAt;
 
     @Enumerated(EnumType.STRING)
     private Status status;
 
     private String proofFileURL;
+
+    @OneToOne
+    @JoinColumn(name = "booking_id", unique = true, nullable = false)
+    private Booking booking;
+
+    public enum Status {
+        OPEN,
+        RESOLVED
+    }
 
     public Report() {
         super();
@@ -67,8 +75,11 @@ public class Report {
         this.proofFileURL = proofFileURL;
     }
 
-    public enum Status {
-        OPEN,
-        RESOLVED
+    public Booking getBooking() {
+        return booking;
+    }
+
+    public void setBooking(Booking booking) {
+        this.booking = booking;
     }
 }

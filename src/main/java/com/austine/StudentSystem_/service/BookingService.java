@@ -22,12 +22,12 @@ public class BookingService {
         return bookingRepository.findAll();
     }
 
-    public Booking getBookingById(int id) {
+    public Booking getBookingById(Long id) {
         return bookingRepository.findById(id)
         .orElseThrow(() -> new NoSuchElementException("Booking with ID " + id + " not found."));
     }
 
-    public Booking updateBooking(int id, Booking newBooking) {
+    public Booking updateBooking(Long id, Booking newBooking) {
         Booking booking = bookingRepository.findById(id)
         .orElseThrow(() -> new NoSuchElementException("Booking with ID " + id + " not found."));
 
@@ -43,7 +43,7 @@ public class BookingService {
         return bookingRepository.save(booking);
     }
 
-    public String deleteBooking(int id) {
+    public String deleteBooking(Long id) {
         String msg = "";
         if(bookingRepository.findById(id).isPresent()){
             bookingRepository.deleteById(id);

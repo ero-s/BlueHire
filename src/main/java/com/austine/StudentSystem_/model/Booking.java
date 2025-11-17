@@ -9,7 +9,7 @@ public class Booking {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "booking_id")
-    private int bookingID;
+    private Long bookingID;
 
     @Column(name = "service_category")
     private String serviceCategory;
@@ -58,11 +58,11 @@ public class Booking {
         this.createdAt = createdAt;
     }
 
-    public int getBookingID() {
+    public Long getBookingID() {
         return bookingID;
     }
 
-    public void setBookingID(int bookingID) {
+    public void setBookingID(Long bookingID) {
         this.bookingID = bookingID;
     }
 

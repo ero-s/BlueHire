@@ -14,12 +14,13 @@ public class Review {
     private String feedback;
     private LocalDate reviewDate;
 
-    public Review() {
-        super();
-    }
+    @OneToOne
+    @JoinColumn(name = "booking_id", unique = true, nullable = false)
+    private Booking booking;
+
+    public Review() {}
 
     public Review(int rating, String feedback, LocalDate reviewDate) {
-        super();
         this.rating = rating;
         this.feedback = feedback;
         this.reviewDate = reviewDate;
@@ -52,4 +53,13 @@ public class Review {
     public void setReviewDate(LocalDate reviewDate) {
         this.reviewDate = reviewDate;
     }
+
+    public Booking getBooking() {
+        return booking;
+    }
+
+    public void setBooking(Booking booking) {
+        this.booking = booking;
+    }
 }
+

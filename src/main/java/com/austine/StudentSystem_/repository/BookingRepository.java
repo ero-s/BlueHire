@@ -5,5 +5,5 @@ import org.springframework.stereotype.Repository;
 import com.austine.StudentSystem_.model.Booking;
 
 @Repository
-public interface BookingRepository extends JpaRepository<Booking, Integer> {
+public interface BookingRepository extends JpaRepository<Booking, Long> {
 }
