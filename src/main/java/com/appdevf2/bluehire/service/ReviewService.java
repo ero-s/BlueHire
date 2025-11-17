@@ -45,7 +45,7 @@ public class ReviewService {
         return reviewRepository.findById(id);
     }
 
-    // UPDATE (booking cannot be changed)
+    // UPDATE
     public Review updateReview(Long id, Review updatedReview) {
         return reviewRepository.findById(id).map(existing -> {
 
