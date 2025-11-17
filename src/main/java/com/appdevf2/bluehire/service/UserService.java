@@ -41,7 +41,7 @@ public class UserService {
                     user.setName(updatedUser.getName());
                     user.setCreatedAt(updatedUser.getCreatedAt());
                     user.setRole(updatedUser.getRole());
-                    user.setVerified(updatedUser.getVerified());
+                    user.setIsVerified(updatedUser.getIsVerified());
                     return userRepository.save(user);
                 })
                 .orElseThrow(() -> new RuntimeException("User not found with ID " + userId));

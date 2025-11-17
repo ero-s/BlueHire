@@ -58,7 +58,7 @@ public class WorkerService {
             user.setUsername(updatedUser.getUsername());
             user.setPassword(updatedUser.getPassword());
             user.setRole(updatedUser.getRole());
-            user.setVerified(updatedUser.getVerified());
+            user.setIsVerified(updatedUser.getIsVerified());
             user.setPhotoURL(updatedUser.getPhotoURL());
 
             userRepository.save(user);

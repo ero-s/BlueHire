@@ -20,7 +20,7 @@ public class PaymentService {
     BookingRepository bookingRepository;
 
     public Payment createPayment(Payment payment) {
-        int bookingId = payment.getBooking().getBookingID();
+        Long bookingId = payment.getBooking().getBookingID();
 
         Booking existingBooking = bookingRepository.findById(bookingId)
                 .orElseThrow(() -> new NoSuchElementException("Booking with ID " + bookingId + " not found"));
