@@ -25,6 +25,7 @@ import ReviewsAndRatings from "./components/ReviewsAndRatings/Reviews&Ratings";
 import NavBar from "./components/WorkerSideDashboard/NavBar/NavBar";
 import DashboardUpperSection from "./components/WorkerSideDashboard/DashboardUpperSection/DashboardUpperSection";
 import DashboardMainSection from "./components/WorkerSideDashboard/DashboardMainSection/DashboardMainSection";
+import ManageAccount from "./Pages/ManageAccount";
 // import NavBar from "./components/NavBar/NavBar";
 // import DashboardUpperSection from "./components/DashboardUpperSection/DashboardUpperSection";
 // import DashboardMainSection from "./components/DashboardMainSection/DashboardMainSection";
@@ -51,23 +52,24 @@ import DashboardMainSection from "./components/WorkerSideDashboard/DashboardMain
 
 export default function App() {
   return (
-    <Routes>
-      <Route path="/" element={<Landing />} />
-      <Route path="/dashboard" element={<Dashboard />} />
-      <Route path="/post-job" element={<JobRequestForm />} />
-      <Route path="/bookings" element={<BookingJobManagement />} />
-      <Route path="/settings" element={<SettingsPage />} />
-      <Route path="/signin" element={<SignIn />} />
-      <Route path="/signup" element={<SignUp />} />
-      {/* Optional 404 */}
-      <Route
-        path="*"
-        element={
-          <div className="p-10 text-center text-xl text-red-600">
-            404 - Page Not Found
-          </div>
-        }
-      />
-    </Routes>
+    <ManageAccount />
+    // <Routes>
+    //   <Route path="/" element={<Landing />} />
+    //   <Route path="/dashboard" element={<Dashboard />} />
+    //   <Route path="/post-job" element={<JobRequestForm />} />
+    //   <Route path="/bookings" element={<BookingJobManagement />} />
+    //   <Route path="/settings" element={<SettingsPage />} />
+    //   <Route path="/signin" element={<SignIn />} />
+    //   <Route path="/signup" element={<SignUp />} />
+    //   {/* Optional 404 */}
+    //   <Route
+    //     path="*"
+    //     element={
+    //       <div className="p-10 text-center text-xl text-red-600">
+    //         404 - Page Not Found
+    //       </div>
+    //     }
+    //   />
+    // </Routes>
   );
 }
