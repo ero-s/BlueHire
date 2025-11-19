@@ -9,7 +9,7 @@ public class Payment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "payment_id")
-    private int paymentID;
+    private Long paymentID;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "payment_method")
@@ -41,11 +41,11 @@ public class Payment {
         FAILED
     }
 
-    public int getPaymentID() {
+    public Long getPaymentID() {
         return paymentID;
     }
 
-    public void setPaymentID(int paymentID) {
+    public void setPaymentID(Long paymentID) {
         this.paymentID = paymentID;
     }
 
