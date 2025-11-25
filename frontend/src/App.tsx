@@ -25,6 +25,8 @@ import ClientSide from "./MainPages/ClientSide";
 
 // WORKER PAGES IMPORTS
 
+import BookingJobManagementPage from "./Worker/pages/BookingJobManagementPage";
+import ChatPage from "./Worker/pages/ChatPage";
 import WorkerDashboard from "./Worker/pages/DashboardPage";
 import ReviewsAndRatings from "./Worker/pages/Reviews&RatingsPage";
 import JobDetailsPage from "./Worker/pages/JobDetailPage";
@@ -32,9 +34,12 @@ import WorkerProfilePage from "./Worker/pages/ProfilePage(Op)";
 import JobRequestPage from "./Worker/pages/JobRequestPage";
 import EarningsReports from "./Worker/pages/Earnings&ReportsPage";
 
+// WORKER SIDE ROUTER
+import WorkerSide from "./MainPages/WorkerSide";
 
+// =============================================================
 export default function App() {
   return (
-    <ReviewsAndRatings/>
+    <WorkerSide/>
   );
 }
