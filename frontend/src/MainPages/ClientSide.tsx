@@ -1,15 +1,15 @@
 import Dashboard from "../Client/pages/DashboardPage.tsx";
-import SettingsPage from "../Client/pages/SettingsPage";
-import ProfilePage from "../Client/pages/ProfilePage";
-import JobRequestForm from "../Client/pages/JobRequestForm";
-import JobPosts from "../Client/pages/JobPostsPage"; 
-import FindWorkers from "../Client/pages/FindWorkers";
+import SettingsPage from "../Client/pages/SettingsPage.tsx";
+import ProfilePage from "../Client/pages/ProfilePage.tsx";
+import JobRequestForm from "../Client/pages/JobRequestForm.tsx";
+import JobPosts from "../Client/pages/JobPostsPage.tsx"; 
+import FindWorkers from "../Client/pages/FindWorkers.tsx";
 import Landing from "./Landing.tsx";
 import "../Client/assets/css/Client.css";
 
 import { Routes, Route } from "react-router-dom";
 
-export default function ClientDashboard() {
+export default function ClientSide() {
   return (
     <Routes>
       <Route path="/" element={<Dashboard />} />

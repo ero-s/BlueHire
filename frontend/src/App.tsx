@@ -19,7 +19,7 @@ import ProfilePage from "./Client/pages/ProfilePage";
 import Settings from "./Client/pages/SettingsPage";
 
 // CLIENT SIDE ROUTER
-import ClientSide from "./MainPages/ClientDashboard";
+import ClientSide from "./MainPages/ClientSide";
 
 // =============================================================
 
