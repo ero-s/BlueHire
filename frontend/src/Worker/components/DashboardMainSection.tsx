@@ -1,7 +1,7 @@
 import React from "react";
-import { useNavigate } from "react-router-dom"; // IMPORT THIS
+import { useNavigate } from "react-router-dom"; 
 import ProfilePic from "../../MainAssets/images/profile.png"; 
-import { Star, MoreHorizontal, CheckSquare, Square } from "lucide-react";
+import { Star, CheckSquare, Square } from "lucide-react"; 
 import {
   BarChart,
   Bar,
@@ -29,7 +29,7 @@ const JOB_REQUESTS = [
 ];
 
 const DashboardMainSection: React.FC = () => {
-  const navigate = useNavigate(); // HOOK INITIALIZATION
+  const navigate = useNavigate();
 
   return (
     <div className="flex flex-col gap-6">
@@ -37,9 +37,9 @@ const DashboardMainSection: React.FC = () => {
       {/* --- Top Row: Stats & Chart --- */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         
-        {/* --- ONGOING JOBS CARD (Updated with Navigation) --- */}
+        {/* Ongoing Jobs */}
         <div 
-          onClick={() => navigate('/bookingJobsManagement')} // NAVIGATE ACTION
+          onClick={() => navigate('/bookingJobsManagement')}
           className="bg-white p-8 rounded-3xl shadow-sm flex flex-col justify-center items-center h-[200px] hover:shadow-md transition-all cursor-pointer group border border-transparent hover:border-[#5AB3E6]"
         >
           <h3 className="text-lg text-gray-600 font-medium mb-2 group-hover:text-[#4D7EAF]">Ongoing Jobs</h3>
@@ -49,7 +49,7 @@ const DashboardMainSection: React.FC = () => {
 
         {/* Completed Jobs */}
         <div 
-          onClick={() => navigate('/bookingJobsManagement')} // NAVIGATE ACTION
+          onClick={() => navigate('/bookingJobsManagement')}
           className="bg-white p-8 rounded-3xl shadow-sm flex flex-col justify-center items-center h-[200px] hover:shadow-md transition-all cursor-pointer group border border-transparent hover:border-[#5AB3E6]"
         >
           <h3 className="text-lg text-gray-600 font-medium mb-2 group-hover:text-[#4D7EAF]">Completed Jobs</h3>
@@ -61,8 +61,12 @@ const DashboardMainSection: React.FC = () => {
         <div className="bg-white p-6 rounded-3xl shadow-sm col-span-1 md:col-span-2 h-[200px] flex flex-col relative hover:shadow-md transition-shadow">
           <div className="flex justify-between items-center mb-2">
             <h3 className="text-lg text-gray-700 font-medium">Earnings & Reports</h3>
-            <button className="p-1 hover:bg-gray-100 rounded-full text-gray-400">
-               <MoreHorizontal size={20} />
+            {/* UPDATED: View All Link */}
+            <button 
+              onClick={() => navigate('/earningsAndReports')} // Ensure you have this route or change to relevant route
+              className="text-sm font-semibold text-[#4D7EAF] hover:underline hover:text-[#3a628a] transition-colors"
+            >
+               View All
             </button>
           </div>
           <div className="flex-1 w-full h-full">
@@ -97,8 +101,12 @@ const DashboardMainSection: React.FC = () => {
         <div className="bg-white p-8 rounded-3xl shadow-sm hover:shadow-md transition-shadow">
           <div className="flex justify-between items-center mb-6">
             <h3 className="text-xl font-semibold text-gray-800">Job Requests</h3>
-            <button className="p-1 hover:bg-gray-100 rounded-full text-gray-400">
-               <MoreHorizontal size={20} />
+            {/* UPDATED: View All Link */}
+            <button 
+              onClick={() => navigate('/jobRequests')} // Ensure you have this route
+              className="text-sm font-semibold text-[#4D7EAF] hover:underline hover:text-[#3a628a] transition-colors"
+            >
+               View All
             </button>
           </div>
           
@@ -142,7 +150,17 @@ const DashboardMainSection: React.FC = () => {
 
         {/* Recent Reviews Card */}
         <div className="bg-white p-8 rounded-3xl shadow-sm hover:shadow-md transition-shadow">
-          <h3 className="text-xl font-semibold text-gray-800 mb-8">Recent Reviews</h3>
+          {/* UPDATED: Added Flex container to align Title and View All button */}
+          <div className="flex justify-between items-center mb-8">
+            <h3 className="text-xl font-semibold text-gray-800">Recent Reviews</h3>
+            {/* UPDATED: View All Link */}
+            <button 
+              onClick={() => navigate('/reviewsAndRatings')} // Ensure you have this route
+              className="text-sm font-semibold text-[#4D7EAF] hover:underline hover:text-[#3a628a] transition-colors"
+            >
+               View All
+            </button>
+          </div>
           
           <div className="flex flex-col md:flex-row gap-8">
             <div className="flex flex-col items-center md:items-start min-w-[140px] text-center md:text-left">
