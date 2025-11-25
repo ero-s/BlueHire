@@ -1,75 +1,39 @@
-// import Dashboard from "./components/Client/Dashboard/Dashboard";
-// import SettingsPage from "./components/Client/Settings/SettingsPage";
-// import JobRequestForm from "./components/Client/Dashboard/JobRequestForm";
-// import { Routes, Route } from "react-router-dom"; 
-// import "./components/Client/Client.css";
-import BookingJobManagement from "./Pages/BookingJobManagement";
-// import JobDetails from "./Pages/JobDetail";
-// import EarningsAndReports from "./components/EarningsandReports/Earnings&Reports";
-// import Landing from "./Pages/Landing";
-// import NavBarLanding from "./components/LandingComponents/NavBarLanding/NavBarLanding";
-// import SignIn from "./components/LandingComponents/SignIn/SignIn";
-// import ReviewsAndRatings from "./components/ReviewsAndRatings/Reviews&Ratings";
-import Dashboard from "./components/ClientSideDashboard/Dashboard/Dashboard";
-import SettingsPage from "./components/ClientSideDashboard/Settings/SettingsPage";
-import JobRequestForm from "./components/ClientSideDashboard/Dashboard/JobRequestForm";
+
 import { Routes, Route } from "react-router-dom"; // <-- Import this
-// import "./components/ClientSideDashboard/Client.css";
-import EarningsAndReports from "./components/EarningsandReports/Earnings&Reports";
-import Landing from "./Pages/Landing";
-import NavBarLanding from "./components/LandingComponents/NavBarLanding/NavBarLanding";
-import SignIn from "./components/LandingComponents/SignIn/SignIn";
-import SignUp from "./components/LandingComponents/Signup/Signup";
-import ReviewsAndRatings from "./components/ReviewsAndRatings/Reviews&Ratings";
 
-import NavBar from "./components/WorkerSideDashboard/NavBar/NavBar";
-import DashboardUpperSection from "./components/WorkerSideDashboard/DashboardUpperSection/DashboardUpperSection";
-import DashboardMainSection from "./components/WorkerSideDashboard/DashboardMainSection/DashboardMainSection";
-import ManageAccount from "./Pages/ManageAccount";
-// import NavBar from "./components/NavBar/NavBar";
-// import DashboardUpperSection from "./components/DashboardUpperSection/DashboardUpperSection";
-// import DashboardMainSection from "./components/DashboardMainSection/DashboardMainSection";
-// import BookingJobManagementUpperSection from "./components/WorkerSide/BookingJobManagementUpperSection/BookingJobManagementUpperSection";
-// import BookingJobManagementMainSection from "./components/WorkerSide/BookingJobManagementMainSection/BookingJobManagementMainSection";
-// // import JobDetails from "./components/JobDetailsMainSection/JobDetails";
-// import DashboardUpperSection from "./components/DashboardUpperSection/DashboardUpperSection";
-// import DashboardMainSection from "./components/DashboardMainSection/DashboardMainSection";
-// import Landing from "./Pages/Landing";
+// MAIN PAGES IMPORTS
 
-// function Bookings() {
-//   return <div className="p-10 text-center text-xl">Bookings Page</div>;
-// }
+import LandingPage from "./MainPages/Landing";
+import SigninSignup from "./MainPages/SigninSignup";
 
-// function AppSettings() {
-//   return <div className="p-10 text-center text-xl">Settings Page</div>;
-// }
+// =============================================================
 
-// function Transactions() {
-//   return <div className="p-10 text-center text-xl">Transactions Page</div>;
-// }
+// CLIENT PAGES IMPORTS
 
-//import WorkerDashboard from "./Pages/WorkerDashboard";
+import BookingJobManagement from "./Client/pages/BookingJobManagementPage";
+import ClientDashboard from "./Client/pages/DashboardPage"; 
+import FindWorkers from "./Client/pages/FindWorkers";
+import JobPostsPage from "./Client/pages/JobPostsPage";
+import JobRequestFormPage from "./Client/pages/JobRequestForm";
+import ProfilePage from "./Client/pages/ProfilePage";
+import Settings from "./Client/pages/SettingsPage";
+
+// CLIENT SIDE ROUTER
+import ClientSide from "./MainPages/ClientDashboard";
+
+// =============================================================
+
+// WORKER PAGES IMPORTS
+
+import WorkerDashboard from "./Worker/pages/DashboardPage";
+import EarningsAndReports from "./Worker/pages/Earnings&Reports";
+import ReviewsAndRatings from "./Worker/pages/Reviews&RatingsPage";
+import JobDetailsPage from "./Worker/pages/JobDetailPage";
+import WorkerProfilePage from "./Worker/pages/ProfilePage(Op)";
+
 
 export default function App() {
   return (
-    <ManageAccount />
-    // <Routes>
-    //   <Route path="/" element={<Landing />} />
-    //   <Route path="/dashboard" element={<Dashboard />} />
-    //   <Route path="/post-job" element={<JobRequestForm />} />
-    //   <Route path="/bookings" element={<BookingJobManagement />} />
-    //   <Route path="/settings" element={<SettingsPage />} />
-    //   <Route path="/signin" element={<SignIn />} />
-    //   <Route path="/signup" element={<SignUp />} />
-    //   {/* Optional 404 */}
-    //   <Route
-    //     path="*"
-    //     element={
-    //       <div className="p-10 text-center text-xl text-red-600">
-    //         404 - Page Not Found
-    //       </div>
-    //     }
-    //   />
-    // </Routes>
+    <ClientSide/>
   );
 }
