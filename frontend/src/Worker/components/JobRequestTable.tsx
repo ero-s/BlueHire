@@ -25,21 +25,6 @@ const JobRequestTable: React.FC = () => {
     <div className="bg-white p-6 rounded-lg shadow-xl w-full max-w-7xl mx-auto mt-8 border border-gray-100">
       {/* Header Section */}
       <div className="flex items-center mb-6 pl-2">
-        {/* Left Arrow Icon */}
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="24"
-          height="24"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          className="h-6 w-6 text-gray-700 cursor-pointer mr-3"
-        >
-          <path d="m15 18-6-6 6-6" />
-        </svg>
         <h2 className="text-2xl font-bold text-gray-800">
           Job{' '}
           <span className="text-[#26466F]">
