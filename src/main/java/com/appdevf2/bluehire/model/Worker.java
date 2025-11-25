@@ -21,6 +21,13 @@ public class Worker {
     @Column(name = "skill")
     private List<String> skills;
 
+    // ---------------- Added Attribute ----------------
+    @ElementCollection
+    @CollectionTable(name = "worker_coverage_areas", joinColumns = @JoinColumn(name = "worker_id"))
+    @Column(name = "coverage_area")
+    private List<String> coverage_areas;
+    // --------------------------------------------------
+
     private double hourlyRate;
     private int completedJobCount;
     private double dailyRate;
@@ -61,6 +68,16 @@ public class Worker {
     public void setSkills(List<String> skills) {
         this.skills = skills;
     }
+
+    // ----- Getter & Setter for coverage_areas -----
+    public List<String> getCoverage_areas() {
+        return coverage_areas;
+    }
+
+    public void setCoverage_areas(List<String> coverage_areas) {
+        this.coverage_areas = coverage_areas;
+    }
+    // ----------------------------------------------
 
     public double getHourlyRate() {
         return hourlyRate;

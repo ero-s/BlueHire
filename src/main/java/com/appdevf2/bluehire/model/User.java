@@ -2,6 +2,9 @@ package com.appdevf2.bluehire.model;
 
 import jakarta.persistence.*;
 import java.util.Date;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.Period;
 
 import com.appdevf2.bluehire.model.embeddables.Address;
 import com.appdevf2.bluehire.model.embeddables.Name;
@@ -33,13 +36,24 @@ public class User {
 
     @JsonProperty("isVerified")
     @Column(name = "is_verified", nullable = false)
-    private boolean isVerified = false;  // primitive type ensures NOT NULL
+    private boolean isVerified = false;
 
     @Column(name = "created_at", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
-    private Date createdAt = new Date(); // default to current time
+    private Date createdAt = new Date();
 
     private String photoURL;
+
+    // ---------------- Added Fields ----------------
+    @Temporal(TemporalType.DATE)
+    private Date birthdate;
+
+    @Transient
+    private int age;
+
+    // Added bio attribute
+    private String bio;
+    // ------------------------------------------------
 
     // ---------------- Constructors ----------------
     public User() {
@@ -54,7 +68,7 @@ public class User {
         this.username = username;
         this.password = password;
         this.role = role;
-        this.isVerified = false;  // default false
+        this.isVerified = false;
         this.createdAt = new Date();
         this.photoURL = null;
     }
@@ -147,4 +161,32 @@ public class User {
     public void setPhotoURL(String photoURL) {
         this.photoURL = photoURL;
     }
+
+    // ---------------- Birthdate & Age Getters/Setters ----------------
+    public Date getBirthdate() {
+        return birthdate;
+    }
+
+    public void setBirthdate(Date birthdate) {
+        this.birthdate = birthdate;
+    }
+
+    public int getAge() {
+        if (birthdate == null) return 0;
+
+        LocalDate birth = birthdate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        LocalDate today = LocalDate.now();
+
+        return Period.between(birth, today).getYears();
+    }
+
+    // ---------------- Bio Getter & Setter ----------------
+    public String getBio() {
+        return bio;
+    }
+
+    public void setBio(String bio) {
+        this.bio = bio;
+    }
+    // ------------------------------------------------
 }

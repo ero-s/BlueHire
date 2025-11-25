@@ -15,6 +15,11 @@ public class Client {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+    // -------- Added Fields --------
+    private String company_name;
+    private String role;
+    // -------------------------------
+
     public Client() {}
 
     public Client(User user) {
@@ -33,4 +38,22 @@ public class Client {
     public void setUser(User user) {
         this.user = user;
     }
+
+    // ----- Added Getters/Setters -----
+    public String getCompany_name() {
+        return company_name;
+    }
+
+    public void setCompany_name(String company_name) {
+        this.company_name = company_name;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
+    // ---------------------------------
 }

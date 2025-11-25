@@ -15,7 +15,7 @@ import ClientDashboard from "./Client/pages/DashboardPage";
 import FindWorkers from "./Client/pages/FindWorkers";
 import JobPostsPage from "./Client/pages/JobPostsPage";
 import JobRequestFormPage from "./Client/pages/JobRequestForm";
-import ProfilePage from "./Client/pages/ProfilePage";
+import ProfilePage from "./Client/pages/ClientProfilePage";
 import Settings from "./Client/pages/SettingsPage";
 
 // CLIENT SIDE ROUTER
@@ -29,11 +29,12 @@ import WorkerDashboard from "./Worker/pages/DashboardPage";
 import EarningsAndReports from "./Worker/pages/Earnings&Reports";
 import ReviewsAndRatings from "./Worker/pages/Reviews&RatingsPage";
 import JobDetailsPage from "./Worker/pages/JobDetailPage";
-import WorkerProfilePage from "./Worker/pages/ProfilePage(Op)";
+import WorkerProfilePage from "./Worker/pages/WorkerProfilePage";
+import ClientProfilePage from "./Client/pages/ClientProfilePage";
 
 
 export default function App() {
   return (
-    <ClientSide/>
+    <ClientProfilePage/>
   );
 }
