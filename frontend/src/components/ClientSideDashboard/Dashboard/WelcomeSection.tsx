@@ -14,8 +14,12 @@ export default function WelcomeSection({ userName }: WelcomeSectionProps) {
       style={{
         paddingLeft: "1rem",
         paddingRight: "3rem",
+        marginTop: "1rem",
+        marginBottom: "1rem",
         width: "100%",
         boxSizing: "border-box",
+        zIndex: "10",
+        position: "relative",
       }}
     >
       <SplitText

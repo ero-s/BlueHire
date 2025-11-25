@@ -1,5 +1,6 @@
 import { useState, type ChangeEvent, type FormEvent } from "react";
 import Header from "./Header";
+import "./Header.css"
 import logo from "../../../assets/logo.jpg";
 
 interface JobFormData {
@@ -40,7 +41,6 @@ export default function JobRequestForm() {
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-100 font-sans">
-      {/* Header (same as Dashboard) */}
       <Header logo={logo} userName="Juan Dela Cruz" />
 
       {/* Form Section */}

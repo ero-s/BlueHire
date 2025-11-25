@@ -1,0 +1,120 @@
+/* --- Original Styles --- */
+.header-format {
+    padding: 1rem 3rem 0; /* Removed trailing 'rem' from 0 */
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 2rem;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.right-side-header {
+    margin-top: 2rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    z-index: 99;
+}
+
+
+.btn-header {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: white;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: 0.3s;
+}
+
+.btn-header:hover{
+    background: #3B82F6;
+}
+
+.btn-header:hover .icon{
+    stroke: white;
+}
+
+.btn-header-profile {
+    border-radius: 50px;
+    background: white;
+    border: none;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: 0.3s;
+}
+
+.btn-header-profile:hover{
+    background: #3B82F6;
+    height: 100px;
+    width: 100px;
+    color: white;
+}
+.avatar {
+    transition: 0.3s;
+}
+
+/* --- REFINED Responsive Styles --- */
+
+/* For tablets (~992px and below) */
+@media (max-width: 992px) {
+    .header-format {
+        padding: 1rem 1.5rem 0; /* Reduce side padding */
+        gap: 1.5rem;
+    }
+}
+
+/* For mobile devices (~768px and below) */
+@media (max-width: 768px) {
+    .header-format {
+        flex-wrap: wrap; /* Allow nav and right-side to wrap */
+        justify-content: center; /* Center items when they wrap */
+        padding: 1rem;
+        gap: 1.5rem; /* Use a consistent gap */
+    }
+
+    /* Note: The margin-top is no longer needed on individual buttons */
+    /* because the parent .header-format gap handles the spacing. */
+    .btn-header,
+    .btn-header-profile {
+        margin-top: 0;
+    }
+}
+
+/* For small mobile devices (~480px and below) */
+@media (max-width: 480px) {
+    .right-side-header {
+        /* Reduce the gap between the icons on the smallest screens */
+        gap: 0.5rem;
+    }
+
+    .btn-header {
+        width: 38px;
+        height: 38px;
+    }
+
+    .btn-header-profile {
+        padding: 6px 12px;
+        gap: 6px;
+    }
+
+    /* Optional: Hides the text label in the profile button */
+    .btn-header-profile span {
+        display: none;
+    }
+
+    .btn-header-profile {
+        /* Makes it a circle like the other icon buttons */
+        width: 38px;
+        height: 38px;
+        padding: 0;
+        justify-content: center;
+    }
+}

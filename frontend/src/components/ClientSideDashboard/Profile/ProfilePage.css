@@ -1,0 +1,289 @@
+/* profile-page.css */
+
+/* --- Variables (re-use from dashboard.css if possible, or define here for standalone) --- */
+:root {
+    --primary-blue: #3b82f6;
+    --primary-blue-hover: #2563eb;
+    --primary-blue-light: #93c5fd;
+    --bg-main: #f5f5f7;
+    --bg-white: #ffffff;
+    --text-primary: #1f2937;
+    --text-secondary: #6b7280;
+    --text-light: #9ca3af;
+    --border-light: #e5e7eb;
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.08);
+    --radius-md: 12px;
+    --radius-lg: 16px;
+    --spacing-sm: 1rem;
+    --spacing-md: 1.5rem;
+    --spacing-lg: 2rem;
+}
+
+
+/* --- Base Page Layout --- */
+.profile-page-container {
+    min-height: 100vh;
+    background-color: var(--bg-main);
+    font-family: Arial, sans-serif;
+    color: var(--text-primary);
+    display: flex;
+    flex-direction: column;
+}
+
+/* --- Main Content Area --- */
+.profile-main-content {
+    flex-grow: 1; /* Allows main content to fill available space */
+    padding: 2rem 3rem; /* Matches dashboard/settings horizontal padding */
+    margin: 0 auto; /* mx-auto for centering */
+    box-sizing: border-box;
+    width: 100%; /* Ensure it takes full width within padding */
+}
+
+.profile-top-bar {
+    margin-bottom: var(--spacing-lg); /* Space below "Manage Account" title */
+}
+
+.profile-page-title {
+    font-size: 1.875rem; /* text-3xl, visually fits the image */
+    font-weight: 700; /* font-bold */
+    color: var(--text-primary);
+    margin: 0;
+}
+
+/* --- Main Grid Layout for Profile Content --- */
+.profile-content-grid {
+    display: grid;
+    grid-template-columns: 1fr 2fr; /* Approx split from image */
+    gap: var(--spacing-lg); /* Gap between left profile card and right forms */
+}
+
+/* --- Shared Card Styles --- */
+.profile-card {
+    background-color: var(--bg-white);
+    border-radius: var(--radius-md); /* Slightly smaller radius for individual cards */
+    box-shadow: var(--shadow-sm);
+    padding: var(--spacing-lg);
+}
+
+/* --- Left Column: Profile Info Card --- */
+.profile-info-card {
+    text-align: center;
+    position: relative;
+}
+
+.profile-avatar-wrapper {
+    position: relative;
+    width: 120px; /* Sizing based on image */
+    height: 120px;
+    margin: 0 auto var(--spacing-md);
+}
+
+.profile-avatar {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 4px solid var(--border-light); /* Light border */
+}
+
+.edit-avatar-btn {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    background-color: var(--primary-blue);
+    color: var(--bg-white);
+    border: none;
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    box-shadow: var(--shadow-sm);
+    transition: background-color 0.2s ease;
+}
+
+.edit-avatar-btn:hover {
+    background-color: var(--primary-blue-hover);
+}
+
+.profile-name {
+    font-size: 1.25rem; /* text-xl */
+    font-weight: 600; /* font-semibold */
+    margin-bottom: 0.5rem;
+}
+
+.profile-verified {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    background-color: #ecfdf5; /* green-50, light green background */
+    color: #047857; /* green-700, darker green text */
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px; /* rounded-full */
+    font-size: 0.875rem; /* text-sm */
+    font-weight: 500;
+    margin-bottom: var(--spacing-lg);
+}
+
+.profile-bio-section {
+    text-align: left; /* Bio text is left-aligned */
+    border-top: 1px solid var(--border-light);
+    padding-top: var(--spacing-lg);
+    margin-top: var(--spacing-lg);
+}
+
+.profile-bio-section h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.profile-bio-section p {
+    font-size: 0.875rem; /* text-sm */
+    color: var(--text-secondary);
+    line-height: 1.5;
+}
+
+
+/* --- Right Column: Forms --- */
+.profile-forms-column {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-lg); /* Space between form cards */
+}
+
+.profile-form-card {
+    padding: var(--spacing-lg);
+}
+
+.form-section-title {
+    font-size: 1.125rem; /* text-lg */
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: var(--spacing-md);
+    padding-bottom: var(--spacing-sm);
+    border-bottom: 1px solid var(--border-light); /* Separator line */
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* Two columns */
+    gap: var(--spacing-md); /* Gap between form groups */
+    margin-bottom: var(--spacing-md);
+}
+
+.form-group.full-width {
+    grid-column: span 2; /* Make address input span full width */
+}
+
+.form-group label {
+    display: block;
+    font-size: 0.75rem; /* text-xs */
+    font-weight: 500;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+}
+
+.form-group input,
+.form-group textarea {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--border-light);
+    border-radius: 8px; /* Rounded corners for inputs */
+    font-size: 0.875rem;
+    color: var(--text-primary);
+    background-color: #f9fafb; /* bg-gray-50 */
+    box-sizing: border-box; /* Include padding in width */
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: var(--primary-blue);
+    box-shadow: 0 0 0 2px var(--primary-blue-light);
+}
+
+.form-group textarea {
+    resize: vertical;
+    min-height: 80px; /* Match image */
+}
+
+.save-changes-btn {
+    background-color: var(--primary-blue);
+    color: var(--bg-white);
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.875rem;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    margin-top: var(--spacing-md);
+    float: right; /* Aligns to right as in image */
+}
+
+.save-changes-btn:hover {
+    background-color: var(--primary-blue-hover);
+}
+
+.form-grid-2-col {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--spacing-md);
+}
+
+.payment-pref-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); /* Four placeholders */
+    gap: var(--spacing-md);
+}
+
+.payment-placeholder {
+    height: 80px; /* Visual height for payment method cards */
+    border: 1px dashed var(--border-light);
+    border-radius: var(--radius-md);
+    background-color: #f9fafb; /* bg-gray-50 */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: var(--text-light);
+}
+
+/* --- Responsive Adjustments --- */
+@media (max-width: 1024px) {
+    .profile-main-content {
+        padding: 1.5rem; /* Reduce padding for tablets */
+    }
+
+    .profile-content-grid {
+        grid-template-columns: 1fr; /* Stack columns vertically */
+    }
+}
+
+@media (max-width: 768px) {
+    .profile-main-content {
+        padding: 1rem; /* Further reduce padding for mobile */
+    }
+
+    .profile-page-title {
+        font-size: 1.5rem; /* Smaller title on mobile */
+    }
+
+    .form-grid, .form-grid-2-col, .payment-pref-grid {
+        grid-template-columns: 1fr; /* Stack form inputs/payment placeholders */
+    }
+
+    .form-group.full-width {
+        grid-column: span 1; /* Reset for mobile */
+    }
+
+    .save-changes-btn {
+        width: 100%; /* Full width button on mobile */
+        float: none;
+    }
+}

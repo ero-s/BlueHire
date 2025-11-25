@@ -1,0 +1,77 @@
+/*
+  Custom styles for the Job Posts Page.
+  This file centralizes the primary layout and styling for the page,
+  moving it from Tailwind utility classes into a dedicated stylesheet for better organization.
+*/
+
+/* The main content area holding the job feed and filters */
+.job-posts-main-content {
+    flex: 1;
+    width: 100%;
+    padding: 2rem 1rem; /* Default padding for mobile */
+}
+
+/* The flex container for the two-column layout (feed and filters) */
+.job-posts-layout {
+    display: flex;
+    flex-direction: column; /* Stack on mobile */
+    gap: 2rem;
+}
+
+/* The left column containing the list of job posts.
+   It's set to grow and fill the available space. */
+.job-feed-column {
+    flex: 1;
+    min-width: 0; /* Prevents overflow in flex containers */
+}
+
+/* The container for the list of job cards */
+.job-feed-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem; /* Replaces Tailwind's space-y-6 */
+}
+
+/* The wrapper for the right column's filter component.
+   It has a fixed width on larger screens and doesn't shrink. */
+.job-filters-wrapper {
+    width: 100%;
+    flex-shrink: 0;
+}
+
+/* --- Responsive Breakpoints --- */
+
+/* For tablets and small desktops */
+@media (min-width: 640px) {
+    .job-posts-main-content {
+        padding-left: 1.5rem;
+        padding-right: 1.5rem;
+    }
+}
+
+/* For large desktops */
+@media (min-width: 1024px) {
+    .job-posts-main-content {
+        padding-left: 3rem;
+        padding-right: 3rem;
+    }
+
+    .job-posts-layout {
+        flex-direction: row; /* Side-by-side layout */
+    }
+
+    .job-filters-wrapper {
+        width: 20rem; /* 320px */
+    }
+}
+
+/* For extra-large desktops */
+@media (min-width: 1280px) {
+    .job-posts-layout {
+        gap: 3rem;
+    }
+
+    .job-filters-wrapper {
+        width: 24rem; /* 384px */
+    }
+}
