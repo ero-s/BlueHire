@@ -1,6 +1,6 @@
 import React from 'react';
 // Assuming WorkerNavbar is located at the path below
-import WorkerNavbar from "../components/WorkerNavbar";
+import Header from "../components/WorkerHeader";
 
 // --- Interfaces ---
 
@@ -130,7 +130,7 @@ const WorkerReviewGrid: React.FC = () => {
     <div className="min-h-screen bg-gray-50">
 
       {/* 1. Navbar component is placed first */}
-      <WorkerNavbar />
+      <Header userName='Sherielyn Guadiana' />
 
       {/* 2. Main Content Area */}
       <main className="p-6 sm:p-8 lg:p-10">

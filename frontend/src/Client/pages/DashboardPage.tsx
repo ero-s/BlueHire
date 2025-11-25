@@ -1,10 +1,10 @@
-import Header from "../components/DashboardHeader.tsx";
+import Header from "../components/ClientHeader.tsx";
 import WelcomeSection from "../components/DashboardWelcomeSection.tsx";
 import StatCard from "../components/DashboardStatCard.tsx";
 import PostJobButton from "../components/DashboardPostJobButton.tsx";
 import TotalSpentCard from "../components/DashboardTotalSpentCard.tsx";
 import PendingRequests from "../components/DashboardPendingRequests.tsx";
-import Footer from "../components/DashboardFooter.tsx";
+import Footer from "../components/ClientFooter.tsx";
 import logo from  "../../MainAssets/images/BlueHireLogo.png";
 import "../assets/css/Dashboard.css"
 

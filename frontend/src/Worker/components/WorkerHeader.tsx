@@ -23,7 +23,7 @@ const WorkerHeader: React.FC<HeaderProps> = ({ userName }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   return (
-    <div className="fixed top-0 left-0 right-0 w-full px-4 md:px-12 pt-4 pb-0 flex flex-wrap items-center justify-between gap-4 md:gap-8 bg-gray-100 z-50 pb-2">
+    <div className="fixed top-0 left-0 right-0 w-full px-4 pt-4 pb-0 flex flex-wrap items-center justify-between gap-4 md:gap-8 bg-gray-100 z-50 pb-2">
       <div className="w-full px-4 md:px-12 pt-4 pb-0 flex flex-wrap items-center justify-between gap-4 md:gap-8 bg-transparent">
         {/* Logo Area */}
         <div className="flex items-center gap-2">

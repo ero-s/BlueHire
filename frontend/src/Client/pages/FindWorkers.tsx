@@ -3,8 +3,8 @@ import type { FiltersState } from "../components/FindWorkers/types.ts";
 import { mockWorkers } from "../components/FindWorkers/mockWorkers.ts";
 import Filters from "../components/Filters.tsx";
 import WorkerCard from "../components/WorkerCard.tsx";
-import Header from "../components/DashboardHeader.tsx";
-import Footer from "../components/DashboardFooter.tsx";
+import Header from "../components/ClientHeader.tsx";
+import Footer from "../components/ClientFooter.tsx";
 import logo from "../../MainAssets/images/BlueHireLogo.png";
 const FindWorkers: React.FC = () => {
   const [filters, setFilters] = useState<FiltersState>({
@@ -31,7 +31,7 @@ const FindWorkers: React.FC = () => {
   }, [filters]);
 
   return (
-    <div className="min-h-screen bg-gray-50 text-gray-800">
+    <div className="min-h-screen bg-gray-50 text-gray-800 mt-24">
       <Header 
       logo={logo} 
       userName="Shervin" />

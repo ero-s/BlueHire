@@ -1,4 +1,4 @@
-import NavBar from "../components/WorkerNavbar";
+import Header from "../components/WorkerHeader";
 import JobDetail from "../components/JobDetailsForm";
 import Footer from "../components/WorkerFooter";
 
@@ -14,7 +14,7 @@ const JobDetails = () => {
       }}
     >
       {/* Top Navigation Bar */}
-      <NavBar />
+      <Header userName="Sherielyn Guadiana"/>
       <div
         style={{
           padding: "40px 60px",

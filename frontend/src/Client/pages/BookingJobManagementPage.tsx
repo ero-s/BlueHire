@@ -1,7 +1,7 @@
 import BookingJobManagementMainSection from "../components/BookingJobManagementMainSection";
 import BookingJobManagementUpperSection from "../components/BookingJobManagementUpperSection";
-import NavBar from "../../Worker/components/WorkerNavbar";
-import Footer from "../../Worker/components/WorkerFooter";
+import Header from "../components/ClientHeader";
+import Footer from "../components/ClientFooter";
 
 const BookingJobManagement = () => {
   return (
@@ -15,7 +15,7 @@ const BookingJobManagement = () => {
       }}
     >
       {/* Top Navigation Bar */}
-      <NavBar />
+      <Header userName="Sherielyn Guadiana"/>
       <div
         style={{
           padding: "40px 60px",

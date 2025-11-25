@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from "react";
 import type { JobPost } from "../components/JobPosts/types.ts";
-import Header from "../components/DashboardHeader.tsx";
-import Footer from "../components/DashboardFooter.tsx";
+import Header from "../components/ClientHeader.tsx";
+import Footer from "../components/ClientFooter.tsx";
 import JobPostCard from "../components/JobPostCard.tsx";
 import JobFilters from "../components/JobFilters.tsx";
 import { LuBriefcase } from "react-icons/lu";
@@ -130,7 +130,7 @@ const JobPostsPage: React.FC = () => {
     setLocationFilter("");
   };
   return (
-    <div className="flex flex-col min-h-screen job-posts-page-container">
+    <div className="flex flex-col min-h-screen job-posts-page-container mt-24">
       <Header logo={logo} 
       userName="Shervin" />
       <main className="job-posts-main-content">

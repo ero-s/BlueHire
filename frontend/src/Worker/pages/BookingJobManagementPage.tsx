@@ -1,5 +1,5 @@
 import React from 'react';
-import NavBar from '../components/WorkerNavbar'; // Assuming your Navbar is here based on previous context
+import Header from '../components/WorkerHeader'; // Assuming your Navbar is here based on previous context
 import BookingJobManagementMainSection from '../components/BookingJobManagementMainSection.tsx';
 import { useNavigate } from 'react-router-dom'; 
 import { ArrowLeft } from 'lucide-react';  
@@ -10,7 +10,7 @@ const navigate = useNavigate();
     <div className="bg-[#F6F6F6] min-h-screen w-full font-sans">
       {/* Fixed Navbar */}
       <div className="fixed top-0 w-full z-40 bg-[#F6F6F6]">
-        <NavBar />
+        <Header userName='Sherielyn Guadiana' />
       </div>
 
       {/* Main Content Area */}
