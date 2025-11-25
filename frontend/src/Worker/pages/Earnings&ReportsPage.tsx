@@ -18,7 +18,7 @@ const EarningsReportPage: React.FC = () => {
       {/* 3. Main Content Area */}
       {/* MODIFIED: Removed 'max-w-screen-xl' and 'mx-auto' to allow content to fill the width. */}
       {/* Also removed padding from <main> and moved it to the inner <div> for better control. */}
-      <main className="pt-24 sm:pt-28 lg:pt-28 pl-8 pr-8 mt-24">
+      <main className="pt-24 sm:pt-28 lg:pt-28 pl-8 pr-8 mt-4">
         <button 
             onClick={() => navigate('/workerDashboard')} 
             className="flex items-center gap-2 mb-6 text-gray-500 hover:text-[#4D7EAF] transition-colors font-medium pl-6"
