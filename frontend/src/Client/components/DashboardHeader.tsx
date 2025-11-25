@@ -1,0 +1,61 @@
+import PillNav from "./DashboardPillNav.tsx";
+import "../assets/css/DashboardHeader.css";
+import { LuBell, LuMail } from "react-icons/lu";
+import profileImg from "../../MainAssets/images/profile.png";
+import React from "react";
+import UserMenu from "./DashboardUserMenu.tsx";
+import SearchBar from "./DashboardSearchBar.tsx";
+
+interface HeaderProps {
+  logo: string;
+  userName: string;
+}
+
+const navItems = [
+  { label: "Dashboard", href: "/" },
+  { label: "Bookings", href: "/jobposts" },
+  { label: "Workers", href: "/findworkers" },
+  { label: "Transactions", href: "/transactions" },
+];
+
+export default function DashboardHeader({ logo }: HeaderProps) {
+  const handleBellClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+    console.log("Bell clicked!");
+  };
+
+  return (
+    <div className={"header-format"}>
+      <PillNav
+        logo={logo}
+        logoAlt="Company Logo"
+        items={navItems}
+        activeHref="/"
+        className="custom-nav"
+        ease="power2.easeOut"
+        baseColor=" rgba(59, 130, 246)"
+        pillColor="#ffffff"
+        hoveredPillTextColor="#ffffff"
+        pillTextColor="#000000"
+      />
+
+      <div className={"right-side-header"}>
+        <SearchBar />
+
+        <button className={"btn-header"} type="button">
+          <LuMail size={22} className={"icon"} />
+        </button>
+
+        <button
+          className={"btn-header"}
+          type={"button"}
+          onClick={handleBellClick}
+        >
+          <LuBell size={22} className={"icon"} />
+        </button>
+
+        <UserMenu className={"btn-header-profile"} profileImg={profileImg} />
+      </div>
+    </div>
+  );
+}
