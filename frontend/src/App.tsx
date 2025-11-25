@@ -30,7 +30,7 @@ import ChatPage from "./Worker/pages/ChatPage";
 import WorkerDashboard from "./Worker/pages/DashboardPage";
 import ReviewsAndRatings from "./Worker/pages/Reviews&RatingsPage";
 import JobDetailsPage from "./Worker/pages/JobDetailPage";
-import WorkerProfilePage from "./Worker/pages/ProfilePage(Op)";
+import WorkerProfilePage from "./Worker/pages/WorkerProfilePage";
 import JobRequestPage from "./Worker/pages/JobRequestPage";
 import EarningsReports from "./Worker/pages/Earnings&ReportsPage";
 
