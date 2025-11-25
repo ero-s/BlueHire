@@ -8,10 +8,10 @@
 		<version>3.5.5</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>com.austine</groupId>
-	<artifactId>StudentSystem_</artifactId>
+	<groupId>com.appdevf2</groupId>
+	<artifactId>code_blooded</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>StudentSystem_</name>
+	<name>BlueHire</name>
 	<description>Full Stack application using springboot, react and mysql</description>
 	<url/>
 	<licenses>
@@ -27,7 +27,7 @@
 		<url/>
 	</scm>
 	<properties>
-		<java.version>24</java.version>
+		<java.version>23</java.version>
 	</properties>
 	<dependencies>
 		<dependency>

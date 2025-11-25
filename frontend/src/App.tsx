@@ -1,8 +1,75 @@
-import ClientSideDashboard from "./Pages/ClientDashboard";
+// import Dashboard from "./components/Client/Dashboard/Dashboard";
+// import SettingsPage from "./components/Client/Settings/SettingsPage";
+// import JobRequestForm from "./components/Client/Dashboard/JobRequestForm";
+// import { Routes, Route } from "react-router-dom"; 
+// import "./components/Client/Client.css";
+import BookingJobManagement from "./Pages/BookingJobManagement";
+// import JobDetails from "./Pages/JobDetail";
+// import EarningsAndReports from "./components/EarningsandReports/Earnings&Reports";
+// import Landing from "./Pages/Landing";
+// import NavBarLanding from "./components/LandingComponents/NavBarLanding/NavBarLanding";
+// import SignIn from "./components/LandingComponents/SignIn/SignIn";
+// import ReviewsAndRatings from "./components/ReviewsAndRatings/Reviews&Ratings";
+import Dashboard from "./components/ClientSideDashboard/Dashboard/Dashboard";
+import SettingsPage from "./components/ClientSideDashboard/Settings/SettingsPage";
+import JobRequestForm from "./components/ClientSideDashboard/Dashboard/JobRequestForm";
+import { Routes, Route } from "react-router-dom"; // <-- Import this
+// import "./components/ClientSideDashboard/Client.css";
+import EarningsAndReports from "./components/EarningsandReports/Earnings&Reports";
+import Landing from "./Pages/Landing";
+import NavBarLanding from "./components/LandingComponents/NavBarLanding/NavBarLanding";
+import SignIn from "./components/LandingComponents/SignIn/SignIn";
+import SignUp from "./components/LandingComponents/Signup/Signup";
+import ReviewsAndRatings from "./components/ReviewsAndRatings/Reviews&Ratings";
+
+import NavBar from "./components/WorkerSideDashboard/NavBar/NavBar";
+import DashboardUpperSection from "./components/WorkerSideDashboard/DashboardUpperSection/DashboardUpperSection";
+import DashboardMainSection from "./components/WorkerSideDashboard/DashboardMainSection/DashboardMainSection";
+import ManageAccount from "./Pages/ManageAccount";
+// import NavBar from "./components/NavBar/NavBar";
+// import DashboardUpperSection from "./components/DashboardUpperSection/DashboardUpperSection";
+// import DashboardMainSection from "./components/DashboardMainSection/DashboardMainSection";
+// import BookingJobManagementUpperSection from "./components/WorkerSide/BookingJobManagementUpperSection/BookingJobManagementUpperSection";
+// import BookingJobManagementMainSection from "./components/WorkerSide/BookingJobManagementMainSection/BookingJobManagementMainSection";
+// // import JobDetails from "./components/JobDetailsMainSection/JobDetails";
+// import DashboardUpperSection from "./components/DashboardUpperSection/DashboardUpperSection";
+// import DashboardMainSection from "./components/DashboardMainSection/DashboardMainSection";
+// import Landing from "./Pages/Landing";
+
+// function Bookings() {
+//   return <div className="p-10 text-center text-xl">Bookings Page</div>;
+// }
+
+// function AppSettings() {
+//   return <div className="p-10 text-center text-xl">Settings Page</div>;
+// }
+
+// function Transactions() {
+//   return <div className="p-10 text-center text-xl">Transactions Page</div>;
+// }
+
+//import WorkerDashboard from "./Pages/WorkerDashboard";
+
 export default function App() {
   return (
-    <>
-      <ClientSideDashboard />
-    </>
+    <ManageAccount />
+    // <Routes>
+    //   <Route path="/" element={<Landing />} />
+    //   <Route path="/dashboard" element={<Dashboard />} />
+    //   <Route path="/post-job" element={<JobRequestForm />} />
+    //   <Route path="/bookings" element={<BookingJobManagement />} />
+    //   <Route path="/settings" element={<SettingsPage />} />
+    //   <Route path="/signin" element={<SignIn />} />
+    //   <Route path="/signup" element={<SignUp />} />
+    //   {/* Optional 404 */}
+    //   <Route
+    //     path="*"
+    //     element={
+    //       <div className="p-10 text-center text-xl text-red-600">
+    //         404 - Page Not Found
+    //       </div>
+    //     }
+    //   />
+    // </Routes>
   );
 }
