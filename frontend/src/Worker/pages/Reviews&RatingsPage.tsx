@@ -1,8 +1,7 @@
 import React from 'react';
 // Assuming WorkerNavbar is located at the path below
 import Header from "../components/WorkerHeader";
-import { useNavigate } from 'react-router-dom'; 
-import { ArrowLeft } from 'lucide-react'; 
+
 // --- Interfaces ---
 
 interface Review {
@@ -126,7 +125,6 @@ const ReviewCard: React.FC<{ review: Review }> = ({ review }) => (
 // --- Main WorkerReviewGrid Component ---
 
 const WorkerReviewGrid: React.FC = () => {
-const navigate = useNavigate();
   return (
     // Outer container for the entire page
     <div className="min-h-screen bg-gray-50">
@@ -136,14 +134,7 @@ const navigate = useNavigate();
 
       {/* 2. Main Content Area */}
       <main className="pt-24 sm:pt-28 lg:pt-28 pl-10 pr-10">
-        <button 
-          onClick={() => navigate('/workerDashboard')} 
-          className="flex items-center gap-2 mb-6 text-gray-500 hover:text-[#4D7EAF] transition-colors font-medium"
-        >
-          <ArrowLeft size={20} />
-          <span>Back to Dashboard</span>
-        </button>
-        <h1 className="text-3xl font-bold text-gray-800 mb-8">Worker Reviews</h1>
+        <h1 className="text-3xl font-bold text-gray-800 mb-8 pt-6">Worker Reviews</h1>
 
         <div className="max-w-6xl mx-auto">
           {/* Responsive Grid Layout */}
