@@ -18,7 +18,7 @@ const Logo: React.FC<LogoProps> = ({ variant = 'md' }) => {
     <div className="flex items-center gap-3">
       <img src={logo} alt="BlueHire Logo" className={`${selectedSize.img} rounded-full`} />
       <div className={`font-bold font-sans ${selectedSize.text}`}>
-        <span className='text-blue-700'>Blue</span>
+        <span className='text-[#4D7EAF]'>Blue</span>
         <span className='text-gray-700'>Hire</span>
       </div>
     </div>
