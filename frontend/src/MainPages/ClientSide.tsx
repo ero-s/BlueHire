@@ -2,23 +2,29 @@ import Dashboard from "../Client/pages/DashboardPage.tsx";
 import SettingsPage from "../Client/pages/SettingsPage.tsx";
 import ClientProfilePage from "../Client/pages/ClientProfilePage.tsx";
 import JobRequestForm from "../Client/pages/JobRequestForm.tsx";
-import JobPosts from "../Client/pages/JobPostsPage.tsx"; 
 import FindWorkers from "../Client/pages/FindWorkers.tsx";
 import Landing from "./Landing.tsx";
+import BookingJobManagement from "../Client/pages/BookingJobManagementPage.tsx";
+import Chat from "../Client/pages/ClientChatPage.tsx";
+import SignIn from "./SignInPage.tsx";
+import SignUp from "./SignupPage.tsx";
 import "../Client/assets/css/Client.css";
-
 import { Routes, Route } from "react-router-dom";
 
 export default function ClientSide() {
   return (
     <Routes>
-      <Route path="/" element={<Dashboard />} />
+      <Route path="/clientDashboard" element={<Dashboard />} />
       <Route path="/post-job" element={<JobRequestForm />} />
       <Route path="/settings" element={<SettingsPage />} />
-      <Route path="/profile" element={<ClientProfilePage />} />
+      <Route path="/clientProfile" element={<ClientProfilePage />} />
       <Route path="/landing" element={<Landing />} />
-      <Route path="/jobposts" element={<JobPosts />} />
-      <Route path="/findworkers" element={<FindWorkers />} />
+      <Route path="/findWorkers" element={<FindWorkers />} />
+      <Route path="/bookings" element={<BookingJobManagement />} />
+      <Route path="/clientChat" element={<Chat />} />
+      <Route path="/signIn" element={<SignIn />} />
+      <Route path="/signUp" element={<SignUp />} />
+
       {/* Optional 404 */}
       <Route
         path="*"

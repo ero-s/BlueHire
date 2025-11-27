@@ -11,8 +11,8 @@ const Navbar: React.FC = () => {
   // Handles smooth scroll to sections
   const handleScroll = (id: string) => {
     // If not on the landing page, navigate to it first
-    if (location.pathname !== '/') {
-      navigate('/');
+    if (location.pathname !== '/landing') {
+      navigate('/landing');
       // Wait a bit for the page to load, then scroll
       setTimeout(() => {
         const section = document.getElementById(id);
@@ -31,7 +31,7 @@ const Navbar: React.FC = () => {
     { type: 'anchor', id: 'home', text: 'Home' },
     { type: 'anchor', id: 'about', text: 'About' },
     { type: 'anchor', id: 'contact', text: 'Contact' },
-    { type: 'router', to: '/signin', text: 'Sign In' },
+    { type: 'router', to: '/signIn', text: 'Sign In' },
   ];
 
   const linkClass =
@@ -85,7 +85,7 @@ const Navbar: React.FC = () => {
             </ul>
 
             <Link
-              to="/signup"
+              to="/signUp"
               className="bg-bluehire-blue text-white px-6 py-2.5 rounded-lg hover:bg-opacity-90 transition-colors duration-300 text-sm font-semibold shadow-sm"
             >
               Sign Up

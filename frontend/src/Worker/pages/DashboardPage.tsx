@@ -2,6 +2,7 @@ import React from "react";
 import Header from "../components/WorkerHeader"; 
 import DashboardUpperSection from "../components/DashboardUpperSection";
 import DashboardMainSection from "../components/DashboardMainSection";
+import Footer from "../components/WorkerFooter";
 
 const DashboardPage: React.FC = () => {
   return (
@@ -16,6 +17,7 @@ const DashboardPage: React.FC = () => {
         <DashboardUpperSection />
         <DashboardMainSection />
       </div>
+      <Footer />
     </div>
   );
 };

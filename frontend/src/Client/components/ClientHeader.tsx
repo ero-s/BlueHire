@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
+import { useNavigate, useLocation, Link } from "react-router-dom"; // 1. Import Router Hooks
 import { Bell, Mail, Search, Menu, ChevronDown, User, LogOut, X, ChevronRight } from "lucide-react";
-import Logo from "../../MainComponents/LandingComponents/Logo/Logo"; // Adjust path as needed
+import Logo from "../../MainComponents/LandingComponents/Logo/Logo"; 
 
 interface HeaderProps {
   logo?: string;
@@ -12,12 +13,12 @@ interface NavItem {
   href: string;
 }
 
-// --- Client Specific Navigation ---
+// 2. Updated Paths (Assuming a /client prefix structure similar to /worker)
 const navItems: NavItem[] = [
-  { label: "Dashboard", href: "/" },
-  { label: "Workers", href: "/jobposts" }, // Client searches for Workers
+  { label: "Dashboard", href: "/clientDashboard" },
+  { label: "Workers", href: "/findWorkers" }, 
   { label: "Bookings", href: "/bookings" },
-  { label: "Transactions", href: "/transactions" },
+  { label: "Transactions", href: "/client/transactions" },
 ];
 
 // --- Mock Data for Search (Workers) ---
@@ -30,6 +31,9 @@ const MOCK_WORKERS = [
 ];
 
 const ClientHeader: React.FC<HeaderProps> = ({ userName }) => {
+  const navigate = useNavigate(); // Initialize navigate
+  const location = useLocation(); // Initialize location
+  
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   
@@ -54,6 +58,11 @@ const ClientHeader: React.FC<HeaderProps> = ({ userName }) => {
     worker.role.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
+  // 3. Helper to check active link
+  const isActiveLink = (path: string) => {
+    return location.pathname === path || location.pathname.startsWith(path + "/");
+  };
+
   return (
     <div className="fixed top-0 left-0 right-0 w-full px-4 pt-4 pb-0 flex flex-col items-center justify-between gap-4 bg-[#F6F6F6] z-50">
       <div className="w-full px-4 md:px-12 pt-2 pb-2 flex items-center justify-between gap-4 bg-transparent">
@@ -63,21 +72,24 @@ const ClientHeader: React.FC<HeaderProps> = ({ userName }) => {
           <Logo />
         </div>
 
-        {/* Desktop Navigation */}
+        {/* 4. Desktop Navigation with Active State Logic */}
         <nav className="hidden md:flex gap-2 items-center bg-white rounded-full px-2 py-2 shadow-sm border border-gray-100">
-          {navItems.map((item, index) => (
-            <a
-              key={index}
-              href={item.href}
-              className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
-                index === 0
-                  ? "bg-[#4D7EAF] text-white shadow-md hover:bg-[#3d6691] hover:shadow-lg"
-                  : "text-gray-600 hover:bg-blue-50 hover:text-[#4D7EAF]"
-              }`}
-            >
-              {item.label}
-            </a>
-          ))}
+          {navItems.map((item, index) => {
+            const active = isActiveLink(item.href);
+            return (
+              <Link
+                key={index}
+                to={item.href}
+                className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
+                  active
+                    ? "bg-[#4D7EAF] text-white shadow-md hover:bg-[#3d6691] hover:shadow-lg"
+                    : "text-gray-600 hover:bg-blue-50 hover:text-[#4D7EAF]"
+                }`}
+              >
+                {item.label}
+              </Link>
+            );
+          })}
         </nav>
 
         {/* Right Side Actions */}
@@ -135,7 +147,11 @@ const ClientHeader: React.FC<HeaderProps> = ({ userName }) => {
               )}
           </div>
 
-          <button className="w-10 h-10 rounded-full bg-white flex items-center justify-center shadow-sm transition-colors duration-300 group hover:shadow-md">
+          {/* 5. Mail Button with Navigation */}
+          <button 
+            onClick={() => navigate('/clientChat')} 
+            className="w-10 h-10 rounded-full bg-white flex items-center justify-center shadow-sm transition-colors duration-300 group hover:shadow-md"
+          >
             <Mail className="w-5 h-5 text-gray-600 group-hover:text-[#4D7EAF] transition-colors duration-300" />
           </button>
 
@@ -143,7 +159,7 @@ const ClientHeader: React.FC<HeaderProps> = ({ userName }) => {
             <Bell className="w-5 h-5 text-gray-600 group-hover:text-[#4D7EAF] transition-colors duration-300" />
           </button>
 
-          {/* User Menu Dropdown */}
+          {/* 6. User Menu Dropdown with Navigation */}
           <div className="relative">
               <button 
                   onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
@@ -162,19 +178,30 @@ const ClientHeader: React.FC<HeaderProps> = ({ userName }) => {
 
               {isUserMenuOpen && (
                   <div className="absolute right-0 mt-2 w-56 bg-white rounded-2xl shadow-xl border border-gray-100 p-2 z-50 origin-top-right animate-[fadeIn_0.2s_ease-out]">
-                      <a href="#" className="group relative flex items-center px-4 py-3 text-sm text-gray-600 rounded-xl overflow-hidden hover:bg-[#4D7EAF] hover:text-white transition-all">
+                      
+                      {/* Profile Button */}
+                      <button 
+                        onClick={() => { setIsUserMenuOpen(false); navigate('/clientProfile'); }}
+                        className="w-full group relative flex items-center px-4 py-3 text-sm text-gray-600 rounded-xl overflow-hidden hover:bg-[#4D7EAF] hover:text-white transition-all"
+                      >
                           <div className="relative z-10 flex items-center gap-3 w-full">
                               <User size={18} className="text-gray-400 group-hover:text-white transition-colors" />
                               <span className="font-medium">Profile</span>
                           </div>
-                      </a>
+                      </button>
+
                       <div className="h-px bg-gray-100 my-1 mx-2"></div>
-                      <a href="#" className="group relative flex items-center px-4 py-3 text-sm text-red-500 rounded-xl overflow-hidden hover:bg-red-500 hover:text-white transition-all">
+                      
+                      {/* Logout Button */}
+                      <button 
+                        onClick={() => { setIsUserMenuOpen(false); navigate('/landing'); }}
+                        className="w-full group relative flex items-center px-4 py-3 text-sm text-red-500 rounded-xl overflow-hidden hover:bg-red-500 hover:text-white transition-all"
+                      >
                           <div className="relative z-10 flex items-center gap-3 w-full">
                               <LogOut size={18} className="text-red-400 group-hover:text-white transition-colors" />
                               <span className="font-medium">Logout</span>
                           </div>
-                      </a>
+                      </button>
                   </div>
               )}
           </div>
@@ -189,25 +216,28 @@ const ClientHeader: React.FC<HeaderProps> = ({ userName }) => {
         </div>
       </div>
 
-      {/* --- Mobile Navigation Dropdown --- */}
+      {/* --- 7. Mobile Navigation Dropdown with Active State --- */}
       {isMobileMenuOpen && (
         <div className="w-full md:hidden bg-white border-t border-gray-100 shadow-lg animate-[fadeIn_0.2s_ease-out]">
           <nav className="flex flex-col p-4 gap-2">
-            {navItems.map((item, index) => (
-              <a
-                key={index}
-                href={item.href}
-                className={`px-4 py-3 rounded-xl text-sm font-medium flex items-center justify-between transition-colors ${
-                  index === 0
-                    ? "bg-[#4D7EAF] text-white"
-                    : "text-gray-600 hover:bg-gray-50 hover:text-[#4D7EAF]"
-                }`}
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                {item.label}
-                {index !== 0 && <ChevronRight size={16} className="text-gray-300" />}
-              </a>
-            ))}
+            {navItems.map((item, index) => {
+              const active = isActiveLink(item.href);
+              return (
+                <Link
+                  key={index}
+                  to={item.href}
+                  className={`px-4 py-3 rounded-xl text-sm font-medium flex items-center justify-between transition-colors ${
+                    active
+                      ? "bg-[#4D7EAF] text-white"
+                      : "text-gray-600 hover:bg-gray-50 hover:text-[#4D7EAF]"
+                  }`}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  {item.label}
+                  {!active && <ChevronRight size={16} className="text-gray-300" />}
+                </Link>
+              );
+            })}
           </nav>
         </div>
       )}

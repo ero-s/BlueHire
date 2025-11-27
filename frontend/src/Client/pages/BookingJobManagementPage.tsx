@@ -1,35 +1,24 @@
-import BookingJobManagementMainSection from "../components/BookingJobManagementMainSection";
-import BookingJobManagementUpperSection from "../components/BookingJobManagementUpperSection";
-import Header from "../components/ClientHeader";
-import Footer from "../components/ClientFooter";
-
-const BookingJobManagement = () => {
+import React from 'react';
+import Header from '../components/ClientHeader'; // Assuming your Navbar is here based on previous context
+import BookingJobManagementMainSection from '../components/BookingJobManagementMainSection.tsx';
+import Footer from '../components/ClientFooter.tsx';
+  
+const BookingJobManagementPage: React.FC = () => {
   return (
-    <div
-      style={{
-        backgroundColor: "#F5F7FA",
-        minHeight: "100vh",
-        width: "100%",
-        overflowX: "hidden",
-        paddingTop: "8vh", // space for fixed navbar
-      }}
-    >
-      {/* Top Navigation Bar */}
-      <Header userName="Sherielyn Guadiana"/>
-      <div
-        style={{
-          padding: "40px 60px",
-          display: "flex",
-          flexDirection: "column",
-          gap: "30px",
-        }}
-      >
-        <BookingJobManagementUpperSection />
-        <BookingJobManagementMainSection />
-        <Footer />
+    <div className="bg-[#F6F6F6] min-h-screen w-full font-sans">
+      {/* Fixed Navbar */}
+      <div className="fixed top-0 w-full z-40 bg-[#F6F6F6]">
+        <Header userName='Sherielyn Guadiana' />
       </div>
+
+      {/* Main Content Area */}
+      {/* pt-28 accounts for navbar height, pb-10 for bottom spacing */}
+      <div className="pt-28 pb-10 px-4 md:px-8 lg:px-12">
+        <BookingJobManagementMainSection />
+      </div>
+      <Footer />
     </div>
   );
 };
 
-export default BookingJobManagement;
+export default BookingJobManagementPage;

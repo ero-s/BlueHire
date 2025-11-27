@@ -10,6 +10,7 @@ import {
   ArrowUpDown, 
   X 
 } from "lucide-react"; // Replaced react-icons with lucide-react for consistency
+import Footer from "../components/WorkerFooter";
 
 // --- Types ---
 interface JobPost {
@@ -373,6 +374,7 @@ const JobFeedPage: React.FC = () => {
 
         </div>
       </main>
+      <Footer />
     </div>
   );
 };
