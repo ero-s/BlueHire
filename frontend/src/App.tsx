@@ -33,9 +33,11 @@ import JobDetailsPage from "./Worker/pages/JobDetailPage";
 import WorkerProfilePage from "./Worker/pages/WorkerProfilePage";
 import JobRequestPage from "./Worker/pages/JobRequestPage";
 import EarningsReports from "./Worker/pages/Earnings&ReportsPage";
+import JobFeedPage from "./Worker/pages/JobFeedPage";
 
 // WORKER SIDE ROUTER
 import WorkerSide from "./MainPages/WorkerSide";
+
 
 // =============================================================
 export default function App() {
