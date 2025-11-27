@@ -1,0 +1,41 @@
+export interface Worker {
+  id: string;
+  name: string;
+  avatar: string;
+  category: string;
+}
+
+export interface PastHire {
+  id: string;
+  worker: Worker;
+  date: string;
+  paymentAmount: number;
+  paymentStatus: "Paid" | "Refunded";
+  rating: number; // 0-5
+}
+
+export interface Booking {
+  id: string;
+  worker: Worker;
+  serviceDate: string;
+  status: "Pending" | "Confirmed" | "Completed" | "Cancelled";
+  price: number;
+}
+
+export interface Message {
+  id: string;
+  text: string;
+  sender: "me" | "other";
+  time: string;
+}
+
+export interface Contact {
+  id: string;
+  name: string;
+  role?: string;
+  status: "Active" | "Offline";
+  avatar: string;
+  lastMessage: string;
+  lastTime: string;
+  unread?: number;
+}

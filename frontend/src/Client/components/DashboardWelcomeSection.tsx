@@ -4,7 +4,9 @@ interface WelcomeSectionProps {
   userName: string;
 }
 
-export default function DashboardWelcomeSection({ userName }: WelcomeSectionProps) {
+export default function DashboardWelcomeSection({
+  userName,
+}: WelcomeSectionProps) {
   const handleAnimationComplete = () => {
     console.log("All letters have animated!");
   };

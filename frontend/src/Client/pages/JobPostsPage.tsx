@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from "react";
 import type { JobPost } from "../components/JobPosts/types.ts";
-import Header from "../components/ClientHeader.tsx";
+import Header from "../components/DashboardHeader.tsx";
 import Footer from "../components/ClientFooter.tsx";
 import JobPostCard from "../components/JobPostCard.tsx";
 import JobFilters from "../components/JobFilters.tsx";
@@ -130,44 +130,45 @@ const JobPostsPage: React.FC = () => {
     setLocationFilter("");
   };
   return (
-    <div className="flex flex-col min-h-screen job-posts-page-container mt-24">
-      <Header logo={logo} 
-      userName="Shervin" />
-      <main className="job-posts-main-content">
-        <div className="job-posts-layout">
-          {/* Left Side: Job Feed */}
-          <div className="job-feed-column">
-            <div className="flex items-center justify-between mb-6">
-              <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 flex items-center gap-3">
-                <LuBriefcase /> Job Feed
-              </h1>
-              <p className="text-sm text-gray-500">
-                {filteredAndSortedJobs.length} results found
-              </p>
+    <div>
+      <Header logo={logo} userName="Shervin" />
+      <div className="flex flex-col min-h-screen job-posts-page-container ">
+        <main className="job-posts-main-content">
+          <div className="job-posts-layout">
+            {/* Left Side: Job Feed */}
+            <div className="job-feed-column">
+              <div className="flex items-center justify-between mb-6">
+                <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 flex items-center gap-3">
+                  <LuBriefcase /> Job Feed
+                </h1>
+                <p className="text-sm text-gray-500">
+                  {filteredAndSortedJobs.length} results found
+                </p>
+              </div>
+              <div className="job-feed-list">
+                {filteredAndSortedJobs.map((job) => (
+                  <JobPostCard key={job.id} job={job} />
+                ))}
+              </div>
             </div>
-            <div className="job-feed-list">
-              {filteredAndSortedJobs.map((job) => (
-                <JobPostCard key={job.id} job={job} />
-              ))}
-            </div>
-          </div>
 
-          {/* Right Side: Filters */}
-          <div className="job-filters-wrapper">
-            <JobFilters
-              categories={JOB_CATEGORIES}
-              selectedCategory={selectedCategory}
-              onCategoryChange={setSelectedCategory}
-              sortOption={sortOption}
-              onSortChange={setSortOption}
-              locationValue={locationFilter}
-              onLocationChange={setLocationFilter}
-              onClearFilters={handleClearFilters}
-            />
+            {/* Right Side: Filters */}
+            <div className="job-filters-wrapper">
+              <JobFilters
+                categories={JOB_CATEGORIES}
+                selectedCategory={selectedCategory}
+                onCategoryChange={setSelectedCategory}
+                sortOption={sortOption}
+                onSortChange={setSortOption}
+                locationValue={locationFilter}
+                onLocationChange={setLocationFilter}
+                onClearFilters={handleClearFilters}
+              />
+            </div>
           </div>
-        </div>
-      </main>
-      <Footer />
+        </main>
+        <Footer />
+      </div>
     </div>
   );
 };
