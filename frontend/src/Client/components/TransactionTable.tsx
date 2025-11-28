@@ -4,24 +4,24 @@ import React, { useState } from "react";
 export interface ClientTransaction {
   date: string;
   workerName: string;
-  hours: string;
+  duration: string;
   serviceType: string;
   payment: string;
 }
 
 // --- Mock Data ---
 const mockClientTransactions: ClientTransaction[] = [
-  { date: "2025-11-28", workerName: "Mark Anthony Reyes", hours: "5h", serviceType: "Carpentry", payment: "₱2,000" },
-  { date: "2025-11-27", workerName: "Jessa Mae Abella", hours: "3h", serviceType: "House Cleaning", payment: "₱1,200" },
-  { date: "2025-11-26", workerName: "Rolando Uy", hours: "4h", serviceType: "Electrical", payment: "₱1,800" },
-  { date: "2025-11-25", workerName: "Kristine Joy Lim", hours: "6h", serviceType: "Babysitting", payment: "₱1,500" },
-  { date: "2025-11-24", workerName: "Jonathan dela Peña", hours: "2h", serviceType: "Plumbing", payment: "₱1,000" },
-  { date: "2025-11-23", workerName: "Mary Rose Cabahug", hours: "5h", serviceType: "Cooking", payment: "₱2,300" },
-  { date: "2025-11-22", workerName: "Carlo Mendoza", hours: "4h", serviceType: "Driving", payment: "₱1,800" },
-  { date: "2025-11-21", workerName: "Angela Santos", hours: "3h", serviceType: "House Cleaning", payment: "₱1,100" },
-  { date: "2025-11-20", workerName: "Luis Fernandez", hours: "5h", serviceType: "Carpentry", payment: "₱2,100" },
-  { date: "2025-11-19", workerName: "Mariel Cruz", hours: "2h", serviceType: "Cooking", payment: "₱900" },
-  { date: "2025-11-18", workerName: "Dante Ramos", hours: "4h", serviceType: "Electrical", payment: "₱1,700" },
+  { date: "2025-11-28", workerName: "Mark Anthony Reyes", duration: "5h", serviceType: "Carpentry", payment: "₱2,000" },
+  { date: "2025-11-27", workerName: "Jessa Mae Abella", duration: "3h", serviceType: "House Cleaning", payment: "₱1,200" },
+  { date: "2025-11-26", workerName: "Rolando Uy", duration: "4h", serviceType: "Electrical", payment: "₱1,800" },
+  { date: "2025-11-25", workerName: "Kristine Joy Lim", duration: "6h", serviceType: "Babysitting", payment: "₱1,500" },
+  { date: "2025-11-24", workerName: "Jonathan dela Peña", duration: "2h", serviceType: "Plumbing", payment: "₱1,000" },
+  { date: "2025-11-23", workerName: "Mary Rose Cabahug", duration: "5h", serviceType: "Cooking", payment: "₱2,300" },
+  { date: "2025-11-22", workerName: "Carlo Mendoza", duration: "4h", serviceType: "Driving", payment: "₱1,800" },
+  { date: "2025-11-21", workerName: "Angela Santos", duration: "3h", serviceType: "House Cleaning", payment: "₱1,100" },
+  { date: "2025-11-20", workerName: "Luis Fernandez", duration: "5h", serviceType: "Carpentry", payment: "₱2,100" },
+  { date: "2025-11-19", workerName: "Mariel Cruz", duration: "2h", serviceType: "Cooking", payment: "₱900" },
+  { date: "2025-11-18", workerName: "Dante Ramos", duration: "4h", serviceType: "Electrical", payment: "₱1,700" },
 ];
 
 // --- Badge Color ---
@@ -61,7 +61,7 @@ const ClientTransactionTable: React.FC = () => {
             <tr className="border-b border-gray-200">
               <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider">Date</th>
               <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider">Worker</th>
-              <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider">Hours</th>
+              <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider">Duration</th>
               <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider">Service</th>
               <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider">Payment</th>
               <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider">Profile</th>
@@ -73,7 +73,7 @@ const ClientTransactionTable: React.FC = () => {
               <tr key={idx} className="hover:bg-green-50/50 transition duration-150">
                 <td className="px-6 py-3 whitespace-nowrap text-sm text-gray-700">{tx.date}</td>
                 <td className="px-6 py-3 whitespace-nowrap text-sm text-[#477EE5] hover:underline cursor-pointer">{tx.workerName}</td>
-                <td className="px-6 py-3 whitespace-nowrap text-sm text-gray-700">{tx.hours}</td>
+                <td className="px-6 py-3 whitespace-nowrap text-sm text-gray-700">{tx.duration}</td>
                 <td className="px-6 py-3 whitespace-nowrap">
                   <span className={`px-3 py-1 rounded-full text-xs font-medium ${serviceBadgeColor(tx.serviceType)}`}>
                     {tx.serviceType}
@@ -133,7 +133,7 @@ const ClientTransactionTable: React.FC = () => {
                 className="w-28 h-28 rounded-full object-cover border-4 border-gray-100 shadow-md"
               />
               <h2 className="mt-4 text-2xl font-bold text-gray-800">{selectedTx.workerName}</h2>
-              <p className="text-gray-500 mt-1">{selectedTx.serviceType} • {selectedTx.hours}</p>
+              <p className="text-gray-500 mt-1">{selectedTx.serviceType} • {selectedTx.duration}</p>
             </div>
 
             <div className="mt-6 space-y-4 text-gray-700">
@@ -146,8 +146,8 @@ const ClientTransactionTable: React.FC = () => {
                 <span>{selectedTx.serviceType}</span>
               </div>
               <div className="flex items-start">
-                <span className="font-semibold w-32">Hours:</span>
-                <span>{selectedTx.hours}</span>
+                <span className="font-semibold w-32">Duration:</span>
+                <span>{selectedTx.duration}</span>
               </div>
               <div className="flex items-start">
                 <span className="font-semibold w-32">Payment:</span>
