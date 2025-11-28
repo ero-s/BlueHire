@@ -15,6 +15,7 @@ import ClientChats from "../Client/pages/ClientChats.tsx";
 import Bookings from "../Client/pages/Bookings.tsx";
 import Header from "../Client/components/DashboardHeader.tsx";
 import logo from "../MainAssets/images/BlueHireLogo.png";
+import TransactionPage from "../Client/pages/TransactionPage";
 
 export default function ClientSide() {
   return (
@@ -29,6 +30,7 @@ export default function ClientSide() {
       <Route path="/clientChat" element={<Chat />} />
       <Route path="/signIn" element={<SignIn />} />
       <Route path="/signUp" element={<SignUp />} />
+      <Route path="/transactions" element={<TransactionPage />} />
 
       {/* Optional 404 */}
       <Route
