@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import Footer from "../components/ClientFooter";
 import { ShieldCheck, Camera, Pencil, CheckCircle2 } from "lucide-react";
+import Header from "../components/ClientHeader";
 
 const ClientProfilePage: React.FC = () => {
   const [userData, setUserData] = useState({
@@ -39,6 +40,7 @@ const ClientProfilePage: React.FC = () => {
          1. Removed 'max-w-7xl' and 'mx-auto' so it spans full width.
          2. Changed 'mt-24' to 'pt-20' to reduce the top gap while clearing the fixed header.
       */}
+      <Header userName="Sherielyn Guadiana" />
       <main className="flex-grow w-full px-4 md:px-12 py-8 pt-20">
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_2fr] gap-8">
           {/* Left Column: Profile Card */}
