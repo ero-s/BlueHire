@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 
 // --- Mock Data and Interfaces ---
 export interface JobRequest {
@@ -21,6 +21,10 @@ export const mockJobRequests: JobRequest[] = [
 
 // --- JobRequestTable Component ---
 const JobRequestTable: React.FC = () => {
+
+  const [showProfile, setShowProfile] = useState(false);
+  const [selectedClient, setSelectedClient] = useState<JobRequest | null>(null);
+
   return (
     <div className="bg-white p-6 rounded-lg shadow-xl w-full max-w-7xl mx-auto mt-8 border border-gray-100">
       {/* Header Section */}
@@ -43,7 +47,8 @@ const JobRequestTable: React.FC = () => {
               <th scope="col" className="px-6 py-4 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider">Job Type</th>
               <th scope="col" className="px-6 py-4 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider">Location</th>
               <th scope="col" className="px-6 py-4 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider">Schedule</th>
-              <th scope="col" className="px-6 py-4 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider">Status</th>
+              <th scope="col" className="px-6 py-4 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider">Action</th>
+              <th scope="col" className="px-6 py-4 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider">Profile</th>
             </tr>
           </thead>
           {/* Table Body */}
@@ -66,6 +71,17 @@ const JobRequestTable: React.FC = () => {
                                  bg-[#5AB3E6] hover:bg-opacity-90"
                   >
                     {request.status}
+                  </button>
+                </td>
+                <td className="px-6 py-3 whitespace-nowrap text-sm">
+                  <button
+                    onClick={() => {
+                      setSelectedClient(request);
+                      setShowProfile(true);
+                    }}
+                    className="py-1 px-4 text-sm font-medium rounded-full border border-[#5AB3E6] text-[#5AB3E6] bg-white shadow-sm transition duration-150 ease-in-out hover:bg-[#5AB3E6] hover:text-white"
+                  >
+                    View Profile
                   </button>
                 </td>
               </tr>
@@ -97,6 +113,61 @@ const JobRequestTable: React.FC = () => {
           </button>
         </div>
       </div>
+      {showProfile && selectedClient && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 px-4">
+          <div className="bg-white rounded-2xl shadow-xl w-full max-w-lg p-6 md:p-8 relative animate-in zoom-in duration-200">
+            
+            {/* Close Button */}
+            <button
+              onClick={() => setShowProfile(false)}
+              className="absolute top-4 right-4 text-gray-500 hover:text-gray-800 text-xl font-bold"
+            >
+              ✕
+            </button>
+
+            {/* Profile Header */}
+            <div className="flex flex-col items-center">
+              <img
+                src="https://i.pravatar.cc/150?u=static_client"
+                alt="Client Profile"
+                className="w-28 h-28 rounded-full object-cover border-4 border-gray-100 shadow-md"
+              />
+              <h2 className="mt-4 text-2xl font-bold text-gray-800">{selectedClient.clientName}</h2>
+              <p className="text-gray-500 mt-1">{selectedClient.jobType} • {selectedClient.schedule}</p>
+            </div>
+
+            {/* Client Details */}
+            <div className="mt-6 space-y-4 text-gray-700">
+              <div className="flex items-start">
+                <span className="font-semibold w-32">Address:</span>
+                <span>{selectedClient.location}</span>
+              </div>
+              <div className="flex items-start">
+                <span className="font-semibold w-32">Job Type:</span>
+                <span>{selectedClient.jobType}</span>
+              </div>
+              <div className="flex items-start">
+                <span className="font-semibold w-32">Schedule:</span>
+                <span>{selectedClient.schedule}</span>
+              </div>
+
+              <div>
+                <span className="font-semibold">Client Info:</span>
+                <p className="text-gray-600 mt-1">Works full-time & prefers weekday bookings.</p>
+              </div>
+
+              <div>
+                <span className="font-semibold">Payment Preferences:</span>
+                <ul className="list-disc ml-6 mt-1 text-gray-600">
+                  <li>GCash</li>
+                  <li>Bank Transfer</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 };

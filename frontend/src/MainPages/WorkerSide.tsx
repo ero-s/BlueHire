@@ -10,6 +10,7 @@ import WorkerProfile from "../Worker/pages/WorkerProfilePage.tsx";
 import Landing from "./Landing.tsx";
 import SignIn from "./SignInPage.tsx";
 import SignUp from "./SignupPage.tsx";
+import TransactionPage from "../Worker/pages/TransactionPage";
 
 import { Routes, Route, Navigate} from "react-router-dom";
 
@@ -34,6 +35,7 @@ export default function WorkerSide() {
       <Route path="landing" element={<Landing />} />
       <Route path="signIn" element={<SignIn />} />
       <Route path="signUp" element={<SignUp />} />
+      <Route path="/transactions" element={<TransactionPage />} />
       
       {/* 404 Fallback */}
       <Route

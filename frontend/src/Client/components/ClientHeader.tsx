@@ -18,7 +18,7 @@ const navItems: NavItem[] = [
   { label: "Dashboard", href: "/clientDashboard" },
   { label: "Workers", href: "/findWorkers" }, 
   { label: "Bookings", href: "/bookings" },
-  { label: "Transactions", href: "/client/transactions" },
+  { label: "Transactions", href: "/transactions" },
 ];
 
 const MOCK_WORKERS = [
