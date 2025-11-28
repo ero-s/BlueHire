@@ -3,6 +3,17 @@ export interface Worker {
   name: string;
   avatar: string;
   category: string;
+  // Extended fields for Find Workers & Profile
+  location?: string;
+  rating?: number;
+  availability?: "Available" | "Busy" | "Weekends Only";
+  hourlyRate?: number;
+  bio?: string;
+  skills?: string[];
+  email?: string;
+  phone?: string;
+  address?: string;
+  coverageArea?: string;
 }
 
 export interface PastHire {

@@ -43,7 +43,7 @@ export default function TotalSpentCard({ data }: { data: SpendingItem[] }) {
           <h3 className="text-gray-500 font-medium text-sm uppercase tracking-wider">
             Total Spent (Last 12 Months)
           </h3>
-          <p className="text-3xl font-bold text-gray-900 mt-2 text-[#3b82f6]">
+          <p className="text-3xl font-bold text-gray-900 mt-2 text-[#4F7FAF]">
             $
             {total.toLocaleString("en-US", {
               minimumFractionDigits: 2,
@@ -51,7 +51,7 @@ export default function TotalSpentCard({ data }: { data: SpendingItem[] }) {
             })}
           </p>
         </div>
-        <button className="text-[#3b82f6] hover:bg-blue-50 p-2 rounded-full transition-colors">
+        <button className="text-[#4F7FAF] hover:bg-blue-50 p-2 rounded-full transition-colors">
           <ArrowUpRight size={20} />
         </button>
       </div>
@@ -64,15 +64,15 @@ export default function TotalSpentCard({ data }: { data: SpendingItem[] }) {
         >
           <defs>
             <linearGradient id="chartGradient" x1="0" x2="0" y1="0" y2="1">
-              <stop offset="0%" stopColor="#3b82f6" stopOpacity="0.2" />
-              <stop offset="100%" stopColor="#3b82f6" stopOpacity="0" />
+              <stop offset="0%" stopColor="#4F7FAF" stopOpacity="0.2" />
+              <stop offset="100%" stopColor="#4F7FAF" stopOpacity="0" />
             </linearGradient>
             <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
               <feDropShadow
                 dx="0"
                 dy="2"
                 stdDeviation="2"
-                floodColor="#3b82f6"
+                floodColor="#4F7FAF"
                 floodOpacity="0.3"
               />
             </filter>
@@ -85,7 +85,7 @@ export default function TotalSpentCard({ data }: { data: SpendingItem[] }) {
           <polyline
             points={points}
             fill="none"
-            stroke="#3b82f6"
+            stroke="#4F7FAF"
             strokeWidth="3"
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -122,7 +122,7 @@ export default function TotalSpentCard({ data }: { data: SpendingItem[] }) {
                 cx={getX(i)}
                 cy={getY(item.amount)}
                 r="4"
-                className="fill-white stroke-[#3b82f6] stroke-[3px] transition-all duration-200 group-hover:r-6 group-hover:fill-[#3b82f6]"
+                className="fill-white stroke-[#4F7FAF] stroke-[3px] transition-all duration-200 group-hover:r-6 group-hover:fill-[#3b82f6]"
               />
 
               {/* Tooltip */}

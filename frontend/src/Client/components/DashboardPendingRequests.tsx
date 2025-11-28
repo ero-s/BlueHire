@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { MOCK_BOOKINGS } from "../pages/Bookings";
-import { ChevronRight, Clock, User } from "lucide-react";
+import { ChevronRight, Clock } from "lucide-react";
 
 interface PendingRequestsProps {
   count?: number;
@@ -25,7 +25,7 @@ export default function PendingRequests({ count }: PendingRequestsProps) {
         <h2 className="text-xl font-bold text-gray-800">Pending Requests</h2>
         <button
           onClick={() => navigate("/bookings")}
-          className="text-sm text-[#3b82f6] font-semibold hover:underline"
+          className="text-sm text-[#4F7FAF] font-semibold hover:underline"
         >
           View All
         </button>
@@ -52,13 +52,13 @@ export default function PendingRequests({ count }: PendingRequestsProps) {
                 <p className="text-xs text-gray-500 mb-1">
                   {booking.worker.category}
                 </p>
-                <div className="flex items-center gap-1 text-xs text-[#3b82f6]">
+                <div className="flex items-center gap-1 text-xs text-[#4F7FAF]">
                   <Clock size={12} />
                   <span>{booking.serviceDate.split("•")[0]}</span>
                 </div>
               </div>
 
-              <div className="text-gray-300 group-hover:text-[#3b82f6] transition-colors">
+              <div className="text-gray-300 group-hover:text-[#4F7FAF] transition-colors">
                 <ChevronRight size={20} />
               </div>
             </div>
