@@ -13,7 +13,8 @@ import {
     MessageSquare,
     Wallet,
     CheckCircle2,
-    XCircle
+    XCircle,
+    X
 } from "lucide-react";
 
 interface WorkerData {
@@ -86,6 +87,39 @@ const WorkerProfile: React.FC = () => {
     </div>
   );
 
+  // --- State for Skills & Coverage Areas ---
+const [skills, setSkills] = useState<string[]>(["Carpentry", "Plumbing", "Electrical"]);
+const [coverageAreas, setCoverageAreas] = useState<string[]>(["Pasig", "Makati", "Quezon City"]);
+const [newSkill, setNewSkill] = useState("");
+const [newArea, setNewArea] = useState("");
+
+// --- Handlers for Skills ---
+const handleAddSkill = () => {
+  const trimmed = newSkill.trim();
+  if (trimmed && !skills.includes(trimmed)) {
+    setSkills(prev => [...prev, trimmed]);
+    setNewSkill("");
+  }
+};
+
+const handleRemoveSkill = (skill: string) => {
+  setSkills(prev => prev.filter(s => s !== skill));
+};
+
+// --- Handlers for Coverage Areas ---
+const handleAddArea = () => {
+  const trimmed = newArea.trim();
+  if (trimmed && !coverageAreas.includes(trimmed)) {
+    setCoverageAreas(prev => [...prev, trimmed]);
+    setNewArea("");
+  }
+};
+
+const handleRemoveArea = (area: string) => {
+  setCoverageAreas(prev => prev.filter(a => a !== area));
+};
+
+
   return (
     <div className="min-h-screen bg-[#f5f5f7] font-sans text-gray-800 flex flex-col">
       <Header userName="Sherielyn Guadiana" />
@@ -93,60 +127,144 @@ const WorkerProfile: React.FC = () => {
       <main className="flex-grow w-full max-w-7xl mx-auto px-4 md:px-6 py-8 md:py-10 mt-24">
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_2fr] gap-8">
           {/* Left Column: Profile Card */}
-          <div className="bg-white rounded-2xl shadow-sm p-8 h-fit text-center relative border border-gray-100">
-            <div className="relative w-32 h-32 mx-auto mb-6">
-              <img
-                src={userData.profileImg}
-                alt="User Profile"
-                className="w-full h-full rounded-full object-cover border-4 border-gray-100 shadow-sm"
-              />
-              <button className="absolute bottom-0 right-0 bg-blue-500 text-white p-2 rounded-full shadow-md hover:bg-blue-600 transition-colors" aria-label="Edit avatar">
-                <Camera size={18} />
-              </button>
-            </div>
+          <div className="flex flex-col gap-8 h-fit">
             
-            <h2 className="text-xl font-bold text-gray-900 mb-2">{userData.userName}</h2>
-            
-            {userData.isVerified && (
-              <div className="inline-flex items-center gap-1.5 bg-green-50 text-green-700 px-3 py-1 rounded-full text-sm font-medium mb-6 uppercase tracking-wide">
-                <ShieldCheck size={16} /> VERIFIED
-              </div>
-            )}
+            {/* Profile Card */}
+            <div className="bg-white rounded-2xl shadow-sm p-8 text-center relative border border-gray-100">
+                <div className="relative w-32 h-32 mx-auto mb-6">
+                <img
+                    src={userData.profileImg}
+                    alt="User Profile"
+                    className="w-full h-full rounded-full object-cover border-4 border-gray-100 shadow-sm"
+                />
+                <button className="absolute bottom-0 right-0 bg-blue-500 text-white p-2 rounded-full shadow-md hover:bg-blue-600 transition-colors" aria-label="Edit avatar">
+                    <Camera size={18} />
+                </button>
+                </div>
+                
+                <h2 className="text-xl font-bold text-gray-900 mb-2">{userData.userName}</h2>
+                
+                {userData.isVerified && (
+                <div className="inline-flex items-center gap-1.5 bg-green-50 text-green-700 px-3 py-1 rounded-full text-sm font-medium mb-6 uppercase tracking-wide">
+                    <ShieldCheck size={16} /> VERIFIED
+                </div>
+                )}
 
-            {/* Availability Status */}
-            <div className="mb-8 pb-8 border-b border-gray-100">
-                <div 
-                    onClick={toggleAvailability}
-                    className={`cursor-pointer select-none rounded-xl p-4 border-2 transition-all duration-200 flex items-center justify-between group ${userData.isAvailable ? 'border-green-100 bg-green-50/50' : 'border-gray-200 bg-gray-50'}`}
-                >
-                    <div className="text-left">
-                        <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Current Status</p>
-                        <p className={`font-bold ${userData.isAvailable ? 'text-green-700' : 'text-gray-600'}`}>
-                            {userData.isAvailable ? 'Available for Work' : 'Not Available'}
-                        </p>
+                {/* Availability Status */}
+                <div className="mb-8 pb-8 border-b border-gray-100">
+                    <div 
+                        onClick={toggleAvailability}
+                        className={`cursor-pointer select-none rounded-xl p-4 border-2 transition-all duration-200 flex items-center justify-between group ${userData.isAvailable ? 'border-green-100 bg-green-50/50' : 'border-gray-200 bg-gray-50'}`}
+                    >
+                        <div className="text-left">
+                            <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Current Status</p>
+                            <p className={`font-bold ${userData.isAvailable ? 'text-green-700' : 'text-gray-600'}`}>
+                                {userData.isAvailable ? 'Available for Work' : 'Not Available'}
+                            </p>
+                        </div>
+                        <div className={`w-10 h-6 rounded-full p-1 transition-colors duration-300 ${userData.isAvailable ? 'bg-green-500' : 'bg-gray-300'}`}>
+                            <div className={`bg-white w-4 h-4 rounded-full shadow-sm transform transition-transform duration-300 ${userData.isAvailable ? 'translate-x-4' : 'translate-x-0'}`} />
+                        </div>
                     </div>
-                    <div className={`w-10 h-6 rounded-full p-1 transition-colors duration-300 ${userData.isAvailable ? 'bg-green-500' : 'bg-gray-300'}`}>
-                        <div className={`bg-white w-4 h-4 rounded-full shadow-sm transform transition-transform duration-300 ${userData.isAvailable ? 'translate-x-4' : 'translate-x-0'}`} />
+                    <p className="text-xs text-gray-400 mt-2 text-left">Click to toggle your availability status for new jobs.</p>
+                </div>
+
+                {/* Bio */}
+                <div className="text-left">
+                <h3 className="text-base font-semibold text-gray-900 mb-3">Bio</h3>
+                {isEditing ? (
+                    <textarea
+                    id="bio"
+                    value={userData.bio}
+                    onChange={handleInputChange}
+                    rows={5}
+                    className="w-full px-4 py-3 border rounded-lg text-sm focus:ring-2 focus:ring-blue-100 border-blue-300 transition-all"
+                    />
+                ) : (
+                    <p className="text-sm text-gray-500 leading-relaxed">{userData.bio}</p>
+                )}
+                </div>
+            </div>
+
+            {/* Skills Card */}
+            <div className="bg-white rounded-2xl shadow-sm p-8 border border-gray-100 flex flex-col">
+                <h3 className="text-lg font-bold text-blue-600 mb-6 text-center">Skills</h3>
+                
+                <div className="flex flex-wrap gap-3 mb-8 justify-center">
+                    {skills.map((skill, index) => (
+                    <div key={index} className="bg-gray-100 border-2 border-gray-300 px-4 py-2 rounded-md flex items-center gap-3 text-gray-800 font-medium text-sm">
+                        <span>{skill}</span>
+                        <button 
+                        onClick={() => handleRemoveSkill(skill)}
+                        className="text-gray-900 hover:text-red-500 transition-colors"
+                        aria-label={`Remove ${skill}`}
+                        >
+                        <X size={16} strokeWidth={3} />
+                        </button>
+                    </div>
+                    ))}
+                </div>
+
+                <div className="mt-auto">
+                  <div className="border-2 border-blue-300 rounded-full flex items-center p-1.5 ring-blue-100 transition-all bg-white">
+                    <input 
+                      type="text" 
+                      placeholder="Add Skills..." 
+                      className="flex-grow px-4 py-2 outline-none text-gray-600 bg-transparent placeholder-gray-400 text-sm rounded-full"
+                      value={newSkill}
+                      onChange={(e) => setNewSkill(e.target.value)}
+                      onKeyDown={(e) => e.key === 'Enter' && handleAddSkill()}
+                    />
+                    <button 
+                      onClick={handleAddSkill}
+                      className="ml-2 bg-blue-100 hover:bg-blue-200 text-blue-600 font-bold py-3 px-6 rounded-full transition-colors text-sm"
+                    >
+                      Enter
+                    </button>
+                  </div>
+                </div>
+
+            </div>
+
+            {/* Coverage Areas Card */}
+            <div className="bg-white rounded-2xl shadow-sm p-8 border border-gray-100 flex flex-col">
+                <h3 className="text-lg font-bold text-blue-600 mb-6 text-center">Coverage Areas</h3>
+                
+                <div className="flex flex-wrap gap-3 mb-8 justify-center">
+                    {coverageAreas.map((area, index) => (
+                    <div key={index} className="bg-gray-100 border-2 border-gray-300 px-4 py-2 rounded-md flex items-center gap-3 text-gray-800 font-medium text-sm">
+                        <span>{area}</span>
+                        <button 
+                        onClick={() => handleRemoveArea(area)}
+                        className="text-gray-900 hover:text-red-500 transition-colors"
+                        aria-label={`Remove ${area}`}
+                        >
+                        <X size={16} strokeWidth={3} />
+                        </button>
+                    </div>
+                    ))}
+                </div>
+
+                <div className="mt-auto">
+                    <div className="border-2 border-blue-300 rounded-full flex items-center p-1.5 focus-within:ring-4 ring-blue-100 transition-all bg-white">
+                        <input 
+                            type="text" 
+                            placeholder="Add location..." 
+                            className="flex-grow px-4 py-2 outline-none text-gray-600 bg-transparent placeholder-gray-400 text-sm rounded-full"
+                            value={newArea}
+                            onChange={(e) => setNewArea(e.target.value)}
+                            onKeyDown={(e) => e.key === 'Enter' && handleAddArea()}
+                        />
+                        <button 
+                            onClick={handleAddArea}
+                            className="ml-2 bg-blue-100 hover:bg-blue-200 text-blue-600 font-bold py-3 px-6 rounded-full transition-colors text-sm"
+                        >
+                            Enter
+                        </button>
                     </div>
                 </div>
-                <p className="text-xs text-gray-400 mt-2 text-left">Click to toggle your availability status for new jobs.</p>
             </div>
 
-            {/* Bio */}
-            <div className="text-left">
-              <h3 className="text-base font-semibold text-gray-900 mb-3">Bio</h3>
-              {isEditing ? (
-                <textarea
-                  id="bio"
-                  value={userData.bio}
-                  onChange={handleInputChange}
-                  rows={5}
-                  className="w-full px-4 py-3 border rounded-lg text-sm focus:ring-2 focus:ring-blue-100 border-blue-300 transition-all"
-                />
-              ) : (
-                <p className="text-sm text-gray-500 leading-relaxed">{userData.bio}</p>
-              )}
-            </div>
           </div>
 
           {/* Right Column: Forms & Stats */}
