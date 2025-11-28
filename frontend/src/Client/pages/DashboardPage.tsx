@@ -4,13 +4,17 @@ import PostJobButton from "../components/DashboardPostJobButton.tsx";
 import TotalSpentCard from "../components/DashboardTotalSpentCard.tsx";
 import PendingRequests from "../components/DashboardPendingRequests.tsx";
 import Footer from "../components/ClientFooter.tsx";
+import Header from "../components/ClientHeader.tsx";
+
 import "../assets/css/Dashboard.css";
 
 export default function Dashboard() {
   const chartData = [30, 50, 70, 90, 95, 85, 60, 40, 55, 75, 85, 100];
 
   return (
+     
     <div className={"profileCard"}>
+      <Header userName="Sherielyn Guadiana"/> 
       <WelcomeSection userName="Juan" />
 
       {/* Main Content */}

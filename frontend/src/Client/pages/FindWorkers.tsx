@@ -4,6 +4,8 @@ import { mockWorkers } from "../components/FindWorkers/mockWorkers.ts";
 import Filters from "../components/Filters.tsx";
 import WorkerCard from "../components/WorkerCard.tsx";
 import Footer from "../components/ClientFooter.tsx";
+import Header from "../components/ClientHeader.tsx";
+
 const FindWorkers: React.FC = () => {
   const [filters, setFilters] = useState<FiltersState>({
     trade: "all",
@@ -31,7 +33,8 @@ const FindWorkers: React.FC = () => {
   return (
     <div>
       <div className="min-h-screen bg-gray-50 text-gray-800 ">
-        <div className="px-12 py-8">
+        <Header userName="Sherielyn Guadiana" />
+        <div className="px-12 py-8 pt-28 max-w-9xl mx-auto">
           <div className="lg:grid lg:grid-cols-12 lg:gap-8">
             <aside className="lg:col-span-4 xl:col-span-3 mb-8 lg:mb-0">
               <Filters
