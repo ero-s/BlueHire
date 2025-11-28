@@ -1,8 +1,6 @@
 import React, { useState } from "react";
-import Header from "../components/DashboardHeader";
 import Footer from "../components/ClientFooter";
 import { ShieldCheck, Camera, Pencil, CheckCircle2 } from "lucide-react";
-import logo from "../../MainAssets/images/BlueHireLogo.png";
 
 const ClientProfilePage: React.FC = () => {
   const [userData, setUserData] = useState({
@@ -37,8 +35,6 @@ const ClientProfilePage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-[#f5f5f7] font-sans text-gray-800 flex flex-col">
-      <Header logo={logo} userName={userData.userName} />
-
       {/* UPDATES HERE:
          1. Removed 'max-w-7xl' and 'mx-auto' so it spans full width.
          2. Changed 'mt-24' to 'pt-20' to reduce the top gap while clearing the fixed header.

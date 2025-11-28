@@ -1,10 +1,8 @@
 import PillNav from "./DashboardPillNav.tsx";
 import "../assets/css/DashboardHeader.css";
 import { LuBell, LuMail } from "react-icons/lu";
-import profileImg from "../../MainAssets/images/profile.png";
 import UserMenu from "./DashboardUserMenu.tsx";
-import React, { useState } from "react";
-import { NavLink, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 interface HeaderProps {
   logo: string;
@@ -21,7 +19,6 @@ const navItems = [
 
 export default function DashboardHeader({ logo }: HeaderProps) {
   const navigate = useNavigate();
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const profileImg = "https://i.pravatar.cc/150?u=99";
 
   const handleBellClick = (event: React.MouseEvent<HTMLButtonElement>) => {

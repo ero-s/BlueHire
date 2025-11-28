@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { X, Star, Upload } from "lucide-react";
+import { X, Star } from "lucide-react";
 import type { Booking } from "../pages/types";
 
 interface ReviewModalProps {

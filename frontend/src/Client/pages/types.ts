@@ -15,11 +15,15 @@ export interface PastHire {
 }
 
 export interface Booking {
-  id: string;
+  id: string; // Corresponds to bookingID
   worker: Worker;
-  serviceDate: string;
+  serviceDate: string; // Corresponds to scheduledDateTime
   status: "Pending" | "Confirmed" | "Completed" | "Cancelled";
   price: number;
+  // New fields from Class Diagram
+  description: string;
+  location: string;
+  createdAt: string;
 }
 
 export interface Message {

@@ -1,17 +1,11 @@
-import React, { useState } from "react";
-import Header from "../components/DashboardHeader";
-import logo from "../../MainAssets/images/BlueHireLogo.png";
-import {
-  Calendar,
-  Clock,
-  MapPin,
-  MoreHorizontal,
-  MessageSquare,
-} from "lucide-react";
+import React, { useState, useEffect, useRef } from "react";
+import { Calendar, MapPin, MoreHorizontal, MessageSquare } from "lucide-react";
 import type { Booking } from "./types";
 import ReviewModal from "../components/ReviewModal";
+import BookingManagerModal from "../components/BookingManagementModal";
+import { useLocation, useNavigate } from "react-router-dom";
 
-const MOCK_BOOKINGS: Booking[] = [
+export const MOCK_BOOKINGS: Booking[] = [
   {
     id: "BK-001",
     worker: {
@@ -23,6 +17,10 @@ const MOCK_BOOKINGS: Booking[] = [
     serviceDate: "Oct 24, 2023 • 2:00 PM",
     status: "Completed",
     price: 150.0,
+    description:
+      "Fixing the broken cabinet hinges in the kitchen and reinforcing the shelf structure.",
+    location: "123 Main St, Springfield, IL",
+    createdAt: "Oct 20, 2023",
   },
   {
     id: "BK-002",
@@ -35,6 +33,10 @@ const MOCK_BOOKINGS: Booking[] = [
     serviceDate: "Oct 26, 2023 • 9:00 AM",
     status: "Confirmed",
     price: 85.0,
+    description:
+      "Repairing a leak under the master bathroom sink and checking pipe pressure.",
+    location: "456 Elm St, Shelbyville, IL",
+    createdAt: "Oct 22, 2023",
   },
   {
     id: "BK-003",
@@ -47,6 +49,10 @@ const MOCK_BOOKINGS: Booking[] = [
     serviceDate: "Oct 30, 2023 • 10:00 AM",
     status: "Pending",
     price: 60.0,
+    description:
+      "General house cleaning for a 2-bedroom apartment, including window washing.",
+    location: "789 Oak Ave, Capital City, IL",
+    createdAt: "Oct 28, 2023",
   },
   {
     id: "BK-004",
@@ -59,16 +65,57 @@ const MOCK_BOOKINGS: Booking[] = [
     serviceDate: "Oct 10, 2023 • 4:00 PM",
     status: "Cancelled",
     price: 45.0,
+    description: "Math tutoring session for Grade 10 Algebra.",
+    location: "Online Session",
+    createdAt: "Oct 05, 2023",
+  },
+  {
+    id: "BK-005",
+    worker: {
+      id: "w5",
+      name: "Maria Clara",
+      category: "Gardening",
+      avatar: "https://i.pravatar.cc/150?u=8",
+    },
+    serviceDate: "Nov 02, 2023 • 8:00 AM",
+    status: "Pending",
+    price: 120.0,
+    description:
+      "Lawn mowing, hedge trimming, and clearing out autumn leaves from the backyard.",
+    location: "123 Main St, Springfield, IL",
+    createdAt: "Oct 29, 2023",
   },
 ];
 
 const Bookings: React.FC = () => {
   const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null);
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
+  const [isManagerModalOpen, setIsManagerModalOpen] = useState(false);
+
+  const location = useLocation();
+  const navigate = useNavigate();
+  const refs = useRef<{ [key: string]: HTMLDivElement | null }>({});
+
+  useEffect(() => {
+    // Check if we need to highlight a specific booking
+    if (location.state?.highlightId) {
+      const id = location.state.highlightId;
+      const element = refs.current[id];
+      if (element) {
+        // Scroll into view
+        element.scrollIntoView({ behavior: "smooth", block: "center" });
+      }
+    }
+  }, [location]);
 
   const handleReviewClick = (booking: Booking) => {
     setSelectedBooking(booking);
     setIsReviewModalOpen(true);
+  };
+
+  const handleManagerClick = (booking: Booking) => {
+    setSelectedBooking(booking);
+    setIsManagerModalOpen(true);
   };
 
   const getStatusColor = (status: Booking["status"]) => {
@@ -86,29 +133,42 @@ const Bookings: React.FC = () => {
     }
   };
 
-  return (
-    <div>
-      <Header />
-      <div className="p-6 md:p-10 max-w-7xl mx-auto w-full">
-        <div className="mb-8 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-800 mb-2">
-              Booking Management
-            </h1>
-            <p className="text-gray-500">
-              Track current and past service appointments.
-            </p>
-          </div>
-          <button className="bg-[#3b82f6] hover:bg-[#2563eb] text-white px-6 py-2.5 rounded-full font-semibold shadow-sm transition-all text-sm">
-            + New Booking
-          </button>
-        </div>
+  const highlightId = location.state?.highlightId;
 
-        <div className="grid grid-cols-1 gap-6">
-          {MOCK_BOOKINGS.map((booking) => (
+  return (
+    <div className="p-6 md:p-10 mx-auto w-full">
+      <div className="mb-8 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-800 mb-2">
+            Booking Management
+          </h1>
+          <p className="text-gray-500">
+            Track current and past service appointments.
+          </p>
+        </div>
+        <button
+          onClick={() => navigate("/post-job")}
+          className="bg-[#3b82f6] hover:bg-[#2563eb] text-white px-6 py-2.5 rounded-full font-semibold shadow-sm transition-all text-sm flex items-center gap-2"
+        >
+          <span>+</span> New Booking
+        </button>
+      </div>
+
+      <div className="grid grid-cols-1 gap-6">
+        {MOCK_BOOKINGS.map((booking) => {
+          const isHighlighted = highlightId === booking.id;
+          return (
             <div
               key={booking.id}
-              className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 flex flex-col md:flex-row gap-6 items-start md:items-center hover:shadow-md transition-shadow"
+              ref={(el) => {
+                if (el) refs.current[booking.id] = el;
+              }}
+              className={`bg-white rounded-2xl shadow-sm border p-6 flex flex-col md:flex-row gap-6 items-start md:items-center transition-all duration-500
+                ${
+                  isHighlighted
+                    ? "border-[#3b82f6] shadow-[0_0_0_2px_rgba(59,130,246,0.3)] bg-blue-50/30"
+                    : "border-gray-100 hover:shadow-md"
+                }`}
             >
               {/* Left: Worker Info */}
               <div className="flex items-center gap-4 min-w-[200px]">
@@ -140,7 +200,7 @@ const Bookings: React.FC = () => {
                 </div>
                 <div className="flex items-center gap-2 text-gray-600">
                   <MapPin size={18} className="text-[#3b82f6]" />
-                  <span className="text-sm">123 Main St, Springfield</span>
+                  <span className="text-sm truncate">{booking.location}</span>
                 </div>
                 <div className="flex items-center gap-2 text-gray-600">
                   <span className="text-sm font-bold text-gray-900">
@@ -166,25 +226,37 @@ const Bookings: React.FC = () => {
                   </button>
                 ) : (
                   <div className="flex gap-2">
-                    <button className="p-2 text-gray-400 hover:text-[#3b82f6] hover:bg-blue-50 rounded-full transition-colors">
+                    <button
+                      onClick={() => navigate("/messages")}
+                      className="p-2 text-gray-400 hover:text-[#3b82f6] hover:bg-blue-50 rounded-full transition-colors"
+                    >
                       <MessageSquare size={20} />
                     </button>
-                    <button className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full transition-colors">
+                    <button
+                      onClick={() => handleManagerClick(booking)}
+                      className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full transition-colors"
+                    >
                       <MoreHorizontal size={20} />
                     </button>
                   </div>
                 )}
               </div>
             </div>
-          ))}
-        </div>
-
-        <ReviewModal
-          isOpen={isReviewModalOpen}
-          onClose={() => setIsReviewModalOpen(false)}
-          booking={selectedBooking}
-        />
+          );
+        })}
       </div>
+
+      <ReviewModal
+        isOpen={isReviewModalOpen}
+        onClose={() => setIsReviewModalOpen(false)}
+        booking={selectedBooking}
+      />
+
+      <BookingManagerModal
+        isOpen={isManagerModalOpen}
+        onClose={() => setIsManagerModalOpen(false)}
+        booking={selectedBooking}
+      />
     </div>
   );
 };

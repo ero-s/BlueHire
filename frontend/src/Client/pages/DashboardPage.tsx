@@ -1,11 +1,9 @@
-import Header from "../components/DashboardHeader.tsx";
 import WelcomeSection from "../components/DashboardWelcomeSection.tsx";
 import StatCard from "../components/DashboardStatCard.tsx";
 import PostJobButton from "../components/DashboardPostJobButton.tsx";
 import TotalSpentCard from "../components/DashboardTotalSpentCard.tsx";
 import PendingRequests from "../components/DashboardPendingRequests.tsx";
 import Footer from "../components/ClientFooter.tsx";
-import logo from "../../MainAssets/images/BlueHireLogo.png";
 import "../assets/css/Dashboard.css";
 
 export default function Dashboard() {
@@ -13,8 +11,6 @@ export default function Dashboard() {
 
   return (
     <div className={"profileCard"}>
-      <Header logo={logo} userName="Shervin" />
-
       <WelcomeSection userName="Juan" />
 
       {/* Main Content */}

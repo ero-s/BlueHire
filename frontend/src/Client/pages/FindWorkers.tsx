@@ -3,9 +3,7 @@ import type { FiltersState } from "../components/FindWorkers/types.ts";
 import { mockWorkers } from "../components/FindWorkers/mockWorkers.ts";
 import Filters from "../components/Filters.tsx";
 import WorkerCard from "../components/WorkerCard.tsx";
-import Header from "../components/DashboardHeader.tsx";
 import Footer from "../components/ClientFooter.tsx";
-import logo from "../../MainAssets/images/BlueHireLogo.png";
 const FindWorkers: React.FC = () => {
   const [filters, setFilters] = useState<FiltersState>({
     trade: "all",
@@ -32,7 +30,6 @@ const FindWorkers: React.FC = () => {
 
   return (
     <div>
-      <Header logo={logo} userName="Shervin" />
       <div className="min-h-screen bg-gray-50 text-gray-800 ">
         <div className="px-12 py-8">
           <div className="lg:grid lg:grid-cols-12 lg:gap-8">

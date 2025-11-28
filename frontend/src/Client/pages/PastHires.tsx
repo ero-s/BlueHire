@@ -1,9 +1,6 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
-import { Star, ChevronRight, ExternalLink } from "lucide-react";
+import { Star, ExternalLink } from "lucide-react";
 import type { PastHire } from "./types";
-import Header from "../components/DashboardHeader.tsx";
-import logo from "../../MainAssets/images/BlueHireLogo.png";
 
 const MOCK_PAST_HIRES: PastHire[] = [
   {
@@ -61,8 +58,6 @@ const MOCK_PAST_HIRES: PastHire[] = [
 ];
 
 const PastHires: React.FC = () => {
-  const navigate = useNavigate();
-
   const handleRowClick = (id: string) => {
     // In a real app, this route would exist. For now, we simulate the action.
     console.log(`Navigating to Transaction List / Details for ${id}`);
@@ -73,8 +68,7 @@ const PastHires: React.FC = () => {
 
   return (
     <div>
-      <Header logo={logo} />
-      <div className="p-6 md:p-10 max-w-7xl mx-auto w-full">
+      <div className="p-6 md:p-10 mx-auto w-full">
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-800 mb-2">Past Hires</h1>
           <p className="text-gray-500">

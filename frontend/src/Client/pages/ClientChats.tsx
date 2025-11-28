@@ -1,14 +1,10 @@
 import React, { useState, useEffect, useRef } from "react";
-import Header from "../components/DashboardHeader";
-import logo from "../../MainAssets/images/BlueHireLogo.png";
 import {
   Search,
-  Plus,
   Info,
   MoreHorizontal,
   Send,
   Paperclip,
-  Check,
   X,
   Upload,
   ArrowLeft,
@@ -251,8 +247,7 @@ const Chat: React.FC = () => {
 
   return (
     <div>
-      <Header logo={logo} userName={"Shervin"} />
-      <div className="h-[calc(100vh-7rem)] p-4 w-full max-w-[1600px] mx-auto overflow-hidden">
+      <div className="h-[calc(100vh-7rem)] p-4 w-full mx-auto overflow-hidden">
         <div className="flex flex-col lg:flex-row gap-6 w-full h-full">
           {/* --- Sidebar: Messages List --- */}
           <div
