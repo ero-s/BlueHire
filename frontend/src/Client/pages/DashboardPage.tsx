@@ -9,12 +9,24 @@ import Header from "../components/ClientHeader.tsx";
 import "../assets/css/Dashboard.css";
 
 export default function Dashboard() {
-  const chartData = [30, 50, 70, 90, 95, 85, 60, 40, 55, 75, 85, 100];
+  const spendingData = [
+    { month: "Jan", amount: 150 },
+    { month: "Feb", amount: 230 },
+    { month: "Mar", amount: 180 },
+    { month: "Apr", amount: 320 },
+    { month: "May", amount: 290 },
+    { month: "Jun", amount: 450 },
+    { month: "Jul", amount: 380 },
+    { month: "Aug", amount: 200 },
+    { month: "Sep", amount: 250 },
+    { month: "Oct", amount: 310 },
+    { month: "Nov", amount: 400 },
+    { month: "Dec", amount: 520 },
+  ];
 
   return (
-     
     <div className={"profileCard"}>
-      <Header userName="Sherielyn Guadiana"/> 
+      <Header userName="Sherielyn Guadiana" />
       <WelcomeSection userName="Juan" />
 
       {/* Main Content */}
@@ -26,7 +38,7 @@ export default function Dashboard() {
             <PostJobButton />
           </div>
 
-          <TotalSpentCard total={0} chartData={chartData} />
+          <TotalSpentCard data={spendingData} />
         </div>
 
         <PendingRequests count={5} />
