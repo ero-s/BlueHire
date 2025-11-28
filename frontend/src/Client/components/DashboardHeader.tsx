@@ -1,10 +1,8 @@
 import PillNav from "./DashboardPillNav.tsx";
 import "../assets/css/DashboardHeader.css";
 import { LuBell, LuMail } from "react-icons/lu";
-import profileImg from "../../MainAssets/images/profile.png";
-import React from "react";
 import UserMenu from "./DashboardUserMenu.tsx";
-import SearchBar from "./DashboardSearchBar.tsx";
+import { useNavigate } from "react-router-dom";
 
 interface HeaderProps {
   logo: string;
@@ -13,15 +11,24 @@ interface HeaderProps {
 
 const navItems = [
   { label: "Dashboard", href: "/" },
-  { label: "Bookings", href: "/jobposts" },
   { label: "Workers", href: "/findworkers" },
+  { label: "Bookings", href: "/bookings" },
   { label: "Transactions", href: "/transactions" },
+  { label: "Hire History", href: "/pastHire" },
 ];
 
 export default function DashboardHeader({ logo }: HeaderProps) {
+  const navigate = useNavigate();
+  const profileImg = "https://i.pravatar.cc/150?u=99";
+
   const handleBellClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
     console.log("Bell clicked!");
+  };
+
+  const handleMailClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+    navigate("/messages");
   };
 
   return (
@@ -40,9 +47,13 @@ export default function DashboardHeader({ logo }: HeaderProps) {
       />
 
       <div className={"right-side-header"}>
-        <SearchBar />
+        {/*<SearchBar />*/}
 
-        <button className={"btn-header"} type="button">
+        <button
+          className="w-10 h-10 flex items-center justify-center rounded-full bg-white border border-gray-200 text-gray-600 hover:text-[#3b82f6] hover:border-[#3b82f6] hover:shadow-md transition-all duration-200 shadow-sm relative group"
+          type="button"
+          onClick={handleMailClick}
+        >
           <LuMail size={22} className={"icon"} />
         </button>
 

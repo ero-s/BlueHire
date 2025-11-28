@@ -1,4 +1,3 @@
-
 import { Routes, Route } from "react-router-dom"; // <-- Import this
 
 // MAIN PAGES IMPORTS
@@ -12,7 +11,7 @@ import SignIn from "./MainPages/SignInPage";
 // CLIENT PAGES IMPORTS
 
 import BookingJobManagement from "./Client/pages/BookingJobManagementPage";
-import ClientDashboard from "./Client/pages/DashboardPage"; 
+import ClientDashboard from "./Client/pages/DashboardPage";
 import FindWorkers from "./Client/pages/FindWorkers";
 import JobRequestFormPage from "./Client/pages/JobRequestForm";
 import ProfilePage from "./Client/pages/ClientProfilePage";

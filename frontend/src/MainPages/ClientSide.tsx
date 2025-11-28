@@ -10,6 +10,11 @@ import SignIn from "./SignInPage.tsx";
 import SignUp from "./SignupPage.tsx";
 import "../Client/assets/css/Client.css";
 import { Routes, Route } from "react-router-dom";
+import PastHires from "../Client/pages/PastHires.tsx";
+import ClientChats from "../Client/pages/ClientChats.tsx";
+import Bookings from "../Client/pages/Bookings.tsx";
+import Header from "../Client/components/DashboardHeader.tsx";
+import logo from "../MainAssets/images/BlueHireLogo.png";
 
 export default function ClientSide() {
   return (

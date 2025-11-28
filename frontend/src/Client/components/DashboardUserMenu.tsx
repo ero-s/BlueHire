@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { LuUser, LuSettings, LuLogOut, LuChevronDown } from "react-icons/lu";
+import { LuUser, LuLogOut, LuChevronDown } from "react-icons/lu";
 
 interface UserMenuProps {
   profileImg: string;
@@ -71,14 +71,6 @@ const DashboardUserMenu: React.FC<UserMenuProps> = ({ profileImg }) => {
             >
               <LuUser size={16} />
               <span>Profile</span>
-            </a>
-            <a
-              href="#"
-              onClick={handleActionClick("/settings")}
-              className="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors rounded-md mx-1"
-            >
-              <LuSettings size={16} />
-              <span>Settings</span>
             </a>
           </div>
           <div className="mt-1 pt-1 border-t border-gray-100">

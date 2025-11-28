@@ -8,22 +8,13 @@ import {
   Globe,
   Briefcase,
 } from "lucide-react";
-import PillNav from "../components/DashboardPillNav.tsx";
 import "../assets/css/SettingsPage.css";
-import logo from "../../MainAssets/images/BlueHireLogo.png";
-import Header from "../components/DashboardHeader.tsx"; // 1. Import your new CSS file
 
 interface SettingCardProps {
   icon: React.ReactNode;
   title: string;
   description: string;
 }
-
-const navItems = [
-  { label: "Dashboard", href: "/" },
-  { label: "Bookings", href: "/bookings" },
-  { label: "Transactions", href: "/transactions" },
-];
 
 // 2. Updated SettingCard to use CSS classes
 const SettingCard: React.FC<SettingCardProps> = ({
@@ -47,8 +38,6 @@ export default function Settings() {
   return (
     // 3. Use .settings-page for the main container
     <div>
-      <Header logo={logo} userName="Juan Dela Cruz" />
-
       <div className="settings-page">
         <div className="settings-content">
           <h1 className="settings-title">Settings</h1>
