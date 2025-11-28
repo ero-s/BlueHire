@@ -1,5 +1,5 @@
 import React, { useState, useRef } from "react";
-import Logo from "../Logo/Logo";
+import Logo from "../MainComponents/LandingComponents/Logo/Logo";
 import { Link, useNavigate } from "react-router-dom";
 import { ArrowLeft } from "lucide-react"; // 👈 Lucide icon for back button
 
@@ -62,7 +62,7 @@ const SignUp: React.FC = () => {
 
       {/* --- Back Button --- */}
       <button
-        onClick={() => navigate("/")}
+        onClick={() => navigate("/landing")}
         className="absolute top-6 left-6 z-20 flex items-center gap-2 bg-white/70 backdrop-blur-md px-3 py-2 rounded-full shadow-md hover:bg-white/90 transition-all duration-200"
       >
         <ArrowLeft className="w-5 h-5 text-bluehire-blue" />

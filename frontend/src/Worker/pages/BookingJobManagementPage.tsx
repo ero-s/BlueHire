@@ -1,6 +1,7 @@
 import React from 'react';
 import Header from '../components/WorkerHeader'; // Assuming your Navbar is here based on previous context
 import BookingJobManagementMainSection from '../components/BookingJobManagementMainSection.tsx';
+import Footer from '../components/WorkerFooter.tsx';
   
 const BookingJobManagementPage: React.FC = () => {
   return (
@@ -15,6 +16,7 @@ const BookingJobManagementPage: React.FC = () => {
       <div className="pt-28 pb-10 px-4 md:px-8 lg:px-12">
         <BookingJobManagementMainSection />
       </div>
+      <Footer />
     </div>
   );
 };
