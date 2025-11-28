@@ -16,6 +16,7 @@ import FindWorkers from "./Client/pages/FindWorkers";
 import JobRequestFormPage from "./Client/pages/JobRequestForm";
 import ProfilePage from "./Client/pages/ClientProfilePage";
 import Settings from "./Client/pages/SettingsPage";
+import ClientTransactionPage from "./Client/pages/TransactionPage";
 
 // CLIENT SIDE ROUTER
 import ClientSide from "./MainPages/ClientSide";
@@ -33,14 +34,16 @@ import WorkerProfilePage from "./Worker/pages/WorkerProfilePage";
 import JobRequestPage from "./Worker/pages/JobRequestPage";
 import EarningsReports from "./Worker/pages/Earnings&ReportsPage";
 import JobFeedPage from "./Worker/pages/JobFeedPage";
+import WorkerTransactionPage from "./Worker/pages/TransactionPage";
 
 // WORKER SIDE ROUTER
 import WorkerSide from "./MainPages/WorkerSide";
 
 
+
 // =============================================================
 export default function App() {
   return (
-    <BookingJobManagement/>
+    <WorkerTransactionPage/>
   );
 }
