@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router-dom"; // Import useNavigate
 import WelcomeSection from "../components/DashboardWelcomeSection.tsx";
 import StatCard from "../components/DashboardStatCard.tsx";
 import PostJobButton from "../components/DashboardPostJobButton.tsx";
@@ -9,6 +10,8 @@ import Header from "../components/ClientHeader.tsx";
 import "../assets/css/Dashboard.css";
 
 export default function Dashboard() {
+  const navigate = useNavigate(); // Initialize hook
+
   const spendingData = [
     { month: "Jan", amount: 150 },
     { month: "Feb", amount: 230 },
@@ -24,6 +27,19 @@ export default function Dashboard() {
     { month: "Dec", amount: 520 },
   ];
 
+  // Navigation Handlers
+  const handleOngoingClick = () => {
+    // Navigate to your Booking Management route. 
+    // We pass 'ongoing' in the state so the target page knows what to filter.
+    navigate("/bookings", { state: { status: "ongoing" } });
+  };
+
+  const handlePastHiresClick = () => {
+    // Navigate to your Booking Management route.
+    // We pass 'completed' in the state.
+    navigate("/bookings", { state: { status: "completed" } });
+  };
+
   return (
     <div className={"profileCard"}>
       <Header userName="Sherielyn Guadiana" />
@@ -33,8 +49,17 @@ export default function Dashboard() {
       <div className={"dashboard-card-main"}>
         <div className={"dashboard-left-side"}>
           <div className={"dashboard-card-row"}>
-            <StatCard label="Ongoing Jobs" value={0} />
-            <StatCard label="Past Hires" value={0} />
+            {/* Added onClick handlers to the cards */}
+            <StatCard 
+              label="Ongoing Jobs" 
+              value={0} 
+              onClick={handleOngoingClick} 
+            />
+            <StatCard 
+              label="Past Hires" 
+              value={0} 
+              onClick={handlePastHiresClick} 
+            />
             <PostJobButton />
           </div>
 
