@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { 
   ChevronDown, 
   ChevronLeft, 
@@ -6,7 +7,8 @@ import {
   X, 
   MessageSquare,
   Star,
-  Clock
+  Clock,
+  RotateCw // Imported for the Rehire icon
 } from 'lucide-react';
 
 // --- Types ---
@@ -37,9 +39,11 @@ const MOCK_BOOKINGS: Booking[] = [
 ];
 
 const ClientBookingManagementMainSection: React.FC = () => {
+  const location = useLocation();
+  const navigate = useNavigate();
   const [filterStatus, setFilterStatus] = useState<string>('All Status');
 
-  // Review State: Stores reviews by Job ID
+  // Review State
   const [reviews, setReviews] = useState<Record<string, Review>>({});
   
   // Modal State
@@ -48,6 +52,18 @@ const ClientBookingManagementMainSection: React.FC = () => {
   const [currentJobId, setCurrentJobId] = useState<string | null>(null);
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState('');
+
+  // --- EFFECT: Check for incoming Dashboard filters ---
+  useEffect(() => {
+    if (location.state && location.state.status) {
+      const incomingStatus = location.state.status;
+      if (incomingStatus === 'ongoing') {
+        setFilterStatus('Ongoing');
+      } else if (incomingStatus === 'completed') {
+        setFilterStatus('Completed');
+      }
+    }
+  }, [location]);
 
   // Filter Logic
   const filteredBookings = MOCK_BOOKINGS.filter(booking => 
@@ -69,8 +85,6 @@ const ClientBookingManagementMainSection: React.FC = () => {
   // Modal Handlers
   const openRateModal = (jobId: string) => {
     setCurrentJobId(jobId);
-    
-    // Check if review exists
     if (reviews[jobId]) {
         const existingReview = reviews[jobId];
         setRating(existingReview.rating);
@@ -81,7 +95,6 @@ const ClientBookingManagementMainSection: React.FC = () => {
         setComment('');
         setIsViewMode(false);
     }
-    
     setIsModalOpen(true);
   };
 
@@ -179,14 +192,14 @@ const ClientBookingManagementMainSection: React.FC = () => {
                   <td className="py-6 px-4 text-sm font-bold text-[#4D7EAF]">{booking.amount}</td>
                   <td className="py-6 px-4">{getStatusBadge(booking.status)}</td>
                   
-                  {/* Actions Column (Client View) */}
+                  {/* Actions Column */}
                   <td className="py-6 px-4">
                     <div className="flex flex-col gap-2 items-center w-full">
                       
                       {booking.status === 'Ongoing' && (
                         <>
                            <button 
-                            onClick={() => console.log('Navigate to Chat')}
+                            onClick={() => navigate('/client/chat')}
                             className="w-full flex items-center justify-center gap-2 px-3 py-1.5 rounded-lg bg-[#5AB3E6] text-white text-xs font-medium hover:bg-[#4a9bc8] shadow-sm transition-colors"
                           >
                              <MessageSquare size={14} /> Chat Worker
@@ -196,6 +209,15 @@ const ClientBookingManagementMainSection: React.FC = () => {
 
                       {booking.status === 'Completed' && (
                         <>
+                            {/* NEW: Rehire Button */}
+                            <button 
+                                onClick={() => console.log(`Rehire ${booking.workerName}`)}
+                                className="w-full flex items-center justify-center gap-2 px-3 py-1.5 rounded-lg bg-[#4D7EAF] text-white text-xs font-medium hover:bg-[#3d6691] shadow-sm transition-colors"
+                            >
+                                <RotateCw size={14} /> Rehire
+                            </button>
+
+                            {/* Existing Review Button */}
                             {reviews[booking.id] ? (
                                 <button 
                                     onClick={() => openRateModal(booking.id)}

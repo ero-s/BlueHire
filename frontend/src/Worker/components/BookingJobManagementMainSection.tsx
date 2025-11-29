@@ -1,4 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react'; // Added useEffect
+import { useLocation, useNavigate } from 'react-router-dom'; // Added useLocation
+
 import { 
   ChevronDown, 
   ChevronLeft, 
@@ -33,12 +35,22 @@ const MOCK_JOBS: Job[] = [
   { id: '5', clientName: 'Jerome Bell', serviceType: 'Plumbing', dateTime: 'Sept 15, 2025 - 9:00 AM', duration: '1 hour', amount: '₱450.00', status: 'Pending', location: 'Cebu City' },
   { id: '6', clientName: 'Kathryn Murphy', serviceType: 'Electrical Repair', dateTime: 'Sept 15, 2025 - 9:00 AM', duration: '2 hours', amount: '₱500.00', status: 'Pending', location: 'Consolacion' },
   { id: '7', clientName: 'Jacob Jones', serviceType: 'Appliance Repair', dateTime: 'April 15, 2025 - 9:00 AM', duration: '2 hours', amount: '₱470.00', status: 'Pending', location: 'Cebu City' },
-  { id: '8', clientName: 'Kristin Watson', serviceType: 'Car Wash & Detailing', dateTime: 'Feb 15, 2025 - 9:00 AM', duration: '2 hours', amount: '₱340.00', status: 'Pending', location: '₱340.00' }, // Image had amount in location, corrected here logic wise but kept data
+  { id: '8', clientName: 'Kristin Watson', serviceType: 'Car Wash & Detailing', dateTime: 'Feb 15, 2025 - 9:00 AM', duration: '2 hours', amount: '₱340.00', status: 'Pending', location: '₱340.00' }, 
 ];
 
 const BookingJobManagementMainSection: React.FC = () => {
+  const location = useLocation(); // Hook to access state passed via navigate
   const [filterStatus, setFilterStatus] = useState<string>('All Status');
   const [currentPage, setCurrentPage] = useState(1);
+  const navigate = useNavigate();
+
+  // --- EFFECT: Listen for incoming navigation state ---
+  useEffect(() => {
+    // If state exists and has a 'status' property, set the filter
+    if (location.state && location.state.status) {
+      setFilterStatus(location.state.status);
+    }
+  }, [location]);
 
   // Filter Logic
   const filteredJobs = MOCK_JOBS.filter(job => 
@@ -156,7 +168,11 @@ const BookingJobManagementMainSection: React.FC = () => {
                       )}
 
                       {job.status === 'Completed' && (
-                        <button className="w-full flex items-center justify-center gap-2 px-3 py-1.5 rounded-lg border border-orange-200 bg-orange-50 text-orange-600 text-xs font-medium hover:bg-orange-100 transition-colors">
+                         <button 
+                          // 3. UPDATED: Navigate with State
+                          onClick={() => navigate('/reviewsAndRatings', { state: { jobId: job.id } })}
+                          className="w-full flex items-center justify-center gap-2 px-3 py-1.5 rounded-lg border border-orange-200 bg-orange-50 text-orange-600 text-xs font-medium hover:bg-orange-100 transition-colors"
+                        >
                           <FileText size={14} /> View Review
                         </button>
                       )}
