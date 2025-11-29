@@ -47,8 +47,7 @@ const JobRequestTable: React.FC = () => {
               <th scope="col" className="px-6 py-4 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider">Job Type</th>
               <th scope="col" className="px-6 py-4 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider">Location</th>
               <th scope="col" className="px-6 py-4 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider">Schedule</th>
-              <th scope="col" className="px-6 py-4 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider">Action</th>
-              <th scope="col" className="px-6 py-4 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider">Profile</th>
+              <th scope="col" className="px-6 py-4 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider">Actions</th>
             </tr>
           </thead>
           {/* Table Body */}
@@ -65,25 +64,33 @@ const JobRequestTable: React.FC = () => {
                 <td className="px-6 py-3 whitespace-nowrap text-sm text-gray-700">{request.location}</td>
                 <td className="px-6 py-3 whitespace-nowrap text-sm text-gray-700">{request.schedule}</td>
                 <td className="px-6 py-3 whitespace-nowrap text-sm">
-                  {/* Status Button: Changed bg-gradient-to-b from-blue-400 to-blue-500 to a solid bg-[#5AB3E6] */}
-                  <button
-                    className="py-1 px-4 text-sm font-medium rounded-full text-white shadow-md transition duration-150 ease-in-out
-                                 bg-[#5AB3E6] hover:bg-opacity-90"
-                  >
-                    {request.status}
-                  </button>
+                  <div className="flex flex-col gap-2">
+
+                    {/* Accept Button */}
+                    <button
+                      className="w-32 py-1.5 text-sm font-medium rounded-full 
+                                text-white bg-[#5AB3E6] shadow 
+                                hover:bg-opacity-90 transition"
+                    >
+                      {request.status}
+                    </button>
+
+                    {/* View Profile Button */}
+                    <button
+                      onClick={() => {
+                        setSelectedClient(request);
+                        setShowProfile(true);
+                      }}
+                      className="w-32 py-1.5 text-sm font-medium rounded-full 
+                                border border-[#5AB3E6] text-[#5AB3E6] bg-white shadow 
+                                hover:bg-[#5AB3E6] hover:text-white transition"
+                    >
+                      View Profile
+                    </button>
+
+                  </div>
                 </td>
-                <td className="px-6 py-3 whitespace-nowrap text-sm">
-                  <button
-                    onClick={() => {
-                      setSelectedClient(request);
-                      setShowProfile(true);
-                    }}
-                    className="py-1 px-4 text-sm font-medium rounded-full border border-[#5AB3E6] text-[#5AB3E6] bg-white shadow-sm transition duration-150 ease-in-out hover:bg-[#5AB3E6] hover:text-white"
-                  >
-                    View Profile
-                  </button>
-                </td>
+
               </tr>
             ))}
           </tbody>
@@ -116,14 +123,6 @@ const JobRequestTable: React.FC = () => {
       {showProfile && selectedClient && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 px-4">
           <div className="bg-white rounded-2xl shadow-xl w-full max-w-lg p-6 md:p-8 relative animate-in zoom-in duration-200">
-            
-            {/* Close Button */}
-            <button
-              onClick={() => setShowProfile(false)}
-              className="absolute top-4 right-4 text-gray-500 hover:text-gray-800 text-xl font-bold"
-            >
-              ✕
-            </button>
 
             {/* Profile Header */}
             <div className="flex flex-col items-center">
@@ -164,6 +163,21 @@ const JobRequestTable: React.FC = () => {
                 </ul>
               </div>
             </div>
+            {/* Footer Buttons */}
+            <div className="mt-5 flex justify-end gap-2">
+              <button
+                className="px-3 py-1.5 text-sm rounded-full bg-[#5AB3E6] text-white font-medium shadow hover:bg-opacity-90"
+              >
+                Message
+              </button>
+
+              <button
+                onClick={() => setShowProfile(false)}
+                className="px-3 py-1.5 text-sm rounded-full border border-gray-400 text-gray-700 hover:bg-gray-100"
+              >
+                Close
+              </button>
+            </div>      
           </div>
         </div>
       )}
