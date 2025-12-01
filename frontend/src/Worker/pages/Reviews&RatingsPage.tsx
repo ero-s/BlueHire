@@ -1,11 +1,11 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
-import { ArrowLeft } from 'lucide-react';
+// import { useNavigate } from 'react-router-dom';
+// import { ArrowLeft } from 'lucide-react';
 import WorkerNavbar from '../components/WorkerHeader'; // Adjust path
 import ReviewsRatingsMainSection from '../components/ReviewsRatingsMainSection';
 
 const ReviewsRatingsPage: React.FC = () => {
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
 
   return (
     <div className="bg-[#F6F6F6] min-h-screen w-full font-sans">

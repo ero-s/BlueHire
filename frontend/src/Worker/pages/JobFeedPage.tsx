@@ -237,7 +237,7 @@ const JobFilters: React.FC<{
         </div>
 
         <div className="mb-8">
-          <label htmlFor="sort" className="block text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
+          <label htmlFor="sort" className="block text-sm font-semibold text-gray-700 mb-2 items-center gap-2">
             <ArrowUpDown size={16} className="text-gray-400" />
             Sort by
           </label>

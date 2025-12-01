@@ -41,7 +41,7 @@ const MOCK_JOBS: Job[] = [
 const BookingJobManagementMainSection: React.FC = () => {
   const location = useLocation(); // Hook to access state passed via navigate
   const [filterStatus, setFilterStatus] = useState<string>('All Status');
-  const [currentPage, setCurrentPage] = useState(1);
+  // const [currentPage, setCurrentPage] = useState(1);
   const navigate = useNavigate();
 
   // --- EFFECT: Listen for incoming navigation state ---
@@ -170,7 +170,7 @@ const BookingJobManagementMainSection: React.FC = () => {
                       {job.status === 'Completed' && (
                          <button 
                           // 3. UPDATED: Navigate with State
-                          onClick={() => navigate('/reviewsAndRatings', { state: { jobId: job.id } })}
+                          onClick={() => navigate("/worker/reviews", { state: { jobId: job.id } })}
                           className="w-full flex items-center justify-center gap-2 px-3 py-1.5 rounded-lg border border-orange-200 bg-orange-50 text-orange-600 text-xs font-medium hover:bg-orange-100 transition-colors"
                         >
                           <FileText size={14} /> View Review
