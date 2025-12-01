@@ -39,7 +39,8 @@ const DashboardMainSection: React.FC = () => {
         
         {/* Ongoing Jobs */}
         <div 
-          onClick={() => navigate('/bookingJobsManagement')}
+          // UPDATED: Passing state 'Ongoing'
+          onClick={() => navigate('/bookingJobsManagement', { state: { status: 'Ongoing' } })}
           className="bg-white p-8 rounded-3xl shadow-sm flex flex-col justify-center items-center h-[200px] hover:shadow-md transition-all cursor-pointer group border border-transparent hover:border-[#5AB3E6]"
         >
           <h3 className="text-lg text-gray-600 font-medium mb-2 group-hover:text-[#4D7EAF]">Ongoing Jobs</h3>
@@ -49,7 +50,8 @@ const DashboardMainSection: React.FC = () => {
 
         {/* Completed Jobs */}
         <div 
-          onClick={() => navigate('/bookingJobsManagement')}
+          // UPDATED: Passing state 'Completed'
+          onClick={() => navigate('/bookingJobsManagement', { state: { status: 'Completed' } })}
           className="bg-white p-8 rounded-3xl shadow-sm flex flex-col justify-center items-center h-[200px] hover:shadow-md transition-all cursor-pointer group border border-transparent hover:border-[#5AB3E6]"
         >
           <h3 className="text-lg text-gray-600 font-medium mb-2 group-hover:text-[#4D7EAF]">Completed Jobs</h3>
@@ -61,9 +63,8 @@ const DashboardMainSection: React.FC = () => {
         <div className="bg-white p-6 rounded-3xl shadow-sm col-span-1 md:col-span-2 h-[200px] flex flex-col relative hover:shadow-md transition-shadow">
           <div className="flex justify-between items-center mb-2">
             <h3 className="text-lg text-gray-700 font-medium">Earnings & Reports</h3>
-            {/* UPDATED: View All Link */}
             <button 
-              onClick={() => navigate('/earningsAndReports')} // Ensure you have this route or change to relevant route
+              onClick={() => navigate('/earningsAndReports')}
               className="text-sm font-semibold text-[#4D7EAF] hover:underline hover:text-[#3a628a] transition-colors"
             >
                View All
@@ -101,9 +102,8 @@ const DashboardMainSection: React.FC = () => {
         <div className="bg-white p-8 rounded-3xl shadow-sm hover:shadow-md transition-shadow">
           <div className="flex justify-between items-center mb-6">
             <h3 className="text-xl font-semibold text-gray-800">Job Requests</h3>
-            {/* UPDATED: View All Link */}
             <button 
-              onClick={() => navigate('/jobRequests')} // Ensure you have this route
+              onClick={() => navigate('/jobRequests')}
               className="text-sm font-semibold text-[#4D7EAF] hover:underline hover:text-[#3a628a] transition-colors"
             >
                View All
@@ -150,12 +150,10 @@ const DashboardMainSection: React.FC = () => {
 
         {/* Recent Reviews Card */}
         <div className="bg-white p-8 rounded-3xl shadow-sm hover:shadow-md transition-shadow">
-          {/* UPDATED: Added Flex container to align Title and View All button */}
           <div className="flex justify-between items-center mb-8">
             <h3 className="text-xl font-semibold text-gray-800">Recent Reviews</h3>
-            {/* UPDATED: View All Link */}
             <button 
-              onClick={() => navigate('/reviewsAndRatings')} // Ensure you have this route
+              onClick={() => navigate('/reviewsAndRatings')}
               className="text-sm font-semibold text-[#4D7EAF] hover:underline hover:text-[#3a628a] transition-colors"
             >
                View All
