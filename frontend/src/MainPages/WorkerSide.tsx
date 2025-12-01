@@ -18,7 +18,7 @@ export default function WorkerSide() {
   return (
     <Routes>
       {/* Default Route: Redirect to Dashboard */}
-      <Route path="/" element={<Navigate to="workerDashboard" replace />} />
+      <Route index element={<Navigate to="workerDashboard" replace />} />
       
       {/* Worker Dashboard */}
       <Route path="workerDashboard" element={<DashboardPage />} />

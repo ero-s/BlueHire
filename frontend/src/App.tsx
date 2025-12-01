@@ -1,4 +1,4 @@
-import { Routes, Route } from "react-router-dom"; // <-- Import this
+import { Routes, Route, useNavigate} from "react-router-dom"; 
 
 // MAIN PAGES IMPORTS
 
@@ -38,12 +38,37 @@ import WorkerTransactionPage from "./Worker/pages/TransactionPage";
 
 // WORKER SIDE ROUTER
 import WorkerSide from "./MainPages/WorkerSide";
+import Landing from "./MainPages/Landing";
+
+import TestingGateway from "./MainPages/UsabilityTestingGateway";
 
 
 
 // =============================================================
 export default function App() {
+  const navigate = useNavigate();
+
+  const handleRoleSelection = (role: "worker" | "client") => {
+    if (role === "worker") {
+      navigate("/worker/workerDashboard");
+    } else {
+      navigate("/client/clientDashboard");
+    }
+  };
+
   return (
-    <WorkerSide/>
+    <Routes>
+      <Route
+        path="/"
+        element={<TestingGateway onSelectRole={handleRoleSelection} />}
+      />
+
+      {/* Worker main router */}
+      <Route path="/worker/*" element={<WorkerSide />} />
+
+      {/* Client main router */}
+      <Route path="/client/*" element={<ClientSide />} />
+    </Routes>
   );
 }
+

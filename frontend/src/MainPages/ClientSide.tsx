@@ -15,6 +15,8 @@ import TransactionPage from "../Client/pages/TransactionPage";
 export default function ClientSide() {
   return (
     <Routes>
+      <Route index element={<Dashboard />} />
+      
       <Route path="/clientDashboard" element={<Dashboard />} />
       <Route path="/post-job" element={<JobRequestForm />} />
       <Route path="/settings" element={<SettingsPage />} />
