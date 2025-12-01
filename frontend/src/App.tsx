@@ -44,6 +44,6 @@ import WorkerSide from "./MainPages/WorkerSide";
 // =============================================================
 export default function App() {
   return (
-    <WorkerSide/>
+    <EarningsReports/>
   );
 }
