@@ -9,11 +9,11 @@ import {
     Briefcase, 
     Clock, 
     Calendar, 
-    DollarSign, 
+    // DollarSign, 
     MessageSquare,
     Wallet,
     CheckCircle2,
-    XCircle,
+    // XCircle,
     X
 } from "lucide-react";
 

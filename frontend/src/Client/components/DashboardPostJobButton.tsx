@@ -1,20 +1,24 @@
-import { useNavigate } from "react-router-dom";
 
-export default function DashboardPostJobButton() {
-  const navigate = useNavigate();
+// 1. Define the interface for props
+interface DashboardPostJobButtonProps {
+  onClick?: () => void;
+}
 
+export default function DashboardPostJobButton({ onClick }: DashboardPostJobButtonProps) {
   return (
     <button
-      onClick={() => navigate("/post-job")}
-      style={{ backgroundColor: "#4F7FAF" }}
+      // 2. Use the passed onClick function (opens the modal)
+      onClick={onClick}
+      // Updated color to match your theme #4D7EAF
+      style={{ backgroundColor: "#4D7EAF" }} 
       className="
-    text-white font-semibold text-lg
-    px-8 py-6 rounded-2xl shadow-md hover:shadow-lg
-    flex items-center justify-center gap-2 transition-all
-    hover:bg-blue-600 active:scale-95
-  "
+        text-white font-semibold text-lg
+        px-8 py-6 rounded-2xl shadow-md hover:shadow-lg
+        flex items-center justify-center gap-2 transition-all
+        hover:bg-[#3d6691] active:scale-95 w-full h-full
+      "
     >
-      <span className="text-2xl">+</span>
+      <span className="text-3xl font-bold">+</span>
       Post New Job!
     </button>
   );

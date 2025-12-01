@@ -123,7 +123,7 @@ const HourlyRateCard: React.FC = () => {
                             <input
                                 type="number"
                                 value={editingRate}
-                                onChange={(e) => setEditingRate(e.target.value)}
+                                onChange={(e) => setEditingRate(Number(e.target.value))}
                                 // Apply dynamic width
                                 className="text-4xl font-bold text-gray-900 border-b border-blue-400 focus:outline-none text-center"
                                 style={{ width: `${inputWidth}px` }}
@@ -195,22 +195,22 @@ const StatCard: React.FC<StatCardProps> = ({ title, value, isRating }) => (
   </div>
 );
 
-const FilterSection: React.FC = () => (
-    <div className="bg-white py-2 px-3 rounded-xl shadow-lg flex items-center space-x-2 flex-shrink-0 min-w-[200px]">
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-        </svg>
-        <span className="text-xs font-medium text-gray-700 whitespace-nowrap">FILTER BY Time Period</span>
-        <select className="border border-gray-300 rounded-md py-0.5 text-xs pl-2 pr-7 focus:ring-blue-500 focus:border-blue-500 appearance-none bg-white bg-no-repeat bg-right-center"
-            style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='currentColor'%3E%3Cpath fill-rule='evenodd' d='M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z' clip-rule='evenodd' /%3E%3C/svg%3E")`, backgroundPosition: 'right 0.3rem center', backgroundSize: '1.2em' }}
-        >
-            <option>All Time</option>
-            <option>Last 30 Days</option>
-            <option>Last 90 Days</option>
-            <option>This Year</option>
-        </select>
-    </div>
-);
+// const FilterSection: React.FC = () => (
+//     <div className="bg-white py-2 px-3 rounded-xl shadow-lg flex items-center space-x-2 flex-shrink-0 min-w-[200px]">
+//         <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+//             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+//         </svg>
+//         <span className="text-xs font-medium text-gray-700 whitespace-nowrap">FILTER BY Time Period</span>
+//         <select className="border border-gray-300 rounded-md py-0.5 text-xs pl-2 pr-7 focus:ring-blue-500 focus:border-blue-500 appearance-none bg-white bg-no-repeat bg-right-center"
+//             style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='currentColor'%3E%3Cpath fill-rule='evenodd' d='M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z' clip-rule='evenodd' /%3E%3C/svg%3E")`, backgroundPosition: 'right 0.3rem center', backgroundSize: '1.2em' }}
+//         >
+//             <option>All Time</option>
+//             <option>Last 30 Days</option>
+//             <option>Last 90 Days</option>
+//             <option>This Year</option>
+//         </select>
+//     </div>
+// );
 
 const EarningsChart: React.FC = () => {
     const earningsData = [

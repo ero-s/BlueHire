@@ -85,7 +85,7 @@ const DashboardMainSection: React.FC = () => {
                   contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
                 />
                 <Bar dataKey="value" radius={[4, 4, 0, 0]}>
-                  {CHART_DATA.map((entry, index) => (
+                  {CHART_DATA.map((index) => (
                     <Cell key={`cell-${index}`} fill="#4D7EAF" />
                   ))}
                 </Bar>

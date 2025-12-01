@@ -1,9 +1,11 @@
-export enum Availability {
-  AVAILABLE_NOW = "Available Now",
-  WEEKENDS = "Weekends Only",
-  WEEKDAYS = "Weekdays Only",
-  NEXT_WEEK = "Available Next Week",
-}
+export const Availability = {
+  AVAILABLE_NOW: "Available Now",
+  WEEKENDS: "Weekends Only",
+  WEEKDAYS: "Weekdays Only",
+  NEXT_WEEK: "Available Next Week",
+} as const;
+
+export type Availability = typeof Availability[keyof typeof Availability];
 
 export interface Worker {
   id: string;

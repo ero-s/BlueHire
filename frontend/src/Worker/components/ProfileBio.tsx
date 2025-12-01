@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Pencil, CheckCircle } from 'lucide-react';
 
 // Mock data

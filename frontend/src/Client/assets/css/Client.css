@@ -298,5 +298,5 @@ input:focus, textarea:focus, select:focus {
     padding: 0 var(--spacing-sm);
   }
 }
-@tailwind base;
-@tailwind components;
+/* @tailwind base;
+@tailwind components; */

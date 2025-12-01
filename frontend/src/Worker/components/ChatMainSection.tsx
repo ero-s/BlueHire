@@ -13,13 +13,13 @@ import {
 } from 'lucide-react';
 
 // --- Types ---
-interface Report {
-  reportid: string;
-  description: string;
-  submittedAt: Date;
-  status: 'Open' | 'Resolved';
-  ProofFileURL: string | null;
-}
+// interface Report {
+//   reportid: string;
+//   description: string;
+//   submittedAt: Date;
+//   status: 'Open' | 'Resolved';
+//   ProofFileURL: string | null;
+// }
 
 interface Message {
   id: string;

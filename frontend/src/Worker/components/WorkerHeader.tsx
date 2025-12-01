@@ -1,9 +1,8 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Bell, Mail, Search, Menu, ChevronDown, User, LogOut, X, ChevronRight } from "lucide-react";
+import { Bell, Mail, Search, Menu, ChevronDown, User, LogOut, X, ChevronRight, Clock } from "lucide-react";
 import Logo from "../../MainComponents/LandingComponents/Logo/Logo";
 import { useNavigate, useLocation, Link } from "react-router-dom";
 
-// ... (Keep your Interface Definitions and MOCK data here) ...
 interface HeaderProps {
   logo?: string;
   userName: string;
@@ -14,8 +13,6 @@ interface NavItem {
   href: string;
 }
 
-// FIX 1: Update hrefs to include the parent "/worker" path
-// These must match the Routes defined in WorkerSide.tsx
 const navItems: NavItem[] = [
   { label: "Dashboard", href: "/worker/dashboard" },
   { label: "Job Feeds", href: "/worker/jobfeeds" },
@@ -54,26 +51,29 @@ const WorkerHeader: React.FC<HeaderProps> = ({ userName }) => {
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       const targetNode = event.target as Node;
+      
+      // Close Search if clicked outside
       if (searchRef.current && !searchRef.current.contains(targetNode)) {
         setIsSearchOpen(false);
       }
+      // Close Notifications if clicked outside
       if (notificationsRef.current && !notificationsRef.current.contains(targetNode)) {
         setIsNotificationsOpen(false);
       }
-      if (isUserMenuOpen && !targetNode.closest('.user-menu-button') && !targetNode.closest('.user-menu-dropdown')) {
+      // Close User Menu if clicked outside
+      if (isUserMenuOpen && targetNode instanceof Element && !targetNode.closest('.user-menu-button') && !targetNode.closest('.user-menu-dropdown')) {
         setIsUserMenuOpen(false);
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [isUserMenuOpen]);
+  }, [isUserMenuOpen]); // Dependency ensures listener stays fresh
 
   const filteredClients = MOCK_CLIENTS.filter((client) =>
     client.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   const isActiveLink = (path: string) => {
-    // Exact match or sub-path match
     return location.pathname === path || location.pathname.startsWith(path + "/");
   };
 
@@ -101,7 +101,6 @@ const WorkerHeader: React.FC<HeaderProps> = ({ userName }) => {
 
         {/* Logo Area */}
         <div className="flex items-center gap-2">
-          {/* Ensure Logo links to the dashboard, not root */}
           <Link to="/worker/dashboard">
             <Logo />
           </Link>
@@ -130,10 +129,9 @@ const WorkerHeader: React.FC<HeaderProps> = ({ userName }) => {
         {/* Right Side Actions */}
         <div className="flex items-center gap-3 ml-auto md:ml-0 relative">
 
-          {/* Search Bar (Code omitted for brevity - kept same as your original) */}
+          {/* --- 1. SEARCH BAR & DROPDOWN --- */}
           <div className="hidden sm:flex items-center relative" ref={searchRef}>
-             {/* ... Search Input Logic ... */}
-             <Search className="absolute left-3 text-gray-400 w-4 h-4 z-10" />
+              <Search className="absolute left-3 text-gray-400 w-4 h-4 z-10" />
               <input
                   type="text"
                   placeholder="Search clients..."
@@ -142,19 +140,58 @@ const WorkerHeader: React.FC<HeaderProps> = ({ userName }) => {
                   onFocus={handleSearchFocus}
                   onChange={(e) => setSearchQuery(e.target.value)}
               />
-              {/* ... Search Dropdown Logic ... */}
+              
+              {/* Added Clear Button */}
+              {searchQuery && (
+                <button 
+                  onClick={() => { setSearchQuery(""); setIsSearchOpen(false); }}
+                  className="absolute right-3 text-gray-400 hover:text-gray-600 z-10"
+                >
+                  <X size={14} />
+                </button>
+              )}
+
+              {/* --- RESTORED: Search Dropdown Results --- */}
+              {isSearchOpen && (
+                <div className="absolute top-full right-0 mt-3 w-72 bg-white rounded-2xl shadow-xl border border-gray-100 z-50 overflow-hidden animate-[fadeIn_0.2s_ease-out]">
+                  <div className="p-3 bg-gray-50 border-b border-gray-100">
+                    <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                      {filteredClients.length > 0 ? "Clients Found" : "No results"}
+                    </span>
+                  </div>
+                  <div className="max-h-[200px] overflow-y-auto custom-scrollbar">
+                    {filteredClients.length > 0 ? (
+                      filteredClients.map((client) => (
+                        <div 
+                          key={client.id}
+                          className="flex items-center justify-between p-3 hover:bg-blue-50 cursor-pointer transition-colors group border-b last:border-0 border-gray-50"
+                        >
+                          <div>
+                            <p className="font-semibold text-sm text-gray-800 group-hover:text-[#4D7EAF]">{client.name}</p>
+                            <p className="text-[10px] text-gray-400">{client.location}</p>
+                          </div>
+                          <ChevronRight size={14} className="text-gray-300 group-hover:text-[#5AB3E6]" />
+                        </div>
+                      ))
+                    ) : (
+                      <div className="p-4 text-center text-gray-400 text-xs">
+                        No clients matching "{searchQuery}"
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
           </div>
 
           {/* Mail Button */}
           <button
-            // FIX 2: Correct path for Chat
             onClick={() => navigate('/worker/chat')}
             className="w-10 h-10 rounded-full bg-white flex items-center justify-center shadow-sm transition-colors duration-300 group hover:shadow-md"
           >
             <Mail className="w-5 h-5 text-gray-600 group-hover:text-[#4D7EAF] transition-colors duration-300" />
           </button>
 
-          {/* Notification Button (Kept same as original) */}
+          {/* --- 2. NOTIFICATION BUTTON & DROPDOWN --- */}
           <div className="relative" ref={notificationsRef}>
              <button
                   onClick={handleNotificationClick}
@@ -165,7 +202,36 @@ const WorkerHeader: React.FC<HeaderProps> = ({ userName }) => {
                       <span className="absolute top-1 right-1 h-2 w-2 rounded-full bg-red-500 border border-white"></span>
                   )}
               </button>
-             {/* ... Notification Dropdown Logic ... */}
+
+             {/* --- RESTORED: Notification Dropdown --- */}
+             {isNotificationsOpen && (
+                <div className="absolute top-full right-0 mt-3 w-80 bg-white rounded-2xl shadow-xl border border-gray-100 z-50 overflow-hidden animate-[fadeIn_0.2s_ease-out]">
+                  <div className="p-4 border-b border-gray-100 flex justify-between items-center">
+                    <h3 className="font-semibold text-gray-800">Notifications</h3>
+                    <span className="text-xs text-[#4D7EAF] cursor-pointer hover:underline">Mark all as read</span>
+                  </div>
+                  <div className="max-h-[300px] overflow-y-auto custom-scrollbar">
+                    {MOCK_NOTIFICATIONS.length > 0 ? (
+                      MOCK_NOTIFICATIONS.map((notif) => (
+                        <div key={notif.id} className="p-4 border-b border-gray-50 hover:bg-gray-50 cursor-pointer transition-colors flex gap-3">
+                           <div className={`mt-1 w-2 h-2 rounded-full flex-shrink-0 ${notif.type === 'job_request' ? 'bg-[#5AB3E6]' : 'bg-gray-300'}`}></div>
+                           <div>
+                              <p className="text-sm text-gray-700 leading-snug">{notif.message}</p>
+                              <span className="text-[10px] text-gray-400 mt-1 flex items-center gap-1">
+                                <Clock size={10} /> {notif.time}
+                              </span>
+                           </div>
+                        </div>
+                      ))
+                    ) : (
+                       <div className="p-6 text-center text-gray-400 text-sm">No new notifications</div>
+                    )}
+                  </div>
+                  <div className="p-3 bg-gray-50 text-center border-t border-gray-100">
+                    <button className="text-xs font-semibold text-gray-600 hover:text-[#4D7EAF]">View all notifications</button>
+                  </div>
+                </div>
+             )}
           </div>
 
           {/* User Menu Dropdown */}
@@ -181,12 +247,9 @@ const WorkerHeader: React.FC<HeaderProps> = ({ userName }) => {
 
               {isUserMenuOpen && (
                   <div className="user-menu-dropdown absolute right-0 mt-2 w-56 bg-white rounded-2xl shadow-xl border border-gray-100 p-2 z-50 origin-top-right animate-[fadeIn_0.2s_ease-out]">
-
-                      {/* Profile Link */}
                       <button
                           onClick={() => {
                               setIsUserMenuOpen(false);
-                              // FIX 3: Correct path for Profile (matches WorkerSide)
                               navigate('/worker/profile');
                           }}
                           className="w-full group relative flex items-center px-4 py-3 text-sm text-gray-600 rounded-xl overflow-hidden hover:bg-[#4D7EAF] hover:text-white transition-all"
@@ -199,11 +262,9 @@ const WorkerHeader: React.FC<HeaderProps> = ({ userName }) => {
 
                       <div className="h-px bg-gray-100 my-1 mx-2"></div>
 
-                      {/* Logout Link */}
                       <button
                           onClick={() => {
                               setIsUserMenuOpen(false);
-                              // FIX 4: Navigate to valid root "/" or "/worker/landing"
                               navigate('/'); 
                           }}
                           className="w-full group relative flex items-center px-4 py-3 text-sm text-red-500 rounded-xl overflow-hidden hover:bg-red-500 hover:text-white transition-all"

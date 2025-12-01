@@ -1,5 +1,5 @@
 import React from "react";
-import { X, Calendar, MapPin, Clock, FileText, User, Hash } from "lucide-react";
+import { X, Calendar, MapPin, Clock, FileText, Hash } from "lucide-react";
 import type { Booking } from "../pages/types";
 
 interface BookingManagerModalProps {

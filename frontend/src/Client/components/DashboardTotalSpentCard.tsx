@@ -43,7 +43,7 @@ export default function TotalSpentCard({ data }: { data: SpendingItem[] }) {
           <h3 className="text-gray-500 font-medium text-sm uppercase tracking-wider">
             Total Spent (Last 12 Months)
           </h3>
-          <p className="text-3xl font-bold text-gray-900 mt-2 text-[#4F7FAF]">
+          <p className="text-3xl font-bold text-gray-900 mt-2">
             $
             {total.toLocaleString("en-US", {
               minimumFractionDigits: 2,

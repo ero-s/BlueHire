@@ -76,7 +76,7 @@ const About: React.FC<AboutProps> = ({ id = "about" }) => {
 
           {/* Main Section */}
           <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-12 mt-12">
-            <p className="lg:w-1/2 lg:text-2xl lg:text-justify lg:ml-0 text-xl text-center ml-24 text-gray-600 space-y-4 z-20 lg:-mt-24 ml-12 lg:pr-24 -ml-2 px-6 font-medium lg:leading-loose">
+            <p className="lg:w-1/2 lg:text-2xl lg:text-justify lg:ml-0 text-xl text-center text-gray-600 space-y-4 z-20 lg:-mt-24 lg:pr-24 px-6 font-medium lg:leading-loose">
               BlueHire is a trusted digital platform that connects clients with verified local workers. It helps clients easily find reliable service providers while giving workers more opportunities to showcase their skills and earn fairly.
             </p>
             <div className="lg:w-1/2 flex justify-center lg:-mt-10">

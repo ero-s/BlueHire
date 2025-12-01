@@ -1,16 +1,21 @@
-import { useNavigate } from "react-router-dom"; // Import useNavigate
-import WelcomeSection from "../components/DashboardWelcomeSection.tsx";
-import StatCard from "../components/DashboardStatCard.tsx";
-import PostJobButton from "../components/DashboardPostJobButton.tsx";
-import TotalSpentCard from "../components/DashboardTotalSpentCard.tsx";
-import PendingRequests from "../components/DashboardPendingRequests.tsx";
-import Footer from "../components/ClientFooter.tsx";
-import Header from "../components/ClientHeader.tsx";
+import { useState } from "react"; // 1. Import useState
+import { useNavigate } from "react-router-dom"; 
+import WelcomeSection from "../components/DashboardWelcomeSection";
+import StatCard from "../components/DashboardStatCard";
+import PostJobButton from "../components/DashboardPostJobButton";
+import TotalSpentCard from "../components/DashboardTotalSpentCard";
+import PendingRequests from "../components/DashboardPendingRequests";
+import Footer from "../components/ClientFooter";
+import Header from "../components/ClientHeader";
+import PostJobModal from "../components/PostJobModal"; // 2. Import the new Modal
 
 import "../assets/css/Dashboard.css";
 
 export default function Dashboard() {
-  const navigate = useNavigate(); // Initialize hook
+  const navigate = useNavigate();
+  
+  // 3. Add Modal State
+  const [isPostJobModalOpen, setIsPostJobModalOpen] = useState(false);
 
   const spendingData = [
     { month: "Jan", amount: 150 },
@@ -32,28 +37,16 @@ export default function Dashboard() {
   // ===============================================
 
   const handleOngoingClick = () => {
-    // UPDATED PATH: /client/bookings
     navigate("/client/bookings", { state: { status: "ongoing" } });
   };
 
   const handlePastHiresClick = () => {
-    // UPDATED PATH: /client/bookings
     navigate("/client/bookings", { state: { status: "completed" } });
   };
 
+  // 4. Handle Post Job Click
   const handlePostJobClick = () => {
-    // UPDATED PATH: /client/post-job
-    navigate("/client/post-job");
-  };
-
-  const handleTotalSpentClick = () => {
-    // UPDATED PATH: /client/transactions
-    navigate("/client/transactions");
-  };
-
-  const handlePendingClick = () => {
-    // UPDATED PATH: /client/bookings (Filtered by pending)
-    navigate("/client/bookings", { state: { status: "pending" } });
+    setIsPostJobModalOpen(true);
   };
 
   return (
@@ -76,25 +69,27 @@ export default function Dashboard() {
               onClick={handlePastHiresClick} 
             />
             
-            {/* Added onClick to PostJobButton */}
+            {/* 5. Pass onClick to trigger Modal */}
             <PostJobButton onClick={handlePostJobClick} />
           </div>
 
-          {/* Added onClick to TotalSpentCard */}
           <TotalSpentCard 
             data={spendingData} 
-            onClick={handleTotalSpentClick} 
           />
         </div>
 
-        {/* Added onClick to PendingRequests */}
         <PendingRequests 
           count={5} 
-          onClick={handlePendingClick} 
         />
       </div>
 
       <Footer />
+
+      {/* 6. Render Modal conditionally */}
+      <PostJobModal 
+        isOpen={isPostJobModalOpen} 
+        onClose={() => setIsPostJobModalOpen(false)} 
+      />
     </div>
   );
 }
