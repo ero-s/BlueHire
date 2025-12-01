@@ -35,7 +35,7 @@ const WorkerProfileModal: React.FC<WorkerProfileModalProps> = ({
   };
 
   const handleMessage = () => {
-    navigate("/messages");
+    navigate("/client/chat");
     onClose();
   };
 

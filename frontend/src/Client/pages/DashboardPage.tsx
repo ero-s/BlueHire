@@ -27,17 +27,33 @@ export default function Dashboard() {
     { month: "Dec", amount: 520 },
   ];
 
-  // Navigation Handlers
+  // ===============================================
+  // NAVIGATION HANDLERS
+  // ===============================================
+
   const handleOngoingClick = () => {
-    // Navigate to your Booking Management route. 
-    // We pass 'ongoing' in the state so the target page knows what to filter.
-    navigate("/bookings", { state: { status: "ongoing" } });
+    // UPDATED PATH: /client/bookings
+    navigate("/client/bookings", { state: { status: "ongoing" } });
   };
 
   const handlePastHiresClick = () => {
-    // Navigate to your Booking Management route.
-    // We pass 'completed' in the state.
-    navigate("/bookings", { state: { status: "completed" } });
+    // UPDATED PATH: /client/bookings
+    navigate("/client/bookings", { state: { status: "completed" } });
+  };
+
+  const handlePostJobClick = () => {
+    // UPDATED PATH: /client/post-job
+    navigate("/client/post-job");
+  };
+
+  const handleTotalSpentClick = () => {
+    // UPDATED PATH: /client/transactions
+    navigate("/client/transactions");
+  };
+
+  const handlePendingClick = () => {
+    // UPDATED PATH: /client/bookings (Filtered by pending)
+    navigate("/client/bookings", { state: { status: "pending" } });
   };
 
   return (
@@ -49,7 +65,6 @@ export default function Dashboard() {
       <div className={"dashboard-card-main"}>
         <div className={"dashboard-left-side"}>
           <div className={"dashboard-card-row"}>
-            {/* Added onClick handlers to the cards */}
             <StatCard 
               label="Ongoing Jobs" 
               value={0} 
@@ -60,13 +75,23 @@ export default function Dashboard() {
               value={0} 
               onClick={handlePastHiresClick} 
             />
-            <PostJobButton />
+            
+            {/* Added onClick to PostJobButton */}
+            <PostJobButton onClick={handlePostJobClick} />
           </div>
 
-          <TotalSpentCard data={spendingData} />
+          {/* Added onClick to TotalSpentCard */}
+          <TotalSpentCard 
+            data={spendingData} 
+            onClick={handleTotalSpentClick} 
+          />
         </div>
 
-        <PendingRequests count={5} />
+        {/* Added onClick to PendingRequests */}
+        <PendingRequests 
+          count={5} 
+          onClick={handlePendingClick} 
+        />
       </div>
 
       <Footer />

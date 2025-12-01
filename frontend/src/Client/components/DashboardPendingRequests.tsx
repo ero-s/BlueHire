@@ -24,7 +24,7 @@ export default function PendingRequests({ count }: PendingRequestsProps) {
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-xl font-bold text-gray-800">Pending Requests</h2>
         <button
-          onClick={() => navigate("/bookings")}
+          onClick={() => navigate("/client/bookings")}
           className="text-sm text-[#4F7FAF] font-semibold hover:underline"
         >
           View All

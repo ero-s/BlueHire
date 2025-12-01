@@ -50,9 +50,9 @@ export default function App() {
 
   const handleRoleSelection = (role: "worker" | "client") => {
     if (role === "worker") {
-      navigate("/worker/workerDashboard");
+      navigate("/worker/dashboard");
     } else {
-      navigate("/client/clientDashboard");
+      navigate("/client/dashboard");
     }
   };
 

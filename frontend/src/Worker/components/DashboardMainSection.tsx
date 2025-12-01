@@ -40,7 +40,7 @@ const DashboardMainSection: React.FC = () => {
         {/* Ongoing Jobs */}
         <div 
           // UPDATED: Passing state 'Ongoing'
-          onClick={() => navigate('/bookingJobsManagement', { state: { status: 'Ongoing' } })}
+          onClick={() => navigate('/worker/bookings', { state: { status: 'Ongoing' } })}
           className="bg-white p-8 rounded-3xl shadow-sm flex flex-col justify-center items-center h-[200px] hover:shadow-md transition-all cursor-pointer group border border-transparent hover:border-[#5AB3E6]"
         >
           <h3 className="text-lg text-gray-600 font-medium mb-2 group-hover:text-[#4D7EAF]">Ongoing Jobs</h3>
@@ -51,7 +51,7 @@ const DashboardMainSection: React.FC = () => {
         {/* Completed Jobs */}
         <div 
           // UPDATED: Passing state 'Completed'
-          onClick={() => navigate('/bookingJobsManagement', { state: { status: 'Completed' } })}
+          onClick={() => navigate('/worker/bookings', { state: { status: 'Completed' } })}
           className="bg-white p-8 rounded-3xl shadow-sm flex flex-col justify-center items-center h-[200px] hover:shadow-md transition-all cursor-pointer group border border-transparent hover:border-[#5AB3E6]"
         >
           <h3 className="text-lg text-gray-600 font-medium mb-2 group-hover:text-[#4D7EAF]">Completed Jobs</h3>
@@ -64,7 +64,7 @@ const DashboardMainSection: React.FC = () => {
           <div className="flex justify-between items-center mb-2">
             <h3 className="text-lg text-gray-700 font-medium">Earnings & Reports</h3>
             <button 
-              onClick={() => navigate('/earningsAndReports')}
+              onClick={() => navigate('/worker/earnings')}
               className="text-sm font-semibold text-[#4D7EAF] hover:underline hover:text-[#3a628a] transition-colors"
             >
                View All
@@ -103,7 +103,7 @@ const DashboardMainSection: React.FC = () => {
           <div className="flex justify-between items-center mb-6">
             <h3 className="text-xl font-semibold text-gray-800">Job Requests</h3>
             <button 
-              onClick={() => navigate('/jobRequests')}
+              onClick={() => navigate('/worker/jobrequests')}
               className="text-sm font-semibold text-[#4D7EAF] hover:underline hover:text-[#3a628a] transition-colors"
             >
                View All
@@ -153,7 +153,7 @@ const DashboardMainSection: React.FC = () => {
           <div className="flex justify-between items-center mb-8">
             <h3 className="text-xl font-semibold text-gray-800">Recent Reviews</h3>
             <button 
-              onClick={() => navigate('/reviewsAndRatings')}
+              onClick={() => navigate('/worker/reviews')}
               className="text-sm font-semibold text-[#4D7EAF] hover:underline hover:text-[#3a628a] transition-colors"
             >
                View All

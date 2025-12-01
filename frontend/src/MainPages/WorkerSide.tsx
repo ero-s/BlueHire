@@ -1,48 +1,47 @@
-import DashboardPage from "../Worker/pages/DashboardPage.tsx";
-import BookingJobManagementPage from "../Worker/pages/BookingJobManagementPage.tsx";
-import EarningsReportPage from "../Worker/pages/Earnings&ReportsPage.tsx";
-import JobRequestsPage from "../Worker/pages/JobRequestPage.tsx";
-import ReviewsAndRatingsPage from "../Worker/pages/Reviews&RatingsPage.tsx";
-import JobDetails from "../Worker/pages/JobDetailPage.tsx";
-import ChatPage from "../Worker/pages/WorkerChatPage.tsx";
-import JobFeedPage from "../Worker/pages/JobFeedPage.tsx";
-import WorkerProfile from "../Worker/pages/WorkerProfilePage.tsx";
-import Landing from "./Landing.tsx";
-import SignIn from "./SignInPage.tsx";
-import SignUp from "./SignupPage.tsx";
+import { Routes, Route, Navigate } from "react-router-dom";
+
+// WORKER PAGES
+import DashboardPage from "../Worker/pages/DashboardPage";
+import BookingJobManagementPage from "../Worker/pages/BookingJobManagementPage";
+import EarningsReportPage from "../Worker/pages/Earnings&ReportsPage";
+import JobRequestsPage from "../Worker/pages/JobRequestPage";
+import ReviewsAndRatingsPage from "../Worker/pages/Reviews&RatingsPage";
+import JobDetails from "../Worker/pages/JobDetailPage";
+import ChatPage from "../Worker/pages/WorkerChatPage";
+import JobFeedPage from "../Worker/pages/JobFeedPage";
+import WorkerProfile from "../Worker/pages/WorkerProfilePage";
 import TransactionPage from "../Worker/pages/TransactionPage";
 
-import { Routes, Route, Navigate} from "react-router-dom";
+// LANDING & AUTH
+import Landing from "./Landing";
+import SignIn from "./SignInPage";
+import SignUp from "./SignupPage";
 
 export default function WorkerSide() {
   return (
     <Routes>
-      {/* Default Route: Redirect to Dashboard */}
-      <Route index element={<Navigate to="workerDashboard" replace />} />
-      
-      {/* Worker Dashboard */}
-      <Route path="workerDashboard" element={<DashboardPage />} />
+      <Route index element={<Navigate to="dashboard" replace />} />
 
-      {/* Browse available jobs */}
-      <Route path="bookingJobsManagement" element={<BookingJobManagementPage />} />
-      <Route path="reviewsAndRatings" element={<ReviewsAndRatingsPage />} />
-      <Route path="earningsAndReports" element={<EarningsReportPage />} />
-      <Route path="jobRequests" element={<JobRequestsPage />} />
-      <Route path="jobDetails/:jobId" element={<JobDetails />} />
+      <Route path="dashboard" element={<DashboardPage />} />
+      <Route path="jobfeeds" element={<JobFeedPage />} />
+      <Route path="bookings" element={<BookingJobManagementPage />} />
+      <Route path="reviews" element={<ReviewsAndRatingsPage />} />
+      <Route path="earnings" element={<EarningsReportPage />} />
+      <Route path="jobrequests" element={<JobRequestsPage />} />
+      <Route path="job/:jobId" element={<JobDetails />} />
       <Route path="chat" element={<ChatPage />} />
-      <Route path="jobFeeds" element={<JobFeedPage />} />
-      <Route path="workerProfile" element={<WorkerProfile />} />
+      <Route path="profile" element={<WorkerProfile />} />
+      <Route path="transactions" element={<TransactionPage />} />
+
       <Route path="landing" element={<Landing />} />
-      <Route path="signIn" element={<SignIn />} />
-      <Route path="signUp" element={<SignUp />} />
-      <Route path="/transactions" element={<TransactionPage />} />
-      
-      {/* 404 Fallback */}
+      <Route path="signin" element={<SignIn />} />
+      <Route path="signup" element={<SignUp />} />
+
       <Route
         path="*"
         element={
           <div className="p-10 text-center text-xl text-red-600">
-            404 - Page Not Found
+            404 - Page Not Found (Worker Side)
           </div>
         }
       />

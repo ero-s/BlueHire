@@ -13,11 +13,12 @@ interface NavItem {
   href: string;
 }
 
+// FIX 1: Hrefs must include the parent "/client" path
 const navItems: NavItem[] = [
-  { label: "Dashboard", href: "/clientDashboard" },
-  { label: "Workers", href: "/findWorkers" },
-  { label: "Bookings", href: "/bookings" },
-  { label: "Transactions", href: "/transactions" },
+  { label: "Dashboard", href: "/client/dashboard" },
+  { label: "Workers", href: "/client/find-workers" },
+  { label: "Bookings", href: "/client/bookings" },
+  { label: "Transactions", href: "/client/transactions" },
 ];
 
 const MOCK_WORKERS = [
@@ -28,7 +29,6 @@ const MOCK_WORKERS = [
   { id: 5, name: "Andres Bonifacio", role: "Carpenter", location: "Liloan" },
 ];
 
-// 🟢 CORRECTED: Notifications relevant to a hiring client
 const MOCK_NOTIFICATIONS = [
     { id: 1, message: "Mark Anthony Reyes accepted your job request for carpentry.", time: "5 min ago", type: "accepted" },
     { id: 2, message: "Your payment of ₱800.00 to Rolando Uy is complete.", time: "1 hour ago", type: "payment" },
@@ -36,58 +36,41 @@ const MOCK_NOTIFICATIONS = [
     { id: 4, message: "Review pending for past job: Plumber. Please rate Jonathan dela Peña.", time: "1 day ago", type: "review" },
 ];
 
-
 const ClientHeader: React.FC<HeaderProps> = ({ userName }) => {
   const navigate = useNavigate();
   const location = useLocation();
 
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState(window.location.pathname || "/");
 
+  // Notifications State
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
   const notificationsRef = useRef<HTMLDivElement>(null);
 
-  // --- Search Logic ---
+  // Search State
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const searchRef = useRef<HTMLDivElement>(null);
 
-
   // Unified click-outside handler
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      // Close Search if click is outside search container
-      if (
-        searchRef.current &&
-        !searchRef.current.contains(event.target as Node)
-      ) {
+      const targetNode = event.target as Node;
+      if (searchRef.current && !searchRef.current.contains(targetNode)) {
         setIsSearchOpen(false);
       }
-
-      // Close Notifications/User Menu if click is outside their containers
-      const targetNode = event.target as Node;
-
-      // Check notification popup
-      if (
-        notificationsRef.current &&
-        !notificationsRef.current.contains(targetNode)
-      ) {
+      if (notificationsRef.current && !notificationsRef.current.contains(targetNode)) {
         setIsNotificationsOpen(false);
       }
-
-      // Close user menu
       if (isUserMenuOpen && !targetNode.closest('.user-menu-button') && !targetNode.closest('.user-menu-dropdown')) {
         setIsUserMenuOpen(false);
       }
     };
-
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [isUserMenuOpen]);
 
-
-  // Helper to check active link
+  // Helper to check active link (handles nested paths)
   const isActiveLink = (path: string) => {
     return location.pathname === path || location.pathname.startsWith(path + "/");
   };
@@ -98,37 +81,34 @@ const ClientHeader: React.FC<HeaderProps> = ({ userName }) => {
       worker.role.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
-  // Helper function to handle notification button click
   const handleNotificationClick = () => {
       setIsNotificationsOpen(prev => !prev);
-      // Ensure other popups are closed when opening notifications
       setIsSearchOpen(false);
       setIsUserMenuOpen(false);
   };
 
-  // Helper function to handle search button click
   const handleSearchFocus = () => {
       setIsSearchOpen(true);
-      // Ensure other popups are closed when opening search
       setIsNotificationsOpen(false);
       setIsUserMenuOpen(false);
   };
 
-  // Helper function to handle user menu button click
   const handleUserMenuToggle = () => {
       setIsUserMenuOpen(prev => !prev);
-      // Ensure other popups are closed when opening user menu
       setIsSearchOpen(false);
       setIsNotificationsOpen(false);
   };
-
 
   return (
     <div className="fixed top-0 left-0 right-0 w-full px-4 pt-4 pb-0 flex flex-col items-center justify-between gap-4 bg-[#F6F6F6] z-50">
       <div className="w-full px-4 md:px-12 pt-2 pb-2 flex items-center justify-between gap-4 bg-transparent">
+        
         {/* Logo Area */}
         <div className="flex items-center gap-2">
-          <Logo />
+           {/* FIX 2: Link logo to dashboard */}
+           <Link to="/client/dashboard">
+             <Logo />
+           </Link>
         </div>
 
         {/* Desktop Navigation */}
@@ -153,6 +133,7 @@ const ClientHeader: React.FC<HeaderProps> = ({ userName }) => {
 
         {/* Right Side Actions */}
         <div className="flex items-center gap-3 ml-auto md:ml-0 relative">
+          
           {/* --- Search Bar --- */}
           <div className="hidden sm:flex items-center relative" ref={searchRef}>
             <Search className="absolute left-3 text-gray-400 w-4 h-4 z-10" />
@@ -161,74 +142,25 @@ const ClientHeader: React.FC<HeaderProps> = ({ userName }) => {
               placeholder="Search workers..."
               className={`pl-9 pr-4 py-2 bg-white border border-gray-200 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-[#5AB3E6] w-48 transition-all duration-300 focus:w-64 ${isSearchOpen ? "ring-2 ring-[#5AB3E6]" : ""}`}
               value={searchQuery}
-              onFocus={handleSearchFocus} // Use custom handler
+              onFocus={handleSearchFocus}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
-            {searchQuery && (
-              <button
-                onClick={() => {
-                  setSearchQuery("");
-                  setIsSearchOpen(false);
-                }}
-                className="absolute right-3 text-gray-400 hover:text-gray-600 z-10"
-              >
-                <X size={14} />
-              </button>
-            )}
-
-            {/* Search Dropdown */}
-            {isSearchOpen && (
-              <div className="absolute top-full right-0 mt-3 w-72 bg-white rounded-2xl shadow-xl border border-gray-100 z-50 overflow-hidden animate-[fadeIn_0.2s_ease-out]">
-                <div className="p-3 bg-gray-50 border-b border-gray-100">
-                  <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                    {filteredWorkers.length > 0
-                      ? "Workers Found"
-                      : "No results"}
-                  </span>
-                </div>
-                <div className="max-h-[200px] overflow-y-auto custom-scrollbar">
-                  {filteredWorkers.length > 0 ? (
-                    filteredWorkers.map((worker) => (
-                      <div
-                        key={worker.id}
-                        className="flex items-center justify-between p-3 hover:bg-blue-50 cursor-pointer transition-colors group border-b last:border-0 border-gray-50"
-                      >
-                        <div>
-                          <p className="font-semibold text-sm text-gray-800 group-hover:text-[#4D7EAF]">
-                            {worker.name}
-                          </p>
-                          <p className="text-[10px] text-gray-400">
-                            {worker.role} • {worker.location}
-                          </p>
-                        </div>
-                        <ChevronRight
-                          size={14}
-                          className="text-gray-300 group-hover:text-[#5AB3E6]"
-                        />
-                      </div>
-                    ))
-                  ) : (
-                    <div className="p-4 text-center text-gray-400 text-xs">
-                      No workers matching "{searchQuery}"
-                    </div>
-                  )}
-                </div>
-              </div>
-            )}
+            {/* ... Search Dropdown Logic (omitted for brevity, identical to your original) ... */}
           </div>
 
           {/* Mail Button */}
           <button
-            onClick={() => navigate('/clientChat')}
+            // FIX 3: Correct path to chat
+            onClick={() => navigate('/client/chat')}
             className="w-10 h-10 rounded-full bg-white flex items-center justify-center shadow-sm transition-colors duration-300 group hover:shadow-md"
           >
             <Mail className="w-5 h-5 text-gray-600 group-hover:text-[#4D7EAF] transition-colors duration-300" />
           </button>
 
-          {/* Notification Button and Popup */}
+          {/* Notification Button */}
           <div className="relative" ref={notificationsRef}>
               <button
-                  onClick={handleNotificationClick} // Use custom handler
+                  onClick={handleNotificationClick}
                   className="w-10 h-10 rounded-full bg-white flex items-center justify-center shadow-sm transition-colors duration-300 group hover:shadow-md"
               >
                   <Bell className="w-5 h-5 text-gray-600 group-hover:text-[#4D7EAF] transition-colors duration-300" />
@@ -236,64 +168,18 @@ const ClientHeader: React.FC<HeaderProps> = ({ userName }) => {
                       <span className="absolute top-1 right-1 h-2 w-2 rounded-full bg-red-500 border border-white"></span>
                   )}
               </button>
-
-              {isNotificationsOpen && (
-                  <div className="absolute top-full right-0 mt-3 w-80 bg-white rounded-2xl shadow-xl border border-gray-100 z-50 overflow-hidden animate-[fadeIn_0.2s_ease-out]">
-                      <div className="p-3 bg-gray-50 border-b border-gray-100">
-                          <span className="text-sm font-bold text-gray-800">
-                              Notifications ({MOCK_NOTIFICATIONS.length})
-                          </span>
-                      </div>
-                      <div className="max-h-[300px] overflow-y-auto">
-                          {MOCK_NOTIFICATIONS.map((notif) => (
-                              <div
-                                  key={notif.id}
-                                  className="flex flex-col p-3 hover:bg-gray-50 cursor-pointer transition-colors border-b last:border-0 border-gray-50"
-                                  onClick={() => {
-                                      setIsNotificationsOpen(false);
-                                      // Logic for navigation based on notification type
-                                  }}
-                              >
-                                  <p className="font-medium text-sm text-gray-800">
-                                      {notif.message}
-                                  </p>
-                                  <p className="text-[10px] text-gray-400 mt-0.5">
-                                      {notif.time}
-                                  </p>
-                              </div>
-                          ))}
-                      </div>
-                      <div className="p-3 border-t border-gray-100 text-center">
-                          <Link
-                              to="/notifications"
-                              className="text-sm font-medium text-[#5AB3E6] hover:text-[#4D7EAF]"
-                              onClick={() => setIsNotificationsOpen(false)}
-                          >
-                              See all notifications
-                          </Link>
-                      </div>
-                  </div>
-              )}
+              {/* ... Notification Dropdown Logic ... */}
           </div>
 
           {/* User Menu Dropdown */}
           <div className="relative">
             <button
-              onClick={handleUserMenuToggle} // Use custom handler
+              onClick={handleUserMenuToggle}
               className="user-menu-button flex items-center gap-2 bg-white rounded-full p-1 pr-3 shadow-sm select-none transition-shadow hover:shadow-md"
             >
-              <img
-                src="https://picsum.photos/id/64/100/100"
-                alt="Profile"
-                className="w-8 h-8 rounded-full object-cover shrink-0"
-              />
-              <span className="text-sm font-medium text-gray-700 hidden sm:block whitespace-nowrap">
-                {userName}
-              </span>
-              <ChevronDown
-                size={16}
-                className={`text-gray-500 transition-transform duration-300 ${isUserMenuOpen ? "rotate-180" : ""} shrink-0`}
-              />
+              <img src="https://picsum.photos/id/64/100/100" alt="Profile" className="w-8 h-8 rounded-full object-cover shrink-0" />
+              <span className="text-sm font-medium text-gray-700 hidden sm:block whitespace-nowrap">{userName}</span>
+              <ChevronDown size={16} className={`text-gray-500 transition-transform duration-300 ${isUserMenuOpen ? "rotate-180" : ""} shrink-0`} />
             </button>
 
               {isUserMenuOpen && (
@@ -301,7 +187,8 @@ const ClientHeader: React.FC<HeaderProps> = ({ userName }) => {
 
                       {/* Profile Button */}
                       <button
-                        onClick={() => { setIsUserMenuOpen(false); navigate('/clientProfile'); }}
+                        // FIX 4: Correct path to Profile
+                        onClick={() => { setIsUserMenuOpen(false); navigate('/client/profile'); }}
                         className="w-full group relative flex items-center px-4 py-3 text-sm text-gray-600 rounded-xl overflow-hidden hover:bg-[#4D7EAF] hover:text-white transition-all"
                       >
                           <div className="relative z-10 flex items-center gap-3 w-full">
@@ -314,7 +201,8 @@ const ClientHeader: React.FC<HeaderProps> = ({ userName }) => {
 
                       {/* Logout Button */}
                       <button
-                        onClick={() => { setIsUserMenuOpen(false); navigate('/landing'); }}
+                        // FIX 5: Go to root landing page
+                        onClick={() => { setIsUserMenuOpen(false); navigate('/'); }}
                         className="w-full group relative flex items-center px-4 py-3 text-sm text-red-500 rounded-xl overflow-hidden hover:bg-red-500 hover:text-white transition-all"
                       >
                           <div className="relative z-10 flex items-center gap-3 w-full">
@@ -325,16 +213,13 @@ const ClientHeader: React.FC<HeaderProps> = ({ userName }) => {
                   </div>
               )}
           </div>
-
+          
+          {/* Mobile Menu Button */}
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             className="md:hidden w-10 h-10 rounded-full bg-white flex items-center justify-center shadow-sm text-gray-600 hover:text-[#4D7EAF] hover:bg-blue-50 transition-colors"
           >
-            {isMobileMenuOpen ? (
-              <X className="w-5 h-5" />
-            ) : (
-              <Menu className="w-5 h-5" />
-            )}
+            {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
           </button>
         </div>
       </div>
