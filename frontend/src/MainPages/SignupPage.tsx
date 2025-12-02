@@ -84,7 +84,7 @@ const SignUp: React.FC = () => {
             </Link>
 
             <div className="my-4">
-              <h1 className="text-3xl font-bold lg:mt-0 mt-24 ">Welcome!</h1>
+              <h1 className="text-3xl font-bold lg:mt-0 mt-24 text-white">Welcome!</h1>
               <p className="mt-4 text-gray-200">
                 Create your account to start connecting with opportunities.
               </p>
@@ -94,7 +94,7 @@ const SignUp: React.FC = () => {
 
         {/* Right Section (Form) */}
         <div className="md:w-2/3 p-8 md:p-12">
-          <h1 className="text-2xl md:text-3xl font-bold text-gray-800 mb-6">
+          <h1 className="text-2xl md:text-3xl font-bold text-gray-800 mb-6 text-center">
             Create An Account
           </h1>
           <form onSubmit={handleSubmit} className="space-y-4">

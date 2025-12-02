@@ -41,6 +41,9 @@ import WorkerSide from "./MainPages/WorkerSide";
 // import Landing from "./MainPages/Landing";
 
 import TestingGateway from "./MainPages/UsabilityTestingGateway";
+import Landing from "./MainPages/Landing";
+import SignUp from "./MainPages/SignupPage";
+import SignIn from "./MainPages/SignInPage";
 
 
 
