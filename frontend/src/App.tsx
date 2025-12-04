@@ -41,10 +41,8 @@ import WorkerSide from "./MainPages/WorkerSide";
 // import Landing from "./MainPages/Landing";
 
 import TestingGateway from "./MainPages/UsabilityTestingGateway";
-import Landing from "./MainPages/Landing";
 import SignUp from "./MainPages/SignupPage";
-import SignIn from "./MainPages/SignInPage";
-
+import Landing from "./MainPages/Landing";
 
 
 // =============================================================
@@ -61,15 +59,15 @@ export default function App() {
 
   return (
     <Routes>
+      <Route path="/" element={<Landing/>}/>
+
       <Route
-        path="/"
-        element={<TestingGateway onSelectRole={handleRoleSelection} />}
+        path="/register"
+        element={<SignUp onSelectRole={handleRoleSelection} />}
       />
 
-      {/* Worker main router */}
       <Route path="/worker/*" element={<WorkerSide />} />
-
-      {/* Client main router */}
+      
       <Route path="/client/*" element={<ClientSide />} />
     </Routes>
   );

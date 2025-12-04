@@ -1,9 +1,13 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import Logo from "../MainComponents/LandingComponents/Logo/Logo";
 import { Link, useNavigate } from "react-router-dom";
-import { ArrowLeft } from "lucide-react"; // 👈 Lucide icon for back button
+import { ArrowLeft } from "lucide-react";
 
-const SignUp: React.FC = () => {
+interface SignUpProps {
+  onSelectRole: (role: "worker" | "client") => void;
+}
+
+const SignUp: React.FC<SignUpProps> = ({ onSelectRole }) => {
   const [formData, setFormData] = useState({
     username: "",
     password: "",
@@ -12,8 +16,18 @@ const SignUp: React.FC = () => {
   });
   const [image, setImage] = useState<File | null>(null);
   const [fileName, setFileName] = useState("No file chosen");
+  const [error, setError] = useState(""); // Current error message
+  const [showError, setShowError] = useState(false); // Show popup
   const fileInputRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
+
+  // Clear error popup after 3 seconds
+  useEffect(() => {
+    if (showError) {
+      const timer = setTimeout(() => setShowError(false), 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [showError]);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -29,79 +43,117 @@ const SignUp: React.FC = () => {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const showErrorPopup = (msg: string) => {
+    setError(msg);
+    setShowError(true);
+  };
+
+  const handleRegister = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (formData.password !== formData.confirmPassword) {
-      alert("Passwords do not match!");
+    const { username, password, confirmPassword, role } = formData;
+
+    if (!username.trim()) {
+      showErrorPopup("Please enter a username.");
       return;
     }
-    console.log("Submitted: ", { ...formData, image });
+
+    if (password !== confirmPassword) {
+      showErrorPopup("Passwords do not match!");
+      return;
+    }
+
+    const passwordRegex =
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*]).{8,}$/;
+    if (!passwordRegex.test(password)) {
+      showErrorPopup(
+        "Password must be at least 8 characters and include uppercase, lowercase, number, and special character."
+      );
+      return;
+    }
+
+    if (!role) {
+      showErrorPopup("Please select a role.");
+      return;
+    }
+
+    if (!image) {
+      showErrorPopup("Please upload your Government ID.");
+      return;
+    }
+
+    // Pass role to parent
+    onSelectRole(role as "worker" | "client");
+
+    // Log form data (for now)
+    console.log("Registered:", { ...formData, image });
+
+    // Navigate based on role
+    if (role === "worker") navigate("/worker/dashboard");
+    else navigate("/client/dashboard");
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center relative overflow-hidden">
-      {/* --- Background Design --- */}
+      {/* Background */}
       <div className="absolute inset-0 bg-gradient-to-br from-blue-100 via-blue-200 to-bluehire-blue"></div>
-
       <div
         className="absolute -top-20 -left-20 w-[400px] h-[400px] bg-blue-300/40 rounded-3xl rotate-12"
         style={{ clipPath: "polygon(0 0, 100% 0, 70% 100%, 0 100%)" }}
       ></div>
-
       <div
         className="absolute top-1/3 right-0 w-[450px] h-[450px] bg-blue-500/30 rounded-3xl -rotate-12"
         style={{ clipPath: "polygon(30% 0, 100% 10%, 100% 90%, 0 100%)" }}
       ></div>
-
       <div
         className="absolute bottom-0 left-1/3 w-[600px] h-[300px] bg-blue-400/20 rounded-3xl rotate-3"
         style={{ clipPath: "polygon(0 30%, 100% 0, 100% 100%, 0 100%)" }}
       ></div>
-
       <div className="absolute inset-0 bg-white/40 backdrop-blur-sm"></div>
 
-      {/* --- Back Button --- */}
+      {/* Error Popup */}
+      {showError && (
+        <div className="absolute top-6 left-1/2 transform -translate-x-1/2 bg-red-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 animate-fade-in">
+          {error}
+        </div>
+      )}
+
+      {/* Back Button */}
       <button
-        onClick={() => navigate("/landing")}
+        onClick={() => navigate("/")}
         className="absolute top-6 left-6 z-20 flex items-center gap-2 bg-white/70 backdrop-blur-md px-3 py-2 rounded-full shadow-md hover:bg-white/90 transition-all duration-200"
       >
         <ArrowLeft className="w-5 h-5 text-bluehire-blue" />
         <span className="hidden md:inline text-bluehire-blue font-medium">Back</span>
       </button>
 
-      {/* --- Sign Up Card --- */}
+      {/* Sign Up Card */}
       <div className="relative flex flex-col md:flex-row w-full max-w-4xl bg-white rounded-2xl shadow-2xl overflow-hidden z-10">
         {/* Left Section */}
-        <div className="relative md:w-1/3 bg-bluehire-blue text-white p-8 flex flex-col items-center text-center overflow-hidden">
+        <div className="relative md:w-1/3 bg-bluehire-blue text-white p-8 flex flex-col items-center text-center">
           <div
             className="absolute top-0 left-0 w-full h-1/3 bg-white"
             style={{ clipPath: "polygon(0 0, 100% 0, 100% 75%, 0 100%)" }}
           ></div>
-
           <div className="relative z-10 flex flex-col h-full justify-around mb-32 items-center">
             <Link to="/" className="block">
               <Logo variant="lg" />
             </Link>
-
-            <div className="my-4">
-              <h1 className="text-3xl font-bold lg:mt-0 mt-24 text-white">Welcome!</h1>
-              <p className="mt-4 text-gray-200">
-                Create your account to start connecting with opportunities.
-              </p>
-            </div>
+            <h1 className="text-3xl font-bold lg:mt-0 mt-24 text-white">Welcome!</h1>
+            <p className="mt-4 text-gray-200 text-center">
+              Create your account to start connecting with opportunities.
+            </p>
           </div>
         </div>
 
-        {/* Right Section (Form) */}
+        {/* Right Section */}
         <div className="md:w-2/3 p-8 md:p-12">
           <h1 className="text-2xl md:text-3xl font-bold text-gray-800 mb-6 text-center">
             Create An Account
           </h1>
-          <form onSubmit={handleSubmit} className="space-y-4">
+
+          <form onSubmit={handleRegister} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Username
-              </label>
+              <label className="block text-sm font-medium text-gray-700">Username</label>
               <input
                 name="username"
                 type="text"
@@ -111,10 +163,9 @@ const SignUp: React.FC = () => {
                 className="mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-bluehire-blue focus:border-bluehire-blue"
               />
             </div>
+
             <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Password
-              </label>
+              <label className="block text-sm font-medium text-gray-700">Password</label>
               <input
                 name="password"
                 type="password"
@@ -124,10 +175,9 @@ const SignUp: React.FC = () => {
                 className="mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-bluehire-blue focus:border-bluehire-blue"
               />
             </div>
+
             <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Confirm Password
-              </label>
+              <label className="block text-sm font-medium text-gray-700">Confirm Password</label>
               <input
                 name="confirmPassword"
                 type="password"
@@ -137,10 +187,9 @@ const SignUp: React.FC = () => {
                 className="mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-bluehire-blue focus:border-bluehire-blue"
               />
             </div>
+
             <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Role
-              </label>
+              <label className="block text-sm font-medium text-gray-700">Role</label>
               <select
                 name="role"
                 value={formData.role}
@@ -153,10 +202,9 @@ const SignUp: React.FC = () => {
                 <option value="client">Client</option>
               </select>
             </div>
+
             <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Government ID
-              </label>
+              <label className="block text-sm font-medium text-gray-700">Government ID</label>
               <div className="mt-1 flex items-center">
                 <input
                   type="file"
@@ -169,7 +217,7 @@ const SignUp: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => fileInputRef.current?.click()}
-                  className="px-4 py-2 bg-gray-200 text-gray-700 rounded-l-lg hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400"
+                  className="px-4 py-2 bg-gray-200 text-gray-700 rounded-l-lg hover:bg-gray-300"
                 >
                   Upload File
                 </button>
@@ -178,6 +226,7 @@ const SignUp: React.FC = () => {
                 </span>
               </div>
             </div>
+
             <button
               type="submit"
               className="w-full mt-6 bg-bluehire-blue text-white font-semibold py-3 rounded-lg hover:bg-bluehire-blue-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-bluehire-blue transition-all duration-300 shadow-md"
@@ -185,12 +234,10 @@ const SignUp: React.FC = () => {
               Register
             </button>
           </form>
+
           <p className="text-center text-sm text-gray-500 mt-6">
             Already have an account?{" "}
-            <Link
-              to="/signin"
-              className="font-medium text-bluehire-blue hover:opacity-80"
-            >
+            <Link to="/signin" className="font-medium text-bluehire-blue hover:opacity-80">
               Sign In
             </Link>
           </p>
