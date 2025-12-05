@@ -10,11 +10,10 @@ import com.appdevf2.bluehire.model.embeddables.Address;
 import com.appdevf2.bluehire.model.embeddables.Name;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-
 @Entity
+@Table(name = "user", uniqueConstraints = @UniqueConstraint(columnNames = "username")) // Add this
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "user_type")
-@Table(name = "user")
 public class User {
 
     @Id
@@ -30,7 +29,9 @@ public class User {
     @Embedded
     private Address address;
 
+    @Column(unique = true)
     private String username;
+
     private String password;
     private String role;
 
@@ -174,7 +175,8 @@ public class User {
     public int getAge() {
         if (birthdate == null) return 0;
 
-        LocalDate birth = birthdate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        // FIX: Convert java.sql.Date to LocalDate safely via String or Time
+        LocalDate birth = new java.sql.Date(birthdate.getTime()).toLocalDate();
         LocalDate today = LocalDate.now();
 
         return Period.between(birth, today).getYears();
