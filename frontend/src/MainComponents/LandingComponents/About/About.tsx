@@ -1,7 +1,7 @@
 import React from 'react'
 import model2 from "../Assets/model2.png"
 import vision from "../Assets/vision.png"
-import corevalues from "../Assets/corevalues.png"
+import corevalues from "../Assets/coreValues.png"
 
 interface AboutProps {
   id?: string;

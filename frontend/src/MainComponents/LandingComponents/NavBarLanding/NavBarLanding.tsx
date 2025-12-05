@@ -85,7 +85,7 @@ const Navbar: React.FC = () => {
             </ul>
 
             <Link
-              to="/signUp"
+              to="/register"
               className="bg-bluehire-blue text-white px-6 py-2.5 rounded-lg hover:bg-opacity-90 transition-colors duration-300 text-sm font-semibold shadow-sm"
             >
               Sign Up

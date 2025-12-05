@@ -22,6 +22,9 @@ import ClientSide from "./MainPages/ClientSide";
 import WorkerSide from "./MainPages/WorkerSide";
 
 import TestingGateway from "./MainPages/UsabilityTestingGateway";
+import SignUp from "./MainPages/SignupPage";
+import Landing from "./MainPages/Landing";
+
 
 // =============================================================
 export default function App() {
@@ -38,9 +41,11 @@ export default function App() {
   return (
     <Routes>
       {/* Default / Gateway Route */}
+      <Route path="/" element={<Landing/>}/>
+
       <Route
-        path="/"
-        element={<TestingGateway onSelectRole={handleRoleSelection} />}
+        path="/register"
+        element={<SignUp onSelectRole={handleRoleSelection} />}
       />
 
       {/* Auth & Public Routes */}
@@ -50,8 +55,7 @@ export default function App() {
 
       {/* Worker main router */}
       <Route path="/worker/*" element={<WorkerSide />} />
-
-      {/* Client main router */}
+      
       <Route path="/client/*" element={<ClientSide />} />
     </Routes>
   );

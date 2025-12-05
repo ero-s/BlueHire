@@ -32,7 +32,11 @@ const Logo: React.FC<LogoProps> = ({ variant = "md" }) => {
   );
 };
 
-const SignUp: React.FC = () => {
+interface SignUpProps {
+  onSelectRole: (role: "worker" | "client") => void;
+}
+
+const SignUp: React.FC<SignUpProps> = ({ onSelectRole }) => {
   const [formData, setFormData] = useState({
     // Name Embeddable Fields
     fname: "",
@@ -62,8 +66,18 @@ const SignUp: React.FC = () => {
   // File upload state
   const [image, setImage] = useState<File | null>(null);
   const [fileName, setFileName] = useState("No file chosen");
+  const [error, setError] = useState(""); // Current error message
+  const [showError, setShowError] = useState(false); // Show popup
   const fileInputRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
+
+  // Clear error popup after 3 seconds
+  useEffect(() => {
+    if (showError) {
+      const timer = setTimeout(() => setShowError(false), 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [showError]);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
@@ -189,7 +203,14 @@ const SignUp: React.FC = () => {
       <div className="absolute bottom-0 right-0 w-[600px] h-[600px] bg-[#3d6691]/10 rounded-full blur-3xl"></div>
       <div className="absolute inset-0 bg-white/30 backdrop-blur-[1px]"></div>
 
-      {/* --- Back Button --- */}
+      {/* Error Popup */}
+      {showError && (
+        <div className="absolute top-6 left-1/2 transform -translate-x-1/2 bg-red-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 animate-fade-in">
+          {error}
+        </div>
+      )}
+
+      {/* Back Button */}
       <button
         onClick={() => navigate("/landing")}
         className="absolute top-6 left-6 z-20 flex items-center gap-2 bg-white/80 backdrop-blur-md px-4 py-2 rounded-full shadow-sm hover:shadow-md hover:bg-white transition-all duration-200 border border-gray-100"
