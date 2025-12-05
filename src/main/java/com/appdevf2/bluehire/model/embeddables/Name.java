@@ -5,6 +5,7 @@ import jakarta.persistence.Embeddable;
 @Embeddable
 public class Name {
     private String fname;
+    private String middlename;
     private String lname;
 
     public void setFname(String fname) {
@@ -21,5 +22,13 @@ public class Name {
 
     public String getLname() {
         return lname;
+    }
+
+    public String getMiddlename() {
+        return middlename;
+    }
+
+    public void setMiddlename(String middlename) {
+        this.middlename = middlename;
     }
 }

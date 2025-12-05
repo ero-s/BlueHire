@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import type { FiltersState } from "../components/FindWorkers/types.ts";
 import Filters from "../components/Filters.tsx";
 import WorkerCard from "../components/WorkerCard.tsx";
@@ -6,6 +6,11 @@ import Footer from "../components/ClientFooter.tsx";
 import Header from "../components/ClientHeader.tsx";
 import type { Worker } from "./types";
 import WorkerProfileModal from "../components/WorkerProfileModal.tsx";
+import axios from "axios";
+
+export const workerList = () => {
+  return axios.get("/api/worker/getAllWorkers");
+};
 
 export const mockWorkers: Worker[] = [
   {
@@ -91,6 +96,10 @@ export const mockWorkers: Worker[] = [
 ];
 
 const FindWorkers: React.FC = () => {
+  const [workers, setWorkers] = useState<Worker[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
   const [filters, setFilters] = useState<FiltersState>({
     trade: "all",
     location: "",
@@ -98,11 +107,25 @@ const FindWorkers: React.FC = () => {
     rating: 0,
   });
 
+  useEffect(() => {
+    workerList()
+      .then((response) => {
+        setWorkers(response.data);
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error("Error fetching workers:", error);
+        setError("Failed to load workers");
+        setLoading(false);
+      });
+  }, []);
+
   const [selectedWorker, setSelectedWorker] = useState<Worker | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const filteredWorkers = useMemo(() => {
-    return mockWorkers.filter((worker) => {
+    const sourceData = workers.length > 0 ? workers : [];
+    return sourceData.filter((worker) => {
       const tradeMatch =
         filters.trade === "all" || worker.category === filters.trade;
 
@@ -155,6 +178,7 @@ const FindWorkers: React.FC = () => {
 
             {/* Workers Grid */}
             <div className="lg:col-span-9">
+              d ..
               {filteredWorkers.length > 0 ? (
                 <div className="space-y-4">
                   {filteredWorkers.map((worker) => (
