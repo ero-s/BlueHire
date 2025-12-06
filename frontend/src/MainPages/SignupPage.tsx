@@ -1,6 +1,7 @@
 import React, { useState, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { ArrowLeft, Briefcase, Loader2 } from "lucide-react";
+import { useEffect } from "react";
 
 // --- Local Logo Component ---
 interface LogoProps {
@@ -33,7 +34,7 @@ const Logo: React.FC<LogoProps> = ({ variant = "md" }) => {
 };
 
 interface SignUpProps {
-  onSelectRole: (role: "worker" | "client") => void;
+  onSelectRole?: (role: "worker" | "client") => void;
 }
 
 const SignUp: React.FC<SignUpProps> = ({ onSelectRole }) => {

@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from 'react'; // Added useEffect
-import { useLocation, useNavigate } from 'react-router-dom'; // Added useLocation
-
+import React, { useState, useEffect } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { 
   ChevronDown, 
   ChevronLeft, 
@@ -15,47 +14,73 @@ import {
 // --- Types ---
 type JobStatus = 'Pending' | 'Ongoing' | 'Completed';
 
+interface Payment {
+  amount: number;
+}
+
 interface Job {
   id: string;
-  clientName: string;
+  client: {
+    user: {
+      name: {
+        fname: string;
+        middlename?: string;
+        lname: string;
+      }
+    }
+  };
   serviceType: string;
   dateTime: string;
   duration: string;
-  amount: string;
   status: JobStatus;
   location: string;
+  payment: Payment;
 }
 
-// --- Mock Data ---
-const MOCK_JOBS: Job[] = [
-  { id: '1', clientName: 'Floyd Miles', serviceType: 'House Cleaning', dateTime: 'Jan 15, 2025 - 9:00 AM', duration: '3 hours', amount: '₱400.00', status: 'Pending', location: 'Cebu City' },
-  { id: '2', clientName: 'Ronald Richards', serviceType: 'Laundry & Ironing', dateTime: 'Sept 15, 2025 - 9:00 AM', duration: '4 hours', amount: '₱260.00', status: 'Ongoing', location: 'Liloan' },
-  { id: '3', clientName: 'Marvin McKinney', serviceType: 'Cooking / Meal Prep', dateTime: 'May 15, 2025 - 9:00 AM', duration: '2 hours', amount: '₱300.00', status: 'Completed', location: 'Talisay' },
-  { id: '4', clientName: 'Tesla Gonzaga', serviceType: 'Gardening / Yard Work', dateTime: 'May 15, 2025 - 9:00 AM', duration: '5 hours', amount: '₱520.00', status: 'Completed', location: 'Cordova' },
-  { id: '5', clientName: 'Jerome Bell', serviceType: 'Plumbing', dateTime: 'Sept 15, 2025 - 9:00 AM', duration: '1 hour', amount: '₱450.00', status: 'Pending', location: 'Cebu City' },
-  { id: '6', clientName: 'Kathryn Murphy', serviceType: 'Electrical Repair', dateTime: 'Sept 15, 2025 - 9:00 AM', duration: '2 hours', amount: '₱500.00', status: 'Pending', location: 'Consolacion' },
-  { id: '7', clientName: 'Jacob Jones', serviceType: 'Appliance Repair', dateTime: 'April 15, 2025 - 9:00 AM', duration: '2 hours', amount: '₱470.00', status: 'Pending', location: 'Cebu City' },
-  { id: '8', clientName: 'Kristin Watson', serviceType: 'Car Wash & Detailing', dateTime: 'Feb 15, 2025 - 9:00 AM', duration: '2 hours', amount: '₱340.00', status: 'Pending', location: '₱340.00' }, 
-];
+// --- Constants ---
+const ITEMS_PER_PAGE = 10;
 
 const BookingJobManagementMainSection: React.FC = () => {
-  const location = useLocation(); // Hook to access state passed via navigate
-  const [filterStatus, setFilterStatus] = useState<string>('All Status');
-  // const [currentPage, setCurrentPage] = useState(1);
+  const location = useLocation();
   const navigate = useNavigate();
 
-  // --- EFFECT: Listen for incoming navigation state ---
+  const [filterStatus, setFilterStatus] = useState<string>('All Status');
+  const [jobs, setJobs] = useState<Job[]>([]);
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [totalPages, setTotalPages] = useState<number>(1);
+
+  // --- Fetch bookings from backend ---
   useEffect(() => {
-    // If state exists and has a 'status' property, set the filter
+    fetch('/booking/getAll') // Replace with your real API endpoint
+      .then(res => res.json())
+      .then((data: Job[]) => {
+        setJobs(data);
+        setTotalPages(Math.ceil(data.length / ITEMS_PER_PAGE));
+      })
+      .catch(err => console.error('Failed to fetch bookings:', err));
+  }, []);
+
+  // --- Listen for navigation state for filter ---
+  useEffect(() => {
     if (location.state && location.state.status) {
       setFilterStatus(location.state.status);
     }
   }, [location]);
 
-  // Filter Logic
-  const filteredJobs = MOCK_JOBS.filter(job => 
+  // --- Filter jobs ---
+  const filteredJobs = jobs.filter(job => 
     filterStatus === 'All Status' ? true : job.status === filterStatus
   );
+
+  // --- Pagination logic ---
+  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+  const paginatedJobs = filteredJobs.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+  const pages = Math.ceil(filteredJobs.length / ITEMS_PER_PAGE);
+
+  const changePage = (page: number) => {
+    if (page < 1 || page > pages) return;
+    setCurrentPage(page);
+  };
 
   // --- Helper: Status Badge ---
   const getStatusBadge = (status: JobStatus) => {
@@ -71,7 +96,7 @@ const BookingJobManagementMainSection: React.FC = () => {
 
   return (
     <div className="flex flex-col gap-6 w-full max-w-[1400px] mx-auto">
-      
+
       {/* --- Top Section: Stats & Filter --- */}
       <div className="flex flex-col lg:flex-row gap-6">
         
@@ -79,15 +104,15 @@ const BookingJobManagementMainSection: React.FC = () => {
         <div className="flex-1 bg-white rounded-3xl p-6 shadow-sm flex justify-between items-center text-center divide-x divide-gray-100">
           <div className="flex-1 px-2">
             <h4 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Ongoings</h4>
-            <span className="text-3xl font-semibold text-gray-800">2</span>
+            <span className="text-3xl font-semibold text-gray-800">{jobs.filter(j => j.status === 'Ongoing').length}</span>
           </div>
           <div className="flex-1 px-2">
             <h4 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Pending</h4>
-            <span className="text-3xl font-semibold text-gray-800">10</span>
+            <span className="text-3xl font-semibold text-gray-800">{jobs.filter(j => j.status === 'Pending').length}</span>
           </div>
           <div className="flex-1 px-2">
             <h4 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Completed</h4>
-            <span className="text-3xl font-semibold text-gray-800">37</span>
+            <span className="text-3xl font-semibold text-gray-800">{jobs.filter(j => j.status === 'Completed').length}</span>
           </div>
         </div>
 
@@ -97,7 +122,7 @@ const BookingJobManagementMainSection: React.FC = () => {
           <div className="relative">
             <select 
               value={filterStatus}
-              onChange={(e) => setFilterStatus(e.target.value)}
+              onChange={(e) => { setFilterStatus(e.target.value); setCurrentPage(1); }}
               className="w-full appearance-none bg-white border border-gray-300 text-gray-700 py-3 px-4 pr-8 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#5AB3E6] focus:border-transparent text-sm cursor-pointer"
             >
               <option>All Status</option>
@@ -131,13 +156,17 @@ const BookingJobManagementMainSection: React.FC = () => {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-50">
-              {filteredJobs.map((job) => (
+              {paginatedJobs.map((job) => (
                 <tr key={job.id} className="group hover:bg-gray-50 transition-colors">
-                  <td className="py-6 px-4 text-sm font-medium text-gray-800">{job.clientName}</td>
+                  <td className="py-6 px-4 text-sm font-medium text-gray-800">
+                    {job.client?.user?.name
+                      ? `${job.client.user.name.fname} ${job.client.user.name.middlename ? job.client.user.name.middlename + ' ' : ''}${job.client.user.name.lname}`
+                      : 'No Name'}
+                  </td>
                   <td className="py-6 px-4 text-sm text-gray-600">{job.serviceType}</td>
                   <td className="py-6 px-4 text-sm text-gray-600">{job.dateTime}</td>
                   <td className="py-6 px-4 text-sm text-gray-600">{job.duration}</td>
-                  <td className="py-6 px-4 text-sm font-bold text-gray-800">{job.amount}</td>
+                  <td className="py-6 px-4 text-sm font-bold text-gray-800">₱{job.payment?.amount}</td>
                   <td className="py-6 px-4">{getStatusBadge(job.status)}</td>
                   <td className="py-6 px-4 text-sm text-gray-600">{job.location}</td>
                   
@@ -169,7 +198,6 @@ const BookingJobManagementMainSection: React.FC = () => {
 
                       {job.status === 'Completed' && (
                          <button 
-                          // 3. UPDATED: Navigate with State
                           onClick={() => navigate("/worker/reviews", { state: { jobId: job.id } })}
                           className="w-full flex items-center justify-center gap-2 px-3 py-1.5 rounded-lg border border-orange-200 bg-orange-50 text-orange-600 text-xs font-medium hover:bg-orange-100 transition-colors"
                         >
@@ -184,27 +212,50 @@ const BookingJobManagementMainSection: React.FC = () => {
             </tbody>
           </table>
           {filteredJobs.length === 0 && (
-            <div className="p-8 text-center text-gray-400 text-sm">No jobs found.</div>
+            <div className="p-12 text-center flex flex-col items-center justify-center text-gray-400">
+              <div className="bg-gray-50 p-4 rounded-full mb-3">
+                <CheckCircle size={32} className="text-gray-300" />
+              </div>
+              <p className="text-sm">
+                {filterStatus === 'All Status'
+                  ? 'No jobs found.'
+                  : `No ${filterStatus.toLowerCase()} jobs found.`}
+              </p>
+            </div>
           )}
+
         </div>
 
         {/* --- Pagination --- */}
         <div className="pt-6 border-t border-gray-100 flex flex-col md:flex-row justify-between items-center gap-4">
           <span className="text-sm text-gray-400">
-            Showing data 1 to {filteredJobs.length} of 256K entries
+            Showing {startIndex + 1} to {Math.min(startIndex + ITEMS_PER_PAGE, filteredJobs.length)} of {filteredJobs.length} entries
           </span>
           
           <div className="flex items-center gap-1">
-            <button className="w-8 h-8 flex items-center justify-center rounded-lg bg-gray-50 text-gray-400 hover:bg-gray-100">
+            <button 
+              className="w-8 h-8 flex items-center justify-center rounded-lg bg-gray-50 text-gray-400 hover:bg-gray-100"
+              onClick={() => changePage(currentPage - 1)}
+            >
               <ChevronLeft size={16} />
             </button>
-            <button className="w-8 h-8 flex items-center justify-center rounded-lg bg-[#4D7EAF] text-white text-sm font-medium shadow-sm">1</button>
-            <button className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-50 text-gray-500 text-sm">2</button>
-            <button className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-50 text-gray-500 text-sm">3</button>
-            <button className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-50 text-gray-500 text-sm">4</button>
-            <span className="w-8 h-8 flex items-center justify-center text-gray-400 text-sm">...</span>
-            <button className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-50 text-gray-500 text-sm">40</button>
-            <button className="w-8 h-8 flex items-center justify-center rounded-lg bg-gray-50 text-gray-600 hover:bg-gray-100">
+
+            {[...Array(pages)].map((_, i) => (
+              <button
+                key={i}
+                className={`w-8 h-8 flex items-center justify-center rounded-lg text-sm font-medium ${
+                  currentPage === i + 1 ? 'bg-[#4D7EAF] text-white shadow-sm' : 'hover:bg-gray-50 text-gray-500'
+                }`}
+                onClick={() => changePage(i + 1)}
+              >
+                {i + 1}
+              </button>
+            ))}
+
+            <button 
+              className="w-8 h-8 flex items-center justify-center rounded-lg bg-gray-50 text-gray-600 hover:bg-gray-100"
+              onClick={() => changePage(currentPage + 1)}
+            >
               <ChevronRight size={16} />
             </button>
           </div>

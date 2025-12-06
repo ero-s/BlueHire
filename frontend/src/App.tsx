@@ -22,7 +22,6 @@ import ClientSide from "./MainPages/ClientSide";
 import WorkerSide from "./MainPages/WorkerSide";
 
 import TestingGateway from "./MainPages/UsabilityTestingGateway";
-import SignUp from "./MainPages/SignupPage";
 import Landing from "./MainPages/Landing";
 
 
