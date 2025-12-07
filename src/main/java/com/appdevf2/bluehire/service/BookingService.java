@@ -4,6 +4,9 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.appdevf2.bluehire.model.Booking;
@@ -53,4 +56,28 @@ public class BookingService {
         }
         return msg;
     }
+
+    public List<Booking> getBookingsByClientUserId(int userId) {
+    List<Booking> bookings = bookingRepository.findBookingsByClientUserId(userId);
+        // Ensure lazy-loaded worker and client are fetched
+        bookings.forEach(b -> {
+            b.getWorker().getUser().getName();  // preload worker's name
+            b.getClient().getUser().getName();  // preload client's name
+        });
+        return bookings;
+    }
+
+    public List<Booking> getBookingsByWorkerUserId(int userId) {
+        List<Booking> bookings = bookingRepository.findBookingsByWorkerUserId(userId);
+
+        // preload lazy fields to avoid lazy-loading issues
+        bookings.forEach(b -> {
+            b.getWorker().getUser().getName();
+            b.getClient().getUser().getName();
+        });
+
+        System.out.println("Bookings for worker userId " + userId + ": " + bookings.size());
+        return bookings;
+    }
+
 }
