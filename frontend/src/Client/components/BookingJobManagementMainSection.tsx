@@ -75,8 +75,19 @@ const ClientBookingManagementMainSection: React.FC = () => {
           },
           serviceCategory: b.serviceCategory,
           scheduledDateTime: b.scheduledDateTime,
-          duration: b.duration ?? "N/A",
-          amount: b.amount ?? 0,
+
+          // ✅ FIXED DURATION LOGIC
+          duration: 
+            b.status === "Completed"
+              ? b.duration || "0 hrs"
+              : "Not yet completed",
+
+          // ✅ FIXED PRICE LOGIC
+          amount:
+            b.status === "Completed"
+              ? b.amount ?? 0
+              : b.worker?.hourlyRate ?? 0,
+
           status: b.status === "Accepted" ? "Ongoing" : b.status,
           location: b.location
         }));

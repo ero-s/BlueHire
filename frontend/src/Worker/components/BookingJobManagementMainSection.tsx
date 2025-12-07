@@ -24,7 +24,6 @@ interface Job {
   serviceCategory: string;
   scheduledDateTime: string;
   duration?: string;
-  amount?: number;
   status: JobStatus;
   location: string;
   worker?: Worker;
@@ -76,7 +75,6 @@ const BookingJobManagementMainSection: React.FC = () => {
           status: job.status === 'Accepted' ? 'Accepted' : job.status,
           location: job.location,
           worker: job.worker ? { workerID: job.worker.workerID, hourlyRate: job.worker.hourlyRate } : undefined,
-          amount: job.amount ?? undefined,
         }));
         setJobs(mappedJobs);
       });
@@ -154,11 +152,10 @@ const BookingJobManagementMainSection: React.FC = () => {
     const endTime = Date.now();
     const durationHours = ((endTime - startTime) / (1000 * 60 * 60)).toFixed(2);
 
-    const updatedJob = {
+    const updatedJob: Job = {
       ...selectedJob,
       status: 'Completed',
       duration: durationHours,
-      amount: selectedJob.amount ?? selectedJob.worker.hourlyRate * Number(durationHours),
     };
 
     await fetch(`http://localhost:8080/booking/update?id=${selectedJob.id}`, {
@@ -171,7 +168,7 @@ const BookingJobManagementMainSection: React.FC = () => {
       }),
     });
 
-    setJobs(prev => prev.map(j => j.id === selectedJob.id ? { ...j, ...updatedJob } : j));
+    setJobs(prev => prev.map(j => j.id === selectedJob.id ? updatedJob : j));
     closeModal();
   };
 
@@ -248,7 +245,13 @@ const BookingJobManagementMainSection: React.FC = () => {
                         ? 'Job not yet started'
                         : 'Job ongoing'}
                   </td>
-                  <td className="py-6 px-4 font-bold">₱{job.amount ?? job.worker?.hourlyRate ?? 0}</td>
+                  <td className="py-6 px-4 font-bold">
+                    ₱{job.worker 
+                        ? job.status === 'Completed' && job.duration
+                          ? (job.worker.hourlyRate * Number(job.duration)).toFixed(2)
+                          : job.worker.hourlyRate.toFixed(2)
+                        : 0}
+                  </td>
                   <td className="py-6 px-4">{getStatusBadge(job.status)}</td>
                   <td className="py-6 px-4">{job.location}</td>
                   <td className="py-6 px-4">
