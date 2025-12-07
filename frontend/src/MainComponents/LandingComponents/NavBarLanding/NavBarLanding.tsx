@@ -10,17 +10,14 @@ const Navbar: React.FC = () => {
 
   // Handles smooth scroll to sections
   const handleScroll = (id: string) => {
-    // If not on the landing page, navigate to it first
     if (location.pathname !== '/landing') {
       navigate('/landing');
-      // Wait a bit for the page to load, then scroll
       setTimeout(() => {
         const section = document.getElementById(id);
         if (section) section.scrollIntoView({ behavior: 'smooth' });
         setActiveSection(id);
       }, 300);
     } else {
-      // Already on the landing page, scroll immediately
       const section = document.getElementById(id);
       if (section) section.scrollIntoView({ behavior: 'smooth' });
       setActiveSection(id);
@@ -85,7 +82,7 @@ const Navbar: React.FC = () => {
             </ul>
 
             <Link
-              to="/register"
+              to="/signup"
               className="bg-bluehire-blue text-white px-6 py-2.5 rounded-lg hover:bg-opacity-90 transition-colors duration-300 text-sm font-semibold shadow-sm"
             >
               Sign Up
