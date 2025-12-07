@@ -33,8 +33,17 @@ public class BookingController {
     }
     
     @GetMapping("/getAll")
-    public List<Booking> getAllBookings() {
-        return bookingService.getAllBookings();
+    public List<Booking> getAllBookings(
+            @RequestParam Integer userId, 
+            @RequestParam String role) {
+
+        if ("WORKER".equalsIgnoreCase(role)) {
+            return bookingService.getBookingsByWorkerUserId(userId);
+        } else if ("CLIENT".equalsIgnoreCase(role)) {
+            return bookingService.getBookingsByClientUserId(userId);
+        } else {
+            return bookingService.getAllBookings();
+        }
     }
 
     @PutMapping("/update")
@@ -46,4 +55,6 @@ public class BookingController {
     public String deleteBooking(@PathVariable Long id) {
         return bookingService.deleteBooking(id);
     }
+
+
 }

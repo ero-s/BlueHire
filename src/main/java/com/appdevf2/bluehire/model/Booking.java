@@ -3,6 +3,7 @@ package com.appdevf2.bluehire.model;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
+
 @Entity
 public class Booking {
 
@@ -30,7 +31,6 @@ public class Booking {
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
-    // Booking likely has relationships in a full implementation
     @ManyToOne
     @JoinColumn(name = "client", nullable = false)
     private Client client;
@@ -45,6 +45,12 @@ public class Booking {
         Completed,
         Cancelled
     }
+
+    @Column(name = "amount")
+    private Double amount;
+
+    @Column(name = "duration")
+    private String duration;
 
     public Booking() {}
 
@@ -129,4 +135,21 @@ public class Booking {
     public void setWorker(Worker worker) {
         this.worker = worker;
     }
+
+    public Double getAmount() {
+        return amount;
+    }
+
+    public void setAmount(Double amount) {
+        this.amount = amount;
+    }
+
+    public String getDuration() {
+        return duration;
+    }
+
+    public void setDuration(String duration) {
+        this.duration = duration;
+    }
+
 }

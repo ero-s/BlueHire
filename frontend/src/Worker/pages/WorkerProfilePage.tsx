@@ -186,46 +186,6 @@ const handleRemoveArea = (area: string) => {
                 </div>
             </div>
 
-            {/* Skills Card */}
-            <div className="bg-white rounded-2xl shadow-sm p-8 border border-gray-100 flex flex-col">
-                <h3 className="text-lg font-bold text-blue-600 mb-6 text-center">Skills</h3>
-                
-                <div className="flex flex-wrap gap-3 mb-8 justify-center">
-                    {skills.map((skill, index) => (
-                    <div key={index} className="bg-gray-100 border-2 border-gray-300 px-4 py-2 rounded-md flex items-center gap-3 text-gray-800 font-medium text-sm">
-                        <span>{skill}</span>
-                        <button 
-                        onClick={() => handleRemoveSkill(skill)}
-                        className="text-gray-900 hover:text-red-500 transition-colors"
-                        aria-label={`Remove ${skill}`}
-                        >
-                        <X size={16} strokeWidth={3} />
-                        </button>
-                    </div>
-                    ))}
-                </div>
-
-                <div className="mt-auto">
-                  <div className="border-2 border-blue-300 rounded-full flex items-center p-1.5 ring-blue-100 transition-all bg-white">
-                    <input 
-                      type="text" 
-                      placeholder="Add Skills..." 
-                      className="flex-grow px-4 py-2 outline-none text-gray-600 bg-transparent placeholder-gray-400 text-sm rounded-full"
-                      value={newSkill}
-                      onChange={(e) => setNewSkill(e.target.value)}
-                      onKeyDown={(e) => e.key === 'Enter' && handleAddSkill()}
-                    />
-                    <button 
-                      onClick={handleAddSkill}
-                      className="ml-2 bg-blue-100 hover:bg-blue-200 text-blue-600 font-bold py-3 px-6 rounded-full transition-colors text-sm"
-                    >
-                      Enter
-                    </button>
-                  </div>
-                </div>
-
-            </div>
-
             {/* Coverage Areas Card */}
             <div className="bg-white rounded-2xl shadow-sm p-8 border border-gray-100 flex flex-col">
                 <h3 className="text-lg font-bold text-blue-600 mb-6 text-center">Coverage Areas</h3>

@@ -14,7 +14,7 @@ export default function ProfileBio() {
   const displayedBio = showFullBio ? userBio : `${userBio.slice(0, bioLimit)}${userBio.length > bioLimit ? '...' : ''}`;
 
   return (
-    <div className="flex items-center justify-center w-full  font-sans">
+    <div className="flex items-center justify-center w-full font-sans">
       <div className="w-[338px] h-[614px] rounded-[20px] bg-white shadow-lg border border-gray-200 p-10 flex flex-col items-center">
         
         {/* Profile Picture */}
@@ -32,14 +32,10 @@ export default function ProfileBio() {
         </div>
 
         {/* User Name */}
-        <h2 className="text-2xl font-bold text-gray-900 mt-3 shrink-0 text-center">
-          {userName}
-        </h2>
+        <h2 className="text-2xl font-bold text-gray-900 mt-3 shrink-0 text-center">{userName}</h2>
 
         {/* User Position */}
-        <p className="text-md text-gray-600 mb-2 shrink-0 text-center">
-          {userPosition}
-        </p>
+        <p className="text-md text-gray-600 mb-2 shrink-0 text-center">{userPosition}</p>
 
         {/* Verified Badge */}
         {isVerified && (
@@ -52,9 +48,7 @@ export default function ProfileBio() {
         {/* Bio Section */}
         <div className="w-full max-w-lg overflow-y-auto px-4 text-center">
           <h2 className="font-bold mb-1" style={{ color: '#4D7EAF' }}>Bio:</h2>
-          <p className="text-gray-800 text-sm">
-            {displayedBio}
-          </p>
+          <p className="text-gray-800 text-sm">{displayedBio}</p>
           {userBio.length > bioLimit && (
             <button
               className="text-blue-600 text-xs font-semibold mt-2 hover:underline"
@@ -64,6 +58,7 @@ export default function ProfileBio() {
             </button>
           )}
         </div>
+
       </div>
     </div>
   );
