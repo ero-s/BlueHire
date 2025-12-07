@@ -1,40 +1,10 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { ArrowLeft, Briefcase, Loader2 } from "lucide-react";
-import { useEffect } from "react";
-
-// --- Local Logo Component ---
-interface LogoProps {
-  variant?: "sm" | "md" | "lg";
-}
-
-const Logo: React.FC<LogoProps> = ({ variant = "md" }) => {
-  const sizeClasses = {
-    sm: { icon: "w-6 h-6", text: "text-lg" },
-    md: { icon: "w-8 h-8", text: "text-2xl" },
-    lg: { icon: "w-12 h-12", text: "text-4xl" },
-  };
-
-  const selectedSize = sizeClasses[variant];
-
-  return (
-    <div className="flex flex-col items-center gap-3">
-      <div
-        className={`flex items-center justify-center bg-blue-100 text-[#4D7EAF] rounded-full p-3 shadow-sm`}
-      >
-        <Briefcase className={`${selectedSize.icon}`} />
-      </div>
-
-      <div className={`font-bold font-sans ${selectedSize.text} flex gap-1`}>
-        <span className="text-[#4D7EAF]">Blue</span>
-        <span className="text-gray-700">Hire</span>
-      </div>
-    </div>
-  );
-};
+import Logo from "../MainComponents/LandingComponents/Logo/Logo"
 
 interface SignUpProps {
-  onSelectRole?: (role: "worker" | "client") => void;
+  onSelectRole: (role: "worker" | "client") => void;
 }
 
 const SignUp: React.FC<SignUpProps> = ({ onSelectRole }) => {
