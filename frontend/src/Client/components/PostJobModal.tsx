@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { X, Briefcase, MapPin, DollarSign, AlignLeft } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { X, Briefcase, MapPin, DollarSign, AlignLeft, Calendar } from 'lucide-react';
 
 interface PostJobModalProps {
   isOpen: boolean;
@@ -10,14 +10,47 @@ const TRADES = ["Plumbing", "Electrical", "Carpentry", "Cleaning", "Nanny", "Gar
 
 const PostJobModal: React.FC<PostJobModalProps> = ({ isOpen, onClose }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [clientId, setClientId] = useState<number | null>(null);
+
   const [formData, setFormData] = useState({
     title: '',
     description: '',
     location: '',
     budget: '',
-    payType: 'Fixed', // or Hourly
-    trade: ''
+    payType: 'Fixed',
+    trade: '',
+    scheduledDate: ''
   });
+
+  // --- FIXED: Updated URL to match your ClientController ---
+  useEffect(() => {
+    const fetchClientProfile = async () => {
+      const storedUser = localStorage.getItem("currentUser");
+      if (storedUser) {
+        const user = JSON.parse(storedUser);
+        try {
+            // UPDATED URL: /api/client/getAllClients
+            const response = await fetch("http://localhost:8080/api/client/getAllClients"); 
+            if (response.ok) {
+                const clients = await response.json();
+                const myClientProfile = clients.find((c: any) => c.user.userId === user.userId);
+                
+                if (myClientProfile) {
+                    setClientId(myClientProfile.clientID);
+                    console.log("Client Identified:", myClientProfile.clientID); // Debug log
+                } else {
+                    console.error("Client profile not found for this user.");
+                }
+            } else {
+                console.error("Failed to fetch clients. Status:", response.status);
+            }
+        } catch (error) {
+            console.error("Network error fetching client profile:", error);
+        }
+      }
+    };
+    fetchClientProfile();
+  }, []);
 
   if (!isOpen) return null;
 
@@ -26,19 +59,70 @@ const PostJobModal: React.FC<PostJobModalProps> = ({ isOpen, onClose }) => {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!clientId) {
+        alert("Error: Could not identify your Client Profile. Please log out and log in again.");
+        return;
+    }
+
     setIsSubmitting(true);
 
-    // Simulate API Call
-    setTimeout(() => {
-      console.log("Job Posted:", formData);
-      setIsSubmitting(false);
-      onClose();
-      // Reset form
-      setFormData({ title: '', description: '', location: '', budget: '', payType: 'Fixed', trade: '' });
-      alert("Job Posted Successfully!");
-    }, 1500);
+    try {
+        // STEP 1: Create Booking
+        const bookingPayload = {
+            jobTitle: formData.title,
+            serviceCategory: formData.trade,
+            description: formData.description,
+            location: formData.location,
+            scheduledDateTime: formData.scheduledDate ? `${formData.scheduledDate}T09:00:00` : new Date().toISOString(), 
+            status: "Pending",
+            createdAt: new Date().toISOString(),
+            client: { clientID: clientId }, 
+            worker: null 
+        };
+
+        console.log("Sending Booking:", bookingPayload); // Debug
+
+        const bookingResponse = await fetch("http://localhost:8080/booking/create", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(bookingPayload)
+        });
+
+        if (!bookingResponse.ok) throw new Error("Failed to post job details");
+        
+        const createdBooking = await bookingResponse.json();
+
+        // STEP 2: Create Payment
+        const paymentPayload = {
+            amount: parseFloat(formData.budget),
+            paymentMethod: "CASH", 
+            status: "PENDING",
+            receiptNo: `JOB-${createdBooking.bookingID}-${Date.now()}`, 
+            booking: { bookingID: createdBooking.bookingID } 
+        };
+
+        const paymentResponse = await fetch("http://localhost:8080/payment/create", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(paymentPayload)
+        });
+
+        if (!paymentResponse.ok) throw new Error("Failed to set budget");
+
+        alert("Job Posted Successfully!");
+        // Reset form
+        setFormData({ title: '', description: '', location: '', budget: '', payType: 'Fixed', trade: '', scheduledDate: '' });
+        onClose();
+
+    } catch (error) {
+        console.error("Error posting job:", error);
+        alert("Failed to post job. Please ensure your backend is running.");
+    } finally {
+        setIsSubmitting(false);
+    }
   };
 
   return (
@@ -107,6 +191,22 @@ const PostJobModal: React.FC<PostJobModalProps> = ({ isOpen, onClose }) => {
                 <MapPin size={16} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
               </div>
             </div>
+          </div>
+
+          {/* Date Picker */}
+          <div>
+             <label className="block text-sm font-semibold text-gray-700 mb-1">Date Needed</label>
+             <div className="relative">
+                <input 
+                  type="date" 
+                  name="scheduledDate"
+                  required
+                  className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#5AB3E6]"
+                  value={formData.scheduledDate}
+                  onChange={handleChange}
+                />
+                <Calendar size={16} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+             </div>
           </div>
 
           {/* Budget & Type Row */}

@@ -1,5 +1,5 @@
-import React, { useState, useMemo } from "react";
-import WorkerHeader from "../components/WorkerHeader"; // Assuming you have this
+import React, { useState, useEffect, useMemo } from "react";
+import WorkerHeader from "../components/WorkerHeader"; 
 import { 
   Briefcase, 
   MapPin, 
@@ -8,8 +8,9 @@ import {
   Star, 
   Filter, 
   ArrowUpDown, 
-  X 
-} from "lucide-react"; // Replaced react-icons with lucide-react for consistency
+  X,
+  Loader2 // Imported for loading spinner
+} from "lucide-react"; 
 import Footer from "../components/WorkerFooter";
 
 // --- Types ---
@@ -27,72 +28,7 @@ interface JobPost {
   featured?: boolean;
 }
 
-// --- Mock Data ---
-const MOCK_JOB_POSTS: JobPost[] = [
-  {
-    id: "1",
-    title: "Urgent: Leaky Pipe Repair",
-    clientName: "Jane Doe",
-    clientAvatar: "https://picsum.photos/seed/client1/100/100",
-    location: "San Francisco, CA",
-    pay: 75,
-    payType: "hourly",
-    description: "I have a persistent leak under my kitchen sink that needs immediate attention. Experience with copper pipes is a must. Please bring your own tools.",
-    tags: ["Plumbing", "Urgent", "Residential"],
-    postedAt: new Date(Date.now() - 3600000 * 2),
-    featured: true,
-  },
-  {
-    id: "2",
-    title: "Full House Rewiring Project",
-    clientName: "John Smith",
-    clientAvatar: "https://picsum.photos/seed/client2/100/100",
-    location: "Oakland, CA",
-    pay: 8000,
-    payType: "fixed",
-    description: "Looking for a certified electrician to rewire a 3-bedroom house. Project includes new panel installation and bringing everything up to code.",
-    tags: ["Electrical", "Commercial", "Full-time"],
-    postedAt: new Date(Date.now() - 86400000 * 1),
-  },
-  {
-    id: "3",
-    title: "Backyard Deck Construction",
-    clientName: "Emily White",
-    clientAvatar: "https://picsum.photos/seed/client3/100/100",
-    location: "San Francisco, CA",
-    pay: 55,
-    payType: "hourly",
-    description: "Need a skilled carpenter to build a 200 sq. ft. redwood deck in my backyard. I have the plans and materials ready.",
-    tags: ["Carpentry", "Construction", "Outdoor"],
-    postedAt: new Date(Date.now() - 86400000 * 3),
-  },
-  {
-    id: "4",
-    title: "Install New Light Fixtures",
-    clientName: "Michael Brown",
-    clientAvatar: "https://picsum.photos/seed/client4/100/100",
-    location: "Berkeley, CA",
-    pay: 250,
-    payType: "fixed",
-    description: "I need 5 ceiling light fixtures and 2 ceiling fans installed in my new apartment. The wiring is already in place.",
-    tags: ["Electrical", "Residential"],
-    postedAt: new Date(Date.now() - 86400000 * 5),
-  },
-  {
-    id: "5",
-    title: "Drywall Repair and Painting",
-    clientName: "Sarah Green",
-    clientAvatar: "https://picsum.photos/seed/client5/100/100",
-    location: "San Mateo, CA",
-    pay: 40,
-    payType: "hourly",
-    description: "A small section of drywall in my living room was damaged. It needs to be patched, sanded, and painted.",
-    tags: ["Painting", "Handyman", "Interior"],
-    postedAt: new Date(Date.now() - 86400000 * 7),
-  },
-];
-
-const JOB_CATEGORIES = ["All", "Plumbing", "Electrical", "Carpentry", "Painting", "Handyman"];
+const JOB_CATEGORIES = ["All", "Plumbing", "Electrical", "Carpentry", "Cleaning", "Gardening"];
 
 // --- Helper Functions ---
 const timeAgo = (date: Date): string => {
@@ -145,7 +81,8 @@ const JobPostCard: React.FC<{ job: JobPost }> = ({ job }) => {
             {job.location}
           </span>
           <span className="flex items-center gap-1.5 font-medium text-gray-800">
-            <DollarSign size={16} className="text-[#5AB3E6]" />${job.pay} <span className="text-gray-500 font-normal">{job.payType}</span>
+            <DollarSign size={16} className="text-[#5AB3E6]" />
+            ₱{job.pay.toFixed(2)} <span className="text-gray-500 font-normal">{job.payType}</span>
           </span>
         </div>
 
@@ -276,11 +213,69 @@ const JobFilters: React.FC<{
 // --- Main Page Component ---
 
 const JobFeedPage: React.FC = () => {
-  const [jobs] = useState<JobPost[]>(MOCK_JOB_POSTS);
+  const [jobs, setJobs] = useState<JobPost[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [sortOption, setSortOption] = useState("newest");
   const [locationFilter, setLocationFilter] = useState("");
 
+  // --- FETCH REAL DATA ---
+  useEffect(() => {
+    const fetchJobs = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const response = await fetch("http://localhost:8080/booking/getAll");
+        if (!response.ok) {
+            throw new Error("Failed to connect to server");
+        }
+        
+        const bookings = await response.json();
+        
+        // Map Backend Data -> Frontend Interface
+        const mappedJobs: JobPost[] = bookings
+          // Filter: Show only Pending jobs that have NO Worker assigned
+          .filter((b: any) => b.status === "Pending" && b.worker === null) 
+          .map((b: any) => {
+              // Safely extract client name
+              let clientName = "Client";
+              if (b.client?.user?.name) {
+                  const { firstName, lastName } = b.client.user.name;
+                  if (firstName && lastName) clientName = `${firstName} ${lastName}`;
+              }
+
+              return {
+                id: b.bookingID.toString(),
+                title: b.jobTitle || "Untitled Job", // Uses the new jobTitle field
+                clientName: clientName,
+                // Use placeholder if no photo
+                clientAvatar: b.client?.user?.photoURL || `https://ui-avatars.com/api/?name=${clientName}&background=random`,
+                location: b.location,
+                // Extract pay from the Payment relationship
+                pay: b.payment ? b.payment.amount : 0, 
+                payType: "fixed", // Defaulting to fixed since it's not in DB yet
+                description: b.description,
+                tags: [b.serviceCategory], // Using serviceCategory as a tag
+                postedAt: new Date(b.createdAt),
+                featured: false
+              };
+          });
+
+        setJobs(mappedJobs);
+      } catch (err) {
+        console.error("Error fetching jobs:", err);
+        setError("Unable to load jobs at this time.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchJobs();
+  }, []);
+
+  // --- Filter & Sort Logic ---
   const filteredAndSortedJobs = useMemo(() => {
     let result = jobs;
 
@@ -297,13 +292,9 @@ const JobFeedPage: React.FC = () => {
     result.sort((a, b) => {
       switch (sortOption) {
         case "pay_high":
-          const payA_high = a.payType === "hourly" ? a.pay * 40 * 52 : a.pay;
-          const payB_high = b.payType === "hourly" ? b.pay * 40 * 52 : b.pay;
-          return payB_high - payA_high;
+          return b.pay - a.pay;
         case "pay_low":
-          const payA_low = a.payType === "hourly" ? a.pay * 40 * 52 : a.pay;
-          const payB_low = b.payType === "hourly" ? b.pay * 40 * 52 : b.pay;
-          return payA_low - payB_low;
+          return a.pay - b.pay;
         case "newest":
         default:
           return b.postedAt.getTime() - a.postedAt.getTime();
@@ -324,6 +315,7 @@ const JobFeedPage: React.FC = () => {
       
       {/* Fixed Header */}
       <div className="fixed top-0 w-full z-40 bg-[#F6F6F6]">
+        {/* Make sure WorkerHeader accepts dynamic names if you updated it */}
         <WorkerHeader userName="Sherielyn Guadiana" />
       </div>
 
@@ -342,7 +334,17 @@ const JobFeedPage: React.FC = () => {
             </div>
             
             <div className="flex flex-col gap-6">
-              {filteredAndSortedJobs.length > 0 ? (
+              {loading ? (
+                <div className="flex flex-col items-center justify-center py-20">
+                    <Loader2 className="h-10 w-10 text-[#4D7EAF] animate-spin mb-4" />
+                    <p className="text-gray-500">Finding opportunities...</p>
+                </div>
+              ) : error ? (
+                <div className="bg-red-50 border border-red-200 text-red-600 px-6 py-8 rounded-2xl text-center">
+                    <p className="font-semibold">{error}</p>
+                    <p className="text-sm mt-2">Please check your internet connection or try again later.</p>
+                </div>
+              ) : filteredAndSortedJobs.length > 0 ? (
                 filteredAndSortedJobs.map((job) => (
                   <JobPostCard key={job.id} job={job} />
                 ))
