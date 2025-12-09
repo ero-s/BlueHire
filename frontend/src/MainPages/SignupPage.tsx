@@ -1,19 +1,19 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { ArrowLeft, Briefcase, Loader2 } from "lucide-react";
-import Logo from "../MainComponents/LandingComponents/Logo/Logo"
+import { ArrowLeft, Loader2 } from "lucide-react";
+import Logo from "../MainComponents/LandingComponents/Logo/Logo";
 
 interface SignUpProps {
-  onSelectRole: (role: "worker" | "client") => void;
+  onSelectRole?: (role: "worker" | "client") => void;
 }
 
-const SignUp: React.FC<SignUpProps> = ({ onSelectRole }) => {
+const SignUp: React.FC<SignUpProps> = () => {
   const [formData, setFormData] = useState({
-    // Name Embeddable Fields
-    fname: "",
-    middlename: "",
-    lname: "",
-    // Address Embeddable Fields
+    // --- FIXED: Renamed to match Java Backend variables ---
+    firstName: "",
+    middleName: "",
+    lastName: "",
+    // Address Fields
     street: "",
     barangay: "",
     city: "",
@@ -51,7 +51,7 @@ const SignUp: React.FC<SignUpProps> = ({ onSelectRole }) => {
   }, [showError]);
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -71,21 +71,20 @@ const SignUp: React.FC<SignUpProps> = ({ onSelectRole }) => {
 
   // --- 1. Helper Function: Check Username API ---
   const checkUsernameAvailability = async (
-    username: string,
+    username: string
   ): Promise<boolean> => {
     if (!username) return false;
     try {
       // Connects to: UserController @GetMapping("/exists/{username}")
       const response = await fetch(
-        `http://localhost:8080/api/user/exists/${username}`,
+        `http://localhost:8080/api/user/exists/${username}`
       );
 
       if (response.ok) {
-        // The backend returns a boolean (true if exists, false if not)
         return await response.json();
       } else {
         console.warn("Username check endpoint error:", response.status);
-        return false; // Fallback: assume available if server errors (or handle differently)
+        return false;
       }
     } catch (error) {
       console.error("Error checking username:", error);
@@ -107,24 +106,22 @@ const SignUp: React.FC<SignUpProps> = ({ onSelectRole }) => {
 
     try {
       // --- 2. Check Username Availability Logic ---
-      // We await the result before proceeding to registration
       const isTaken = await checkUsernameAvailability(formData.username);
 
       if (isTaken) {
-        const errorMsg =
-          "This username is already taken. Please choose another.";
+        const errorMsg = "This username is already taken. Please choose another.";
         setUsernameError(errorMsg);
-        // We stop the submission here so the POST request is never sent
         setIsSubmitting(false);
         return;
       }
 
-      // Prepare the data payload matching the Java User entity structure
+      // --- 3. Prepare Payload ---
+      // CRITICAL FIX: Ensure keys match Java 'Name' class exactly
       const userPayload = {
         name: {
-          fname: formData.fname,
-          middlename: formData.middlename,
-          lname: formData.lname,
+          firstName: formData.firstName,   // Matches Java 'firstName'
+          middleName: formData.middleName, // Matches Java 'middleName'
+          lastName: formData.lastName,     // Matches Java 'lastName'
         },
         address: {
           street: formData.street,
@@ -137,11 +134,13 @@ const SignUp: React.FC<SignUpProps> = ({ onSelectRole }) => {
         contactNumber: formData.contactNumber,
         username: formData.username,
         password: formData.password,
-        role: formData.role.toUpperCase(), // Ensure uppercase for Enum mapping
+        role: formData.role.toUpperCase(),
         birthdate: formData.birthdate,
       };
 
-      // --- 3. Register User ---
+      console.log("Sending Payload:", userPayload); // Debugging line
+
+      // --- 4. Register User ---
       const response = await fetch("http://localhost:8080/api/user/postUser", {
         method: "POST",
         headers: {
@@ -156,7 +155,7 @@ const SignUp: React.FC<SignUpProps> = ({ onSelectRole }) => {
       } else {
         const errorText = await response.text();
         console.error("Registration Error:", errorText);
-        alert("Registration Failed. Please check your inputs.");
+        alert("Registration Failed. Please check console for details.");
       }
     } catch (error) {
       console.error("Network Error:", error);
@@ -237,42 +236,45 @@ const SignUp: React.FC<SignUpProps> = ({ onSelectRole }) => {
                 Personal Information
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {/* FIRST NAME INPUT */}
                 <div>
                   <label className="block text-xs font-semibold text-gray-600 mb-1">
                     First Name
                   </label>
                   <input
-                    name="fname"
+                    name="firstName" // Changed from fname
                     type="text"
                     placeholder="John"
-                    value={formData.fname}
+                    value={formData.firstName} // Changed
                     onChange={handleChange}
                     required
                     className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#3d6691]/20 focus:border-[#3d6691] outline-none transition-all"
                   />
                 </div>
+                {/* MIDDLE NAME INPUT */}
                 <div>
                   <label className="block text-xs font-semibold text-gray-600 mb-1">
                     Middle Name
                   </label>
                   <input
-                    name="middlename"
+                    name="middleName" // Changed from middlename
                     type="text"
                     placeholder="Quincy"
-                    value={formData.middlename}
+                    value={formData.middleName} // Changed
                     onChange={handleChange}
                     className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#3d6691]/20 focus:border-[#3d6691] outline-none transition-all"
                   />
                 </div>
+                {/* LAST NAME INPUT */}
                 <div>
                   <label className="block text-xs font-semibold text-gray-600 mb-1">
                     Last Name
                   </label>
                   <input
-                    name="lname"
+                    name="lastName" // Changed from lname
                     type="text"
                     placeholder="Doe"
-                    value={formData.lname}
+                    value={formData.lastName} // Changed
                     onChange={handleChange}
                     required
                     className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#3d6691]/20 focus:border-[#3d6691] outline-none transition-all"
@@ -442,7 +444,6 @@ const SignUp: React.FC<SignUpProps> = ({ onSelectRole }) => {
                 <label className="block text-xs font-semibold text-gray-600 mb-1">
                   Username
                 </label>
-                {/* Visual feedback for error state */}
                 <input
                   name="username"
                   type="text"
@@ -455,7 +456,6 @@ const SignUp: React.FC<SignUpProps> = ({ onSelectRole }) => {
                       : "border-gray-200"
                   } rounded-lg focus:ring-2 focus:ring-[#3d6691]/20 focus:border-[#3d6691] outline-none transition-all`}
                 />
-                {/* Error Message Display */}
                 {usernameError && (
                   <p className="text-xs text-red-500 mt-1 font-medium">
                     {usernameError}

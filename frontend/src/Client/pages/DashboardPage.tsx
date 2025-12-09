@@ -1,5 +1,5 @@
-import { useState } from "react"; // 1. Import useState
-import { useNavigate } from "react-router-dom"; 
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import WelcomeSection from "../components/DashboardWelcomeSection";
 import StatCard from "../components/DashboardStatCard";
 import PostJobButton from "../components/DashboardPostJobButton";
@@ -7,15 +7,52 @@ import TotalSpentCard from "../components/DashboardTotalSpentCard";
 import PendingRequests from "../components/DashboardPendingRequests";
 import Footer from "../components/ClientFooter";
 import Header from "../components/ClientHeader";
-import PostJobModal from "../components/PostJobModal"; // 2. Import the new Modal
+import PostJobModal from "../components/PostJobModal"; 
 
 import "../assets/css/Dashboard.css";
 
+// Updated Interface: Matches your new Java 'Name' class and Database columns
+interface UserData {
+  name?: {
+    firstName?: string;
+    lastName?: string;
+  };
+}
+
 export default function Dashboard() {
   const navigate = useNavigate();
-  
-  // 3. Add Modal State
   const [isPostJobModalOpen, setIsPostJobModalOpen] = useState(false);
+  
+  // Default states for the user name
+  const [fullName, setFullName] = useState("Client User");
+  const [firstName, setFirstName] = useState("Client");
+
+  useEffect(() => {
+    // 1. Retrieve the user string from LocalStorage
+    const storedUser = localStorage.getItem("currentUser");
+    
+    if (storedUser) {
+      try {
+        const parsedUser: UserData = JSON.parse(storedUser);
+        
+        // Debugging: You should see { name: { firstName: "...", lastName: "..." } } in the console
+        console.log("Logged in user data:", parsedUser); 
+
+        // 2. Safely extract names using the standard naming convention
+        const fName = parsedUser.name?.firstName || ""; 
+        const lName = parsedUser.name?.lastName || "";
+        
+        // 3. Update state only if we found valid names
+        if (fName || lName) {
+            setFullName(`${fName} ${lName}`.trim());
+            setFirstName(fName);
+        }
+
+      } catch (error) {
+        console.error("Failed to parse user data:", error);
+      }
+    }
+  }, []);
 
   const spendingData = [
     { month: "Jan", amount: 150 },
@@ -44,17 +81,18 @@ export default function Dashboard() {
     navigate("/client/bookings", { state: { status: "completed" } });
   };
 
-  // 4. Handle Post Job Click
   const handlePostJobClick = () => {
     setIsPostJobModalOpen(true);
   };
 
   return (
     <div className={"profileCard"}>
-      <Header userName="Sherielyn Guadiana" />
-      <WelcomeSection userName="Juan" />
+      {/* Dynamic Header with Full Name */}
+      <Header userName={fullName} />
+      
+      {/* Dynamic Welcome Section with First Name */}
+      <WelcomeSection userName={firstName} />
 
-      {/* Main Content */}
       <div className={"dashboard-card-main"}>
         <div className={"dashboard-left-side"}>
           <div className={"dashboard-card-row"}>
@@ -69,7 +107,6 @@ export default function Dashboard() {
               onClick={handlePastHiresClick} 
             />
             
-            {/* 5. Pass onClick to trigger Modal */}
             <PostJobButton onClick={handlePostJobClick} />
           </div>
 
@@ -85,7 +122,6 @@ export default function Dashboard() {
 
       <Footer />
 
-      {/* 6. Render Modal conditionally */}
       <PostJobModal 
         isOpen={isPostJobModalOpen} 
         onClose={() => setIsPostJobModalOpen(false)} 
