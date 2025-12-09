@@ -1,58 +1,82 @@
 import React, { useState, useEffect } from "react";
-import Header from "../components/WorkerHeader"; 
+import { useNavigate } from "react-router-dom";
+import Header from "../components/WorkerHeader";
 import DashboardUpperSection from "../components/DashboardUpperSection";
 import DashboardMainSection from "../components/DashboardMainSection";
 import Footer from "../components/WorkerFooter";
 
-// Interface to match your backend data structure
-interface UserData {
-  name?: {
-    firstName?: string;
-    lastName?: string;
-  };
+// Interface matching the Nested JSON from Backend
+interface Name {
+  firstName: string;
+  middleName?: string;
+  lastName: string;
+}
+
+interface User {
+  id: number;
+  name: Name;
+  email: string;
+  username: string;
+}
+
+interface Worker {
+  workerID: number;
+  user: User; // The User is nested inside
+  // Add other worker fields if you need to display them on dashboard
 }
 
 const DashboardPage: React.FC = () => {
-  // State to hold the dynamic user name
-  const [fullName, setFullName] = useState("Worker User");
+  const [fullName, setFullName] = useState("Loading...");
+  const navigate = useNavigate();
 
   useEffect(() => {
-    // 1. Retrieve the user string from LocalStorage
-    const storedUser = localStorage.getItem("currentUser");
-    
-    if (storedUser) {
+    const fetchWorkerData = async () => {
       try {
-        const parsedUser: UserData = JSON.parse(storedUser);
-        
-        // Debugging: Check console to ensure Worker data is loaded correctly
-        console.log("Worker Dashboard - Logged in user:", parsedUser); 
+        const storedId = localStorage.getItem("currentUserId");
+        const userRole = localStorage.getItem("userRole");
 
-        // 2. Safely extract names using the standard naming convention (firstName/lastName)
-        const fName = parsedUser.name?.firstName || ""; 
-        const lName = parsedUser.name?.lastName || "";
-        
-        // 3. Update state only if we found valid names
-        if (fName || lName) {
-            setFullName(`${fName} ${lName}`.trim());
+        // Safety Check
+        if (!storedId || userRole !== "WORKER") {
+          // navigate("/signin"); // Uncomment to enforce auth
+          console.warn("No valid worker session found");
+          return;
         }
 
+        console.log("Fetching Worker Data for ID:", storedId);
+
+        // Fetch from Worker Controller
+        const response = await fetch(
+          `http://localhost:8080/api/worker/getWorker/${storedId}`,
+        );
+
+        if (response.ok) {
+          const data: Worker = await response.json();
+          console.log("Worker Data Received:", data);
+
+          // Extract Name safely
+          const fName = data.user?.name?.firstName || "Worker";
+          const lName = data.user?.name?.lastName || "";
+          setFullName(`${fName} ${lName}`.trim());
+        } else {
+          console.error("Worker not found or server error");
+          setFullName("Worker");
+        }
       } catch (error) {
-        console.error("Failed to parse worker data:", error);
+        console.error("Failed to connect to backend:", error);
       }
-    }
-  }, []);
+    };
+
+    fetchWorkerData();
+  }, [navigate]);
 
   return (
     <div className="bg-[#F6F6F6] min-h-screen w-full font-sans">
-      {/* Top Navigation Bar */}
       <div className="fixed top-0 w-full z-40 bg-[#F6F6F6]">
-        {/* Pass the dynamic fullName state here */}
-        <Header userName={fullName}/>
+        <Header userName={fullName} />
       </div>
 
-      {/* Dashboard Body */}
       <div className="pt-28 pb-12 px-6 lg:px-12 max-w-[1600px] mx-auto flex flex-col gap-8 mt-4">
-        <DashboardUpperSection />
+        <DashboardUpperSection userName={fullName} />
         <DashboardMainSection />
       </div>
       <Footer />
