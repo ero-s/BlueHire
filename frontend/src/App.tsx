@@ -15,6 +15,12 @@ import ClientSide from "./MainPages/ClientSide";
 
 // =============================================================
 
+// ADMIN PAGES IMPORTS
+import AdminLanding from "./Admin/pages/AdminDashboardPage";
+import AdminReport from "./Admin/pages/AdminViewReportPage";
+import AdminSystemLog from "./Admin/pages/AdminViewSystemLogPage";
+
+
 // WORKER PAGES IMPORTS
 // ... (Your existing Worker imports are commented out in source, keeping them as is or uncomment if needed)
 
@@ -40,7 +46,7 @@ export default function App() {
   return (
     <Routes>
       {/* Default / Gateway Route */}
-      <Route path="/" element={<Landing/>}/>
+      <Route path="/" element={<AdminLanding/>}/>
 
       <Route
         path="/signup"
@@ -50,7 +56,8 @@ export default function App() {
       {/* Auth & Public Routes */}
       <Route path="/landing" element={<LandingPage />} />
       <Route path="/signin" element={<SignIn />} />
-
+      <Route path="/Admin/Reports" element={<AdminReport />} />
+      <Route path="/Admin/SystemLogs" element={<AdminSystemLog />} />
       <Route path="/worker/*" element={<WorkerSide />} />
       <Route path="/client/*" element={<ClientSide />} />
     </Routes>
