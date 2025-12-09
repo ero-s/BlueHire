@@ -46,7 +46,7 @@ export default function App() {
   return (
     <Routes>
       {/* Default / Gateway Route */}
-      <Route path="/" element={<AdminLanding/>}/>
+      <Route path="/" element={<LandingPage/>}/>
 
       <Route
         path="/signup"
@@ -58,6 +58,7 @@ export default function App() {
       <Route path="/signin" element={<SignIn />} />
       <Route path="/Admin/Reports" element={<AdminReport />} />
       <Route path="/Admin/SystemLogs" element={<AdminSystemLog />} />
+      <Route path="/Admin" element={<AdminLanding />} />
       <Route path="/worker/*" element={<WorkerSide />} />
       <Route path="/client/*" element={<ClientSide />} />
     </Routes>

@@ -18,6 +18,25 @@ const SignIn: React.FC = () => {
     setError(null);
     setIsLoading(true);
 
+    // --- 1. HARDCODED ADMIN CHECK ---
+    // Check for specific admin credentials before calling API
+    if (username === "bluehire" && password === "codeblooded") {
+      // Create a mock admin user for LocalStorage so the Header works
+      const adminUser = {
+        id: "admin-master",
+        username: "bluehire",
+        role: "ADMIN",
+        name: "Admin", // This will show in the Header
+      };
+
+      localStorage.setItem("currentUser", JSON.stringify(adminUser));
+
+      // Navigate to the Admin Dashboard route
+      navigate("/Admin");
+      return; // Stop execution here, do not call API
+    }
+
+    // --- 2. STANDARD API LOGIN ---
     try {
       // We send the username and password to the backend
       const response = await fetch("http://localhost:8080/api/user/login", {
@@ -25,8 +44,6 @@ const SignIn: React.FC = () => {
         headers: {
           "Content-Type": "application/json",
         },
-        // We can reuse the User entity structure or a map.
-        // Sending as a JSON object matching the backend expectation.
         body: JSON.stringify({ username, password }),
       });
 
@@ -41,11 +58,11 @@ const SignIn: React.FC = () => {
         const role = user.role ? user.role.toUpperCase() : "";
 
         if (role === "CLIENT") {
-          navigate("/client"); // Change this to your actual Client route
+          navigate("/client");
         } else if (role === "WORKER") {
-          navigate("/worker"); // Change this to your actual Worker route
+          navigate("/worker");
         } else {
-          // Fallback if role is missing or admin
+          // Fallback if role is missing or generic dashboard
           navigate("/dashboard");
         }
       } else {
