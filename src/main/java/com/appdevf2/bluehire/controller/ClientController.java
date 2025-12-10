@@ -1,17 +1,15 @@
 package com.appdevf2.bluehire.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import com.appdevf2.bluehire.model.Client;
 import com.appdevf2.bluehire.service.ClientService;
-
-
-
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/client")
+@CrossOrigin(origins = "http://localhost:5173")
 public class ClientController {
     @Autowired
     private ClientService clientService;
@@ -27,10 +25,15 @@ public class ClientController {
     }
 
     @GetMapping("/getClient/{id}")
-    public Client getClientById(@PathVariable Integer id) {
-        return clientService.getClientById(id);
+    public ResponseEntity<Client> getClientById(@PathVariable Integer id) {
+        try {
+            Client client = clientService.getClientById(id);
+            return ResponseEntity.ok(client);
+        } catch (Exception e) {
+            // Returns 404 instead of 500 if ID is not found
+            return ResponseEntity.notFound().build();
+        }
     }
-
 
     @PutMapping("/updateClient/{id}")
     public Client updateClient(@PathVariable Integer id, @RequestBody Client client) {

@@ -7,52 +7,84 @@ import TotalSpentCard from "../components/DashboardTotalSpentCard";
 import PendingRequests from "../components/DashboardPendingRequests";
 import Footer from "../components/ClientFooter";
 import Header from "../components/ClientHeader";
-import PostJobModal from "../components/PostJobModal"; 
-
+import PostJobModal from "../components/PostJobModal";
 import "../assets/css/Dashboard.css";
 
-// Updated Interface: Matches your new Java 'Name' class and Database columns
-interface UserData {
-  name?: {
-    firstName?: string;
-    lastName?: string;
-  };
+// Flexible Interface to catch mismatching data
+interface Name {
+  firstName?: string;
+  fname?: string; // Fallback for older backend code
+  middleName?: string;
+  middlename?: string;
+  lastName?: string;
+  lname?: string;
+}
+
+interface User {
+  id?: number;
+  name: Name;
+  email: string;
+  username: string;
+}
+
+interface Client {
+  clientID: number;
+  company_name?: string;
+  user: User;
 }
 
 export default function Dashboard() {
   const navigate = useNavigate();
   const [isPostJobModalOpen, setIsPostJobModalOpen] = useState(false);
-  
-  // Default states for the user name
-  const [fullName, setFullName] = useState("Client User");
-  const [firstName, setFirstName] = useState("Client");
+  const [client, setClient] = useState<Client | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // 1. Retrieve the user string from LocalStorage
-    const storedUser = localStorage.getItem("currentUser");
-    
-    if (storedUser) {
+    const fetchClientData = async () => {
       try {
-        const parsedUser: UserData = JSON.parse(storedUser);
-        
-        // Debugging: You should see { name: { firstName: "...", lastName: "..." } } in the console
-        console.log("Logged in user data:", parsedUser); 
+        const storedId = localStorage.getItem("currentUserId");
 
-        // 2. Safely extract names using the standard naming convention
-        const fName = parsedUser.name?.firstName || ""; 
-        const lName = parsedUser.name?.lastName || "";
-        
-        // 3. Update state only if we found valid names
-        if (fName || lName) {
-            setFullName(`${fName} ${lName}`.trim());
-            setFirstName(fName);
+        if (!storedId) {
+          console.warn("No ID found. Redirecting to login...");
+          navigate("/signin");
+          return;
         }
 
+        console.log("Attempting to fetch Client ID:", storedId);
+        const response = await fetch(
+          `http://localhost:8080/api/client/getClient/${storedId}`,
+        );
+
+        if (response.ok) {
+          const data = await response.json();
+          console.log("✅ SUCCESS: Backend Data Received:", data);
+          console.log("User Name Object:", data.user?.name); // Inspect this in console!
+          setClient(data);
+        } else {
+          console.error(
+            "❌ ERROR: Server responded with status:",
+            response.status,
+          );
+
+          // CRITICAL FIX: If ID is invalid (500 or 404), clear it and force re-login
+          if (response.status === 500 || response.status === 404) {
+            console.warn("Invalid ID detected. Clearing session.");
+            localStorage.removeItem("currentUserId");
+            localStorage.removeItem("currentUser");
+            localStorage.removeItem("userRole");
+            alert("Session expired or invalid. Please sign in again.");
+            navigate("/signin");
+          }
+        }
       } catch (error) {
-        console.error("Failed to parse user data:", error);
+        console.error("Network Error:", error);
+      } finally {
+        setLoading(false);
       }
-    }
-  }, []);
+    };
+
+    fetchClientData();
+  }, [navigate]);
 
   const spendingData = [
     { month: "Jan", amount: 150 },
@@ -69,62 +101,49 @@ export default function Dashboard() {
     { month: "Dec", amount: 520 },
   ];
 
-  // ===============================================
-  // NAVIGATION HANDLERS
-  // ===============================================
-
-  const handleOngoingClick = () => {
+  const handleOngoingClick = () =>
     navigate("/client/bookings", { state: { status: "ongoing" } });
-  };
-
-  const handlePastHiresClick = () => {
+  const handlePastHiresClick = () =>
     navigate("/client/bookings", { state: { status: "completed" } });
-  };
 
-  const handlePostJobClick = () => {
-    setIsPostJobModalOpen(true);
-  };
+  // Robust Name Extraction
+  const nameObj = client?.user?.name;
+
+  // Try firstName, if missing try fname, if missing default to "Guest"
+  const firstName = nameObj?.firstName || nameObj?.fname || "Guest";
+  const lastName = nameObj?.lastName || nameObj?.lname || "";
+
+  const fullName = client ? `${firstName} ${lastName}`.trim() : "Guest";
 
   return (
     <div className={"profileCard"}>
-      {/* Dynamic Header with Full Name */}
       <Header userName={fullName} />
-      
-      {/* Dynamic Welcome Section with First Name */}
       <WelcomeSection userName={firstName} />
 
       <div className={"dashboard-card-main"}>
         <div className={"dashboard-left-side"}>
           <div className={"dashboard-card-row"}>
-            <StatCard 
-              label="Ongoing Jobs" 
-              value={0} 
-              onClick={handleOngoingClick} 
+            <StatCard
+              label="Ongoing Jobs"
+              value={0}
+              onClick={handleOngoingClick}
             />
-            <StatCard 
-              label="Past Hires" 
-              value={0} 
-              onClick={handlePastHiresClick} 
+            <StatCard
+              label="Past Hires"
+              value={0}
+              onClick={handlePastHiresClick}
             />
-            
-            <PostJobButton onClick={handlePostJobClick} />
+            <PostJobButton onClick={() => setIsPostJobModalOpen(true)} />
           </div>
-
-          <TotalSpentCard 
-            data={spendingData} 
-          />
+          <TotalSpentCard data={spendingData} />
         </div>
-
-        <PendingRequests 
-          count={5} 
-        />
+        <PendingRequests count={5} />
       </div>
 
       <Footer />
-
-      <PostJobModal 
-        isOpen={isPostJobModalOpen} 
-        onClose={() => setIsPostJobModalOpen(false)} 
+      <PostJobModal
+        isOpen={isPostJobModalOpen}
+        onClose={() => setIsPostJobModalOpen(false)}
       />
     </div>
   );
