@@ -20,7 +20,40 @@ interface JobPost {
   featured?: boolean;
 }
 
-const JOB_CATEGORIES = ["All", "Plumbing", "Electrical", "Carpentry", "Cleaning", "Gardening"];
+const JOB_CATEGORIES = [
+  "All",
+  "Plumbing",
+  "Electrical",
+  "Carpentry",
+  "Masonry & Concrete",
+  "Roofing",
+  "Welding & Metal Fabrication",
+  "Painting & Decorating",
+  "HVAC & Refrigeration",
+  "Glazing (Glass)",
+  "Flooring & Tiling",
+  "Drywall & Insulation",
+  "Automotive & Mechanic",
+  "Appliance Repair",
+  "Locksmithing",
+  "Facilities Maintenance",
+  "Janitorial & Cleaning",
+  "Gardening & Landscaping",
+  "Tree Service & Arboriculture",
+  "Pest Control",
+  "Pool & Spa Maintenance",
+  "Assembly & Manufacturing",
+  "Warehousing & Logistics",
+  "Machine Operation",
+  "Packaging & Labeling",
+  "Trucking & Driving",
+  "Moving & Relocation",
+  "Delivery & Courier",
+  "General Labor",
+  "Waste Management",
+  "Event Setup & Tear Down",
+  "Demolition"
+];
 
 // --- Helper Functions ---
 const timeAgo = (date: Date): string => {
@@ -36,6 +69,11 @@ const timeAgo = (date: Date): string => {
   interval = seconds / 60;
   if (interval > 1) return Math.floor(interval) + " minutes ago";
   return Math.floor(seconds) + " seconds ago";
+};
+
+const getJobsByCategory = (jobs: JobPost[], category: string): JobPost[] => {
+  if (category === "All") return jobs;
+  return jobs.filter((job) => job.tags.includes(category));
 };
 
 // --- Sub-Components ---
@@ -146,7 +184,7 @@ const JobFilters: React.FC<{
 
         <div className="mb-6">
           <h4 className="text-sm font-semibold text-gray-700 mb-3">Category</h4>
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap gap-2 max-h-60 overflow-y-auto custom-scrollbar">
             {categories.map((category) => (
               <button
                 key={category}
@@ -292,15 +330,18 @@ const JobFeedPage: React.FC = () => {
     setApplyingId(jobId);
 
     try {
-        // CALL BACKEND TO ASSIGN WORKER
+        // --- REAL DB CALL ---
+        // We attempt to explicitly send the status "Pending" in the body.
+        // This ensures it shows up as "Awaiting Response" in the Booking Table.
         const response = await fetch(`http://localhost:8080/booking/apply/${jobId}/${currentWorkerId}`, {
             method: "PUT",
-            headers: { "Content-Type": "application/json" }
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ status: "Pending" }) // Try to force Pending status
         });
 
         if (response.ok) {
-            alert("Application successful! You have been assigned to this job.");
-            // Remove the job from the local list immediately so it looks "gone"
+            alert("Application successful! You can now check it in the 'Awaiting Response' tab.");
+            // Remove the job from the local list
             setJobs(prevJobs => prevJobs.filter(job => job.id !== jobId));
         } else {
             alert("Failed to apply. This job might already be taken.");
@@ -315,11 +356,7 @@ const JobFeedPage: React.FC = () => {
 
   // --- Filter & Sort Logic ---
   const filteredAndSortedJobs = useMemo(() => {
-    let result = jobs;
-
-    if (selectedCategory !== "All") {
-      result = result.filter((job) => job.tags.includes(selectedCategory));
-    }
+    let result = getJobsByCategory(jobs, selectedCategory);
 
     if (locationFilter.trim() !== "") {
       result = result.filter((job) =>

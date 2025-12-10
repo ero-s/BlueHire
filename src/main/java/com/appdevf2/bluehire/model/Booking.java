@@ -34,26 +34,29 @@ public class Booking {
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
-    // --- CORRECTION HERE ---
     @ManyToOne
     @JoinColumn(name = "client", nullable = false)
-    // ONLY ignore 'bookings'. Allow 'user' so we can see the name!
     @JsonIgnoreProperties({"bookings"}) 
     private Client client;
 
-    // --- Correct: Worker is nullable for new posts ---
     @ManyToOne
     @JoinColumn(name = "worker", nullable = true)
     @JsonIgnoreProperties({"user", "skills", "coverage_areas"})
     private Worker worker;
 
-    // --- Correct: Links to Payment for the Budget ---
     @OneToOne(mappedBy = "booking", cascade = CascadeType.ALL)
     @JsonIgnoreProperties("booking") 
     private Payment payment;
 
+    // --- UPDATED ENUM WITH "Responded" ---
     public enum Status {
-        Pending, Accepted, Completed, Cancelled
+        Pending,        // 1. Worker Applied -> Waiting for Client
+        Responded,      // 2. NEW: Client Clicked "Accept" -> Waiting for Worker to Confirm
+        Client_Agreed,  // (You can keep or remove this if "Responded" replaces it)
+        Accepted,       // 3. Worker Confirmed -> Ongoing Job
+        Completed,      // 4. Job Done
+        Declined,       // 5. Client Rejected Application
+        Cancelled       // 6. Worker Withdrew Application
     }
 
     public Booking() {}

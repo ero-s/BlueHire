@@ -6,7 +6,45 @@ interface PostJobModalProps {
   onClose: () => void;
 }
 
-const TRADES = ["Plumbing", "Electrical", "Carpentry", "Cleaning", "Nanny", "Gardening", "Moving"];
+const TRADES = [
+  // Construction & Skilled Trades
+  "Plumbing",
+  "Electrical",
+  "Carpentry",
+  "Masonry & Concrete",
+  "Roofing",
+  "Welding & Metal Fabrication",
+  "Painting & Decorating",
+  "HVAC & Refrigeration",
+  "Glazing (Glass)",
+  "Flooring & Tiling",
+  "Drywall & Insulation",
+  // Maintenance & Repair
+  "Automotive & Mechanic",
+  "Appliance Repair",
+  "Locksmithing",
+  "Facilities Maintenance",
+  "Janitorial & Cleaning",
+  // Landscaping & Outdoor
+  "Gardening & Landscaping",
+  "Tree Service & Arboriculture",
+  "Pest Control",
+  "Pool & Spa Maintenance",
+  // Manufacturing & Warehousing
+  "Assembly & Manufacturing",
+  "Warehousing & Logistics",
+  "Machine Operation",
+  "Packaging & Labeling",
+  // Transportation & Moving
+  "Trucking & Driving",
+  "Moving & Relocation",
+  "Delivery & Courier",
+  // General Labor & Services
+  "General Labor",
+  "Waste Management",
+  "Event Setup & Tear Down",
+  "Demolition"
+];
 
 const PostJobModal: React.FC<PostJobModalProps> = ({ isOpen, onClose }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -195,8 +233,8 @@ const PostJobModal: React.FC<PostJobModalProps> = ({ isOpen, onClose }) => {
 
           {/* Date Picker */}
           <div>
-             <label className="block text-sm font-semibold text-gray-700 mb-1">Date Needed</label>
-             <div className="relative">
+              <label className="block text-sm font-semibold text-gray-700 mb-1">Date Needed</label>
+              <div className="relative">
                 <input 
                   type="date" 
                   name="scheduledDate"
@@ -206,7 +244,7 @@ const PostJobModal: React.FC<PostJobModalProps> = ({ isOpen, onClose }) => {
                   onChange={handleChange}
                 />
                 <Calendar size={16} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
-             </div>
+              </div>
           </div>
 
           {/* Budget & Type Row */}

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import WelcomeSection from "../components/DashboardWelcomeSection";
+import WelcomeSection from "../../Worker/components/DashboardUpperSection";
 import StatCard from "../components/DashboardStatCard";
 import PostJobButton from "../components/DashboardPostJobButton";
 import TotalSpentCard from "../components/DashboardTotalSpentCard";
@@ -118,8 +118,9 @@ export default function Dashboard() {
   return (
     <div className={"profileCard"}>
       <Header userName={fullName} />
-      <WelcomeSection userName={firstName} />
-
+      <div className="mt-20 ml-12">
+        <WelcomeSection userName={firstName}/>
+      </div>
       <div className={"dashboard-card-main"}>
         <div className={"dashboard-left-side"}>
           <div className={"dashboard-card-row"}>
