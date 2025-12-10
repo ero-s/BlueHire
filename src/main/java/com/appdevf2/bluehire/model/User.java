@@ -5,6 +5,8 @@ import java.util.Date;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.Period;
+import java.util.List;
+import java.util.ArrayList;
 
 import com.appdevf2.bluehire.model.embeddables.Address;
 import com.appdevf2.bluehire.model.embeddables.Name;
@@ -19,6 +21,9 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int userId;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Document> documents = new ArrayList<>();
 
     @Embedded
     private Name name;
@@ -191,4 +196,18 @@ public class User {
         this.bio = bio;
     }
     // ------------------------------------------------
+
+    public List<Document> getDocuments() {
+        return documents;
+    }
+
+    public void setDocuments(List<Document> documents) {
+        this.documents = documents;
+    }
+    
+    // Helper method to add a document easily
+    public void addDocument(Document doc) {
+        documents.add(doc);
+        doc.setUser(this);
+    }
 }

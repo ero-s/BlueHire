@@ -9,7 +9,6 @@ interface SignUpProps {
 
 const SignUp: React.FC<SignUpProps> = ({ onSelectRole }) => {
   const [formData, setFormData] = useState({
-    // Standardized Name Fields
     firstName: "",
     middleName: "",
     lastName: "",
@@ -36,7 +35,10 @@ const SignUp: React.FC<SignUpProps> = ({ onSelectRole }) => {
   const [showError, setShowError] = useState(false);
   const [error, setError] = useState("");
   const [fileName, setFileName] = useState("No file chosen");
-
+  const [error] = useState("");
+  const [showError, setShowError] = useState(false);
+  const [documentType, setDocumentType] = useState("GOV_ID");
+  
   const fileInputRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
 
@@ -61,22 +63,24 @@ const SignUp: React.FC<SignUpProps> = ({ onSelectRole }) => {
     }
   };
 
-  const checkUsernameAvailability = async (
-    username: string,
-  ): Promise<boolean> => {
+  const checkUsernameAvailability = async (username: string): Promise<boolean> => {
     if (!username) return false;
     try {
       const response = await fetch(
         `http://localhost:8080/api/user/exists/${username}`,
       );
-      if (response.ok) return await response.json();
-      return false;
+      if (response.ok) {
+        return await response.json();
+      } else {
+        return false;
+      }
     } catch (error) {
       console.error("Error checking username:", error);
       return false;
     }
   };
 
+  // --- UPDATED SUBMIT LOGIC ---
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -96,7 +100,7 @@ const SignUp: React.FC<SignUpProps> = ({ onSelectRole }) => {
         return;
       }
 
-      // Payload strictly using firstName, middleName, lastName
+      // 2. Prepare User Data Object
       const userPayload = {
         name: {
           firstName: formData.firstName,
@@ -118,20 +122,26 @@ const SignUp: React.FC<SignUpProps> = ({ onSelectRole }) => {
         birthdate: formData.birthdate,
       };
 
+      // --- MERGED LOGIC ---
       let response;
 
+      // SCENARIO 1: CLIENT (Standard JSON)
       if (formData.role === "client") {
         const clientPayload = {
-          company_name: formData.companyName,
+          company_name: formData.companyName || "N/A",
           role: "Hiring Manager",
           user: userPayload,
         };
+
         response = await fetch("http://localhost:8080/api/client/postClient", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(clientPayload),
         });
-      } else {
+      } 
+      
+      // SCENARIO 2: WORKER (FormData with File to /api/worker/postWorker)
+      else {
         const workerPayload = {
           user: userPayload,
           skills: [],
@@ -143,34 +153,55 @@ const SignUp: React.FC<SignUpProps> = ({ onSelectRole }) => {
           averageRating: 0.0,
           totalEarnings: 0.0,
         };
+
+        // 1. Prepare FormData (Required for File Upload)
+        const data = new FormData();
+        
+        // Append the Worker JSON structure as a string
+        // NOTE: Your Backend @RequestPart must match this key ("worker")
+        data.append("worker", JSON.stringify(workerPayload));
+
+        // Append the File
+        if (image) {
+          data.append("file", image);
+          data.append("docType", documentType);
+        }
+
+        // 2. Send Request to the specific WORKER endpoint
         response = await fetch("http://localhost:8080/api/worker/postWorker", {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(workerPayload),
+          // IMPORTANT: Do NOT set Content-Type header manually for FormData
+          body: data, 
         });
       }
 
+      // --- RESPONSE HANDLING ---
       if (response.ok) {
-        const data = await response.json();
+        // Parse response safely
+        const data = await response.json().catch(() => ({}));
 
         if (formData.role === "client" && data.clientID) {
           localStorage.setItem("currentUserId", data.clientID.toString());
           localStorage.setItem("userRole", "CLIENT");
           alert("Client Account Created!");
           navigate("/client/dashboard");
-        } else if (formData.role === "worker" && data.workerID) {
-          localStorage.setItem("currentUserId", data.workerID.toString());
+        } else if (formData.role === "worker") {
+          // If the backend returns the workerID
+          if (data.workerID) {
+             localStorage.setItem("currentUserId", data.workerID.toString());
+          }
           localStorage.setItem("userRole", "WORKER");
-          alert("Worker Account Created!");
+          alert("Worker Account Created with Document!");
           navigate("/worker/dashboard");
         } else {
+          // Fallback
           alert("Registration Successful! Please Sign In.");
           navigate("/signin");
         }
       } else {
         const errorText = await response.text();
         console.error("Registration Error:", errorText);
-        alert("Registration Failed.");
+        alert(`Registration Failed: ${errorText}`);
       }
     } catch (error) {
       console.error("Network Error:", error);
@@ -201,16 +232,29 @@ const SignUp: React.FC<SignUpProps> = ({ onSelectRole }) => {
       </button>
 
       <div className="relative flex flex-col md:flex-row w-full max-w-5xl bg-white rounded-3xl shadow-2xl overflow-hidden z-10 m-4 max-h-[90vh] border border-gray-100">
-        {/* Left Panel */}
-        <div className="relative md:w-1/3 bg-gradient-to-br from-blue-50 to-white p-8 flex flex-col items-center justify-center text-center border-r border-gray-100">
-          <Link to="/" className="hover:scale-105 transition-transform">
-            <Logo variant="lg" />
-          </Link>
-          <div className="space-y-3 mt-4">
-            <h1 className="text-3xl font-bold text-gray-800">Welcome!</h1>
-            <p className="text-gray-600 max-w-xs mx-auto">
-              Create your account to start connecting.
-            </p>
+        
+        {/* Left Section - Fixed */}
+        <div className="relative md:w-1/3 bg-gradient-to-br from-blue-50 to-white p-8 flex flex-col items-center justify-center text-center overflow-hidden shrink-0 border-r border-gray-100">
+          <div className="absolute top-0 left-0 w-full h-full opacity-30">
+            <div className="absolute top-10 left-10 w-20 h-20 bg-blue-200 rounded-full blur-2xl"></div>
+            <div className="absolute bottom-10 right-10 w-32 h-32 bg-[#4D7EAF] rounded-full blur-3xl"></div>
+          </div>
+
+          <div className="relative z-10 flex flex-col items-center gap-6">
+            <Link
+              to="/"
+              className="hover:scale-105 transition-transform duration-300"
+            >
+              <Logo variant="lg" />
+            </Link>
+            <div className="space-y-3 mt-4">
+              <h1 className="text-3xl font-bold text-gray-800">Welcome!</h1>
+              <p className="text-gray-600 max-w-xs mx-auto leading-relaxed">
+                Create your account to start connecting with the best
+                opportunities.
+              </p>
+            </div>
+            <div className="w-16 h-1 bg-[#4D7EAF] rounded-full mt-4 opacity-50"></div>
           </div>
         </div>
 
@@ -427,29 +471,57 @@ const SignUp: React.FC<SignUpProps> = ({ onSelectRole }) => {
               </div>
             </div>
 
-            {/* File Upload */}
-            <div>
-              <label className="block text-xs font-semibold text-gray-600 mb-1">
-                Government ID
-              </label>
-              <div className="flex items-center">
-                <button
-                  type="button"
-                  onClick={() => fileInputRef.current?.click()}
-                  className="px-4 py-2.5 bg-gray-100 text-gray-700 rounded-l-lg border border-gray-200 text-sm"
-                >
-                  Upload File
-                </button>
-                <span className="flex-1 px-4 py-2.5 border border-l-0 border-gray-200 rounded-r-lg text-sm text-gray-500 bg-gray-50">
-                  {fileName}
-                </span>
-                <input
-                  type="file"
-                  ref={fileInputRef}
-                  onChange={handleFileChange}
-                  className="hidden"
-                  accept="image/*"
-                />
+            {/* Government ID Upload */}
+            {/* --- Document Verification Section --- */}
+            <div className="space-y-2 pt-2">
+              <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wide">
+                Document Verification
+              </h3>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* ID Type Dropdown */}
+                <div>
+                  <label className="block text-xs font-semibold text-gray-600 mb-1">
+                    ID Type
+                  </label>
+                  <select
+                    value={documentType}
+                    onChange={(e) => setDocumentType(e.target.value)}
+                    className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#3d6691]/20 focus:border-[#3d6691] outline-none transition-all cursor-pointer"
+                  >
+                    <option value="GOV_ID">Government ID</option>
+                    <option value="PASSPORT">Passport</option>
+                    <option value="DRIVER_LICENSE">Driver's License</option>
+                    <option value="OTHER">Other</option>
+                  </select>
+                </div>
+
+                {/* File Upload Input */}
+                <div>
+                  <label className="block text-xs font-semibold text-gray-600 mb-1">
+                    Upload Document
+                  </label>
+                  <div className="flex items-center">
+                    <input
+                      type="file"
+                      id="govId"
+                      accept="image/*,application/pdf"
+                      onChange={handleFileChange}
+                      className="hidden"
+                      ref={fileInputRef}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => fileInputRef.current?.click()}
+                      className="px-4 py-2 bg-gray-100 text-gray-700 font-medium rounded-l-lg hover:bg-gray-200 focus:outline-none transition-colors border border-r-0 border-gray-200 text-sm whitespace-nowrap"
+                    >
+                      Choose File
+                    </button>
+                    <span className="flex-1 px-4 py-2 border border-l-0 border-gray-200 rounded-r-lg text-sm text-gray-500 truncate bg-gray-50 block min-w-0">
+                      {fileName}
+                    </span>
+                  </div>
+                </div>
               </div>
             </div>
 

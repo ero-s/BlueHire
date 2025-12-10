@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 // --- 1. Interfaces ---
@@ -16,16 +16,17 @@ interface Report {
   status: 'Open' | 'Resolved' | 'Under Review';
 }
 
-interface VerificationEntry {
-  documentId: string;
-  workerName: string;
+// Interface for the Real Database Response
+interface BackendDocument {
+  documentID: number;
+  workerName: string; // Requires the @JsonProperty helper in Java
   documentType: string;
-  status: 'Pending' | 'Verified' | 'Rejected';
-  // Added date property for the modal details
-  dateSubmitted: string;
+  status: 'PENDING' | 'VERIFIED' | 'REJECTED';
+  uploadedAt: string;
+  documentFileURL: string;
 }
 
-// --- 2. Mock Data ---
+// --- 2. Mock Data (For Stats, Logs, Reports) ---
 
 const MOCK_STATS = {
   users: "1,240",
@@ -47,18 +48,6 @@ const MOCK_REPORTS: Report[] = [
   { id: 'RPT-101', description: 'Inappropriate chat behavior', status: 'Under Review' },
   { id: 'RPT-099', description: 'Payment dispute #4421', status: 'Resolved' },
   { id: 'RPT-098', description: 'Duplicate account reported', status: 'Resolved' },
-];
-
-// Added dates to mock verifications
-const MOCK_VERIFICATIONS: VerificationEntry[] = [
-  { documentId: 'DOC-7721', workerName: 'Juan Dela Cruz', documentType: 'National ID', status: 'Pending', dateSubmitted: 'Oct 26, 2023' },
-  { documentId: 'DOC-7722', workerName: 'Maria Clara', documentType: 'NBI Clearance', status: 'Verified', dateSubmitted: 'Oct 24, 2023' },
-  { documentId: 'DOC-7723', workerName: 'Andres Bonifacio', documentType: 'Driver License', status: 'Rejected', dateSubmitted: 'Oct 23, 2023' },
-  { documentId: 'DOC-7724', workerName: 'Jose Rizal', documentType: 'TESDA Certificate', status: 'Verified', dateSubmitted: 'Oct 22, 2023' },
-  { documentId: 'DOC-7725', workerName: 'Emilio Aguinaldo', documentType: 'Police Clearance', status: 'Pending', dateSubmitted: 'Oct 26, 2023' },
-  { documentId: 'DOC-7726', workerName: 'Apolinario Mabini', documentType: 'National ID', status: 'Verified', dateSubmitted: 'Oct 20, 2023' },
-  { documentId: 'DOC-7727', workerName: 'Antonio Luna', documentType: 'UMID', status: 'Pending', dateSubmitted: 'Oct 25, 2023' },
-  { documentId: 'DOC-7728', workerName: 'Gabriela Silang', documentType: 'Barangay Clearance', status: 'Rejected', dateSubmitted: 'Oct 21, 2023' },
 ];
 
 // --- 3. Component Parts ---
@@ -86,14 +75,15 @@ const AggregatesOverview: React.FC = () => {
   );
 };
 
-// --- Status Badge Component ---
+// --- Unified Status Badge Component ---
 const StatusBadge: React.FC<{ status: string, type: 'log' | 'report' | 'verification' }> = ({ status, type }) => {
   let styles = "bg-gray-100 text-gray-800";
+  const upperStatus = status ? status.toUpperCase() : "UNKNOWN";
 
   if (type === 'verification') {
-    if (status === 'Verified') styles = "bg-green-100 text-green-700 border border-green-200";
-    else if (status === 'Pending') styles = "bg-yellow-100 text-yellow-700 border border-yellow-200";
-    else if (status === 'Rejected') styles = "bg-red-100 text-red-700 border border-red-200";
+    if (upperStatus === 'VERIFIED') styles = "bg-green-100 text-green-700 border border-green-200";
+    else if (upperStatus === 'PENDING') styles = "bg-yellow-100 text-yellow-700 border border-yellow-200";
+    else if (upperStatus === 'REJECTED') styles = "bg-red-100 text-red-700 border border-red-200";
   }
   else if (type === 'log') {
     if (status === 'Success') styles = "text-green-600";
@@ -204,14 +194,70 @@ const ReportsCard: React.FC = () => {
   );
 };
 
-// --- Bottom Section: Verifications Table ---
+// --- Bottom Section: Verifications Table (INTEGRATED WITH DATABASE) ---
 const VerificationsTable: React.FC = () => {
-  const navigate = useNavigate();
-  // State for the modal
+  const [documents, setDocuments] = useState<BackendDocument[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  
+  // Modal State
   const [showDetails, setShowDetails] = useState(false);
-  const [selectedEntry, setSelectedEntry] = useState<VerificationEntry | null>(null);
+  const [selectedEntry, setSelectedEntry] = useState<BackendDocument | null>(null);
 
-  const handleView = (entry: VerificationEntry) => {
+  // --- FETCH DATA ---
+  const fetchDocuments = async () => {
+    try {
+      const response = await fetch("http://localhost:8080/documents");
+      if (response.ok) {
+        const data = await response.json();
+        // Sort by newest
+        const sortedData = data.sort((a: any, b: any) => 
+          new Date(b.uploadedAt).getTime() - new Date(a.uploadedAt).getTime()
+        );
+        setDocuments(sortedData);
+      } else {
+        console.error("Failed to fetch documents");
+      }
+    } catch (error) {
+      console.error("Error connecting to backend:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchDocuments();
+  }, []);
+
+  // --- STATUS UPDATE (APPROVE/REJECT) ---
+  const handleStatusUpdate = async (doc: BackendDocument, newStatus: string) => {
+    if (!window.confirm(`Are you sure you want to mark this as ${newStatus}?`)) return;
+
+    try {
+      const updatedPayload = {
+        ...doc,
+        status: newStatus,
+        reviewedAt: new Date().toISOString(),
+        verifiedBy: "Admin" 
+      };
+
+      const response = await fetch(`http://localhost:8080/documents/${doc.documentID}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(updatedPayload),
+      });
+
+      if (response.ok) {
+        fetchDocuments(); // Refresh list
+        setShowDetails(false); // Close modal
+      } else {
+        alert("Failed to update status.");
+      }
+    } catch (error) {
+      console.error("Error updating status:", error);
+    }
+  };
+
+  const handleView = (entry: BackendDocument) => {
     setSelectedEntry(entry);
     setShowDetails(true);
   };
@@ -225,76 +271,60 @@ const VerificationsTable: React.FC = () => {
     <div className="bg-white pt-6 px-6 pb-6 rounded-xl shadow-lg w-full border border-gray-100">
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-lg font-bold text-gray-800 uppercase tracking-wide">Worker Verifications</h2>
-        <div className="flex gap-2 items-center">
-            <input type="text" placeholder="Search ID..." className="text-xs border border-gray-300 rounded-lg px-3 py-1.5 focus:outline-none focus:border-blue-500" />
-        </div>
+        <button onClick={fetchDocuments} className="text-xs text-blue-600 hover:underline">Refresh</button>
       </div>
 
       <div className="overflow-x-auto">
         <table className="min-w-full divide-y divide-gray-200">
           <thead>
             <tr className="bg-gray-50 text-gray-500 text-left text-xs uppercase font-semibold tracking-wider">
-              <th scope="col" className="px-6 py-3 whitespace-nowrap">Document ID</th>
-              <th scope="col" className="px-6 py-3 whitespace-nowrap">Worker Name</th>
-              <th scope="col" className="px-6 py-3 whitespace-nowrap">Document Type</th>
-              <th scope="col" className="px-6 py-3 whitespace-nowrap">Status</th>
-              <th scope="col" className="px-6 py-3 whitespace-nowrap text-right">Actions</th>
+              <th className="px-6 py-3 whitespace-nowrap">Document ID</th>
+              <th className="px-6 py-3 whitespace-nowrap">Worker Name</th>
+              <th className="px-6 py-3 whitespace-nowrap">Document Type</th>
+              <th className="px-6 py-3 whitespace-nowrap">Status</th>
+              <th className="px-6 py-3 whitespace-nowrap text-right">Actions</th>
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-100">
-            {MOCK_VERIFICATIONS.map((entry, index) => (
-              <tr key={index} className="hover:bg-blue-50/30 transition-colors text-sm">
-                <td className="px-6 py-4 whitespace-nowrap font-mono text-xs text-gray-500">{entry.documentId}</td>
-                <td className="px-6 py-4 whitespace-nowrap font-medium text-gray-900">{entry.workerName}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-gray-600">{entry.documentType}</td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <StatusBadge status={entry.status} type="verification" />
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-right text-xs font-medium">
-                  {/* View Button Triggers Modal */}
-                  <button
-                    onClick={() => handleView(entry)}
-                    className="text-blue-600 hover:text-blue-900 font-semibold"
-                  >
-                    View
-                  </button>
-                </td>
-              </tr>
-            ))}
+            {isLoading ? (
+               <tr><td colSpan={5} className="text-center py-4">Loading documents...</td></tr>
+            ) : documents.length === 0 ? (
+               <tr><td colSpan={5} className="text-center py-4">No documents found.</td></tr>
+            ) : (
+              documents.map((entry) => (
+                <tr key={entry.documentID} className="hover:bg-blue-50/30 transition-colors text-sm">
+                  <td className="px-6 py-4 whitespace-nowrap font-mono text-xs text-gray-500">#{entry.documentID}</td>
+                  <td className="px-6 py-4 whitespace-nowrap font-medium text-gray-900">{entry.workerName}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-gray-600">{entry.documentType}</td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <StatusBadge status={entry.status} type="verification" />
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-right text-xs font-medium">
+                    <button
+                      onClick={() => handleView(entry)}
+                      className="text-blue-600 hover:text-blue-900 font-semibold"
+                    >
+                      View
+                    </button>
+                  </td>
+                </tr>
+              ))
+            )}
           </tbody>
         </table>
       </div>
 
-      {/* Pagination Footer */}
-      <div className="flex justify-between items-center mt-4 pt-4 border-t border-gray-100 text-xs text-gray-500">
-        <span>Showing 1 to {MOCK_VERIFICATIONS.length} of 45 entries</span>
-        <div className="flex items-center space-x-1">
-          <button className="p-1 text-gray-400 hover:text-gray-700 disabled:opacity-50">
-            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6"/></svg>
-          </button>
-          <div className="flex space-x-1">
-            <button className="w-6 h-6 rounded bg-blue-600 text-white shadow-sm flex items-center justify-center">1</button>
-            <button className="w-6 h-6 rounded hover:bg-gray-100 text-gray-600 flex items-center justify-center">2</button>
-            <button className="w-6 h-6 rounded hover:bg-gray-100 text-gray-600 flex items-center justify-center">3</button>
-          </div>
-          <button className="p-1 text-gray-700 hover:text-gray-900">
-            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6"/></svg>
-          </button>
-        </div>
-      </div>
-
-      {/* Verification Details Modal */}
+      {/* --- Verification Details Modal --- */}
       {showDetails && selectedEntry && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 px-4">
           <div className="bg-white rounded-2xl shadow-xl w-full max-w-lg p-6 md:p-8 relative animate-in zoom-in duration-200">
-
+            
             {/* Modal Header */}
             <div className="flex flex-col items-center border-b border-gray-100 pb-4">
-               {/* Document Icon */}
               <div className="w-16 h-16 rounded-full bg-blue-50 flex items-center justify-center text-[#26466F] mb-3">
                  <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><path d="M16 13H8"/><path d="M16 17H8"/><path d="M10 9H8"/></svg>
               </div>
-              <h2 className="text-xl font-bold text-gray-800">{selectedEntry.documentId}</h2>
+              <h2 className="text-xl font-bold text-gray-800">Document #{selectedEntry.documentID}</h2>
               <span className="mt-2"><StatusBadge status={selectedEntry.status} type="verification" /></span>
             </div>
 
@@ -310,29 +340,34 @@ const VerificationsTable: React.FC = () => {
               </div>
               <div className="flex items-start">
                 <span className="font-semibold w-32 text-gray-500">Submitted On:</span>
-                <span>{selectedEntry.dateSubmitted}</span>
+                <span>{new Date(selectedEntry.uploadedAt).toLocaleString()}</span>
+              </div>
+              <div className="flex items-start">
+                <span className="font-semibold w-32 text-gray-500">File Location:</span>
+                <span className="text-xs text-gray-400 break-all">{selectedEntry.documentFileURL}</span>
               </div>
 
               <div className="bg-gray-50 p-3 rounded-lg mt-4 border border-gray-100 text-center">
                 <span className="text-xs text-gray-400 block mb-2">DOCUMENT PREVIEW</span>
-                <div className="h-24 bg-gray-200 rounded flex items-center justify-center text-gray-500 text-xs italic">
-                    [Image Placeholder]
+                <div className="h-24 bg-gray-200 rounded flex items-center justify-center text-gray-500 text-xs italic p-2">
+                    Files are stored securely on the server. <br/>
+                    Preview not available in this demo.
                 </div>
               </div>
             </div>
 
             {/* Footer Buttons */}
             <div className="mt-8 flex justify-end gap-2">
-              {selectedEntry.status === 'Pending' && (
+              {selectedEntry.status === 'PENDING' && (
                 <>
                   <button
-                    onClick={handleClose}
+                    onClick={() => handleStatusUpdate(selectedEntry, "VERIFIED")}
                     className="px-4 py-2 text-sm rounded-full bg-green-600 text-white font-medium shadow hover:bg-green-700 transition"
                   >
                     Approve
                   </button>
                   <button
-                    onClick={handleClose}
+                    onClick={() => handleStatusUpdate(selectedEntry, "REJECTED")}
                     className="px-4 py-2 text-sm rounded-full bg-red-500 text-white font-medium shadow hover:bg-red-600 transition"
                   >
                     Reject
@@ -349,11 +384,9 @@ const VerificationsTable: React.FC = () => {
           </div>
         </div>
       )}
-
     </div>
   );
 };
-
 
 // --- Main Exported Component ---
 
@@ -371,7 +404,7 @@ const AdminCards: React.FC = () => {
             <ReportsCard />
         </div>
 
-        {/* 3. Bottom Section: Verifications Table */}
+        {/* 3. Bottom Section: Verifications Table (Connected to DB) */}
         <div className="mb-8">
             <VerificationsTable />
         </div>
