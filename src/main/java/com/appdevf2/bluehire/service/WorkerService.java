@@ -20,6 +20,10 @@ public class WorkerService {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private com.appdevf2.bluehire.service.UserService userService; 
+ 
+
     public WorkerService() {
         super();
     }
@@ -84,5 +88,17 @@ public class WorkerService {
         } else {
             return "Worker with ID " + workerId + " not found.";
         }
+    }
+
+    public Worker createWorkerWithDocument(Worker worker, org.springframework.web.multipart.MultipartFile file, String docType) throws java.io.IOException {
+        // 1. Save the User part + Document using the existing UserService logic
+        // This handles saving the file to the folder and the Document entry to the DB
+        com.appdevf2.bluehire.model.User savedUser = userService.registerUserWithDocument(worker.getUser(), file, docType);
+        
+        // 2. Link the saved User to the Worker
+        worker.setUser(savedUser);
+        
+        // 3. Save the Worker
+        return workerRepository.save(worker);
     }
 }
