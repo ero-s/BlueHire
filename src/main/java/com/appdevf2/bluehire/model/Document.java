@@ -2,6 +2,8 @@ package com.appdevf2.bluehire.model;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 @Entity
 @Table(name = "documents")
@@ -10,6 +12,12 @@ public class Document {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long documentID;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false) // Foreign Key
+    @JsonIgnore 
+
+    private User user;
 
     private String verifiedBy;
 
@@ -29,20 +37,27 @@ public class Document {
         super();
     }
 
-    public Document(String verifiedBy, String documentFileURL, Status status, LocalDateTime uploadedAt, DocumentType documentType, LocalDateTime reviewedAt) {
-        super();
-        this.verifiedBy = verifiedBy;
+    public Document(User user, String documentFileURL, DocumentType documentType) {
+        this.user = user;
         this.documentFileURL = documentFileURL;
-        this.status = status;
-        this.uploadedAt = uploadedAt;
         this.documentType = documentType;
-        this.reviewedAt = reviewedAt;
+        this.status = Status.PENDING; // Default status
+        this.uploadedAt = LocalDateTime.now();
     }
 
     // Add Auto Timestamp Here
     @PrePersist
     public void onCreate() {
         this.uploadedAt = LocalDateTime.now();
+        if(this.status == null) this.status = Status.PENDING;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public Long getDocumentID() {
@@ -108,5 +123,13 @@ public class Document {
         PASSPORT,
         DRIVER_LICENSE,
         OTHER
+    }
+
+    @JsonProperty("workerName")
+    public String getWorkerName() {
+        if (user != null && user.getName() != null) {
+            return user.getName().getFirstName() + " " + user.getName().getLastName();
+        }
+        return "Unknown";
     }
 }

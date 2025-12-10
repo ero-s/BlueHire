@@ -2,19 +2,39 @@ package com.appdevf2.bluehire.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.appdevf2.bluehire.model.User;
-import com.appdevf2.bluehire.repository.UserRepository;
 
-import java.util.List;
+import com.appdevf2.bluehire.model.User;
+import com.appdevf2.bluehire.model.Document;
+import com.appdevf2.bluehire.model.Document.DocumentType;
+import com.appdevf2.bluehire.model.Document.Status;
+
+import com.appdevf2.bluehire.repository.UserRepository;
+import com.appdevf2.bluehire.repository.DocumentRepository;
+
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
+import java.time.LocalDateTime;
 import java.util.Optional;
+import java.util.List;
+import java.util.UUID;
 
 @Service
 public class UserService {
+
     @Autowired
     private UserRepository userRepository;
 
-    public UserService() {
-    }
+    @Autowired
+    private DocumentRepository documentRepository;
+
+    private static final String UPLOAD_DIR = "uploads/";
+
+    // ----------------------------- BASIC USER METHODS -----------------------------
 
     public User postUserRecord(User user) {
         return userRepository.save(user);
@@ -24,12 +44,10 @@ public class UserService {
         return userRepository.findAll();
     }
 
-    // Updated return type to Optional<User>
     public Optional<User> getUserByUsername(String username) {
         return userRepository.findByUsername(username);
     }
 
-    // This method supports the Controller's /exists/{username} endpoint
     public boolean checkUsernameExists(String username) {
         return userRepository.findByUsername(username).isPresent();
     }
@@ -47,9 +65,7 @@ public class UserService {
                     user.setAddress(updatedUser.getAddress());
                     user.setContactNumber(updatedUser.getContactNumber());
                     user.setName(updatedUser.getName());
-                    // user.setCreatedAt(updatedUser.getCreatedAt()); // Careful with updating timestamps manually
                     user.setRole(updatedUser.getRole());
-                    // user.setIsVerified(updatedUser.getIsVerified()); // Only update if necessary
                     return userRepository.save(user);
                 })
                 .orElseThrow(() -> new RuntimeException("User not found with ID " + userId));
@@ -59,10 +75,53 @@ public class UserService {
         userRepository.deleteById(userId);
     }
 
-
     public User authenticate(String username, String password) {
         return userRepository.findByUsername(username)
-                .filter(user -> user.getPassword().equals(password)) // Check if password matches
-                .orElse(null); // Return null if not found or password incorrect
+                .filter(user -> user.getPassword().equals(password))
+                .orElse(null);
+    }
+
+    // ----------------------------- REGISTER WITH DOCUMENT -----------------------------
+
+    public User registerUserWithDocument(User user, MultipartFile file, String docTypeStr) throws IOException {
+
+        // 1. Save user first
+        User savedUser = userRepository.save(user);
+
+        // 2. Process file upload if exists
+        if (file != null && !file.isEmpty()) {
+
+            // Ensure uploads directory exists
+            Path uploadPath = Paths.get(UPLOAD_DIR);
+            if (!Files.exists(uploadPath)) {
+                Files.createDirectories(uploadPath);
+            }
+
+            // Ensure unique filename
+            String filename = UUID.randomUUID() + "_" + file.getOriginalFilename();
+            Path filePath = uploadPath.resolve(filename);
+
+            // Save file to disk
+            Files.copy(file.getInputStream(), filePath);
+
+            // 3. Create document entry
+            Document doc = new Document();
+            doc.setUser(savedUser);
+            doc.setDocumentFileURL(filePath.toString());
+            doc.setUploadedAt(LocalDateTime.now());
+            doc.setStatus(Status.PENDING);
+
+            // Handle document type safely
+            try {
+                doc.setDocumentType(DocumentType.valueOf(docTypeStr.toUpperCase()));
+            } catch (Exception e) {
+                doc.setDocumentType(DocumentType.OTHER);
+            }
+
+            // Save document to DB
+            documentRepository.save(doc);
+        }
+
+        return savedUser;
     }
 }

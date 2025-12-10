@@ -9,9 +9,10 @@ import com.appdevf2.bluehire.service.DocumentService;
 
 import java.util.List;
 
+@CrossOrigin(origins = "http://localhost:5173") 
 @RestController
 @RequestMapping("/documents")
-@CrossOrigin(origins = "*") // Allow requests from any frontend
+
 public class DocumentController {
 
     @Autowired

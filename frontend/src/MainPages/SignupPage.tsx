@@ -9,7 +9,6 @@ interface SignUpProps {
 
 const SignUp: React.FC<SignUpProps> = () => {
   const [formData, setFormData] = useState({
-    // --- FIXED: Renamed to match Java Backend variables ---
     firstName: "",
     middleName: "",
     lastName: "",
@@ -29,20 +28,19 @@ const SignUp: React.FC<SignUpProps> = () => {
     role: "",
   });
 
-  // State to track username availability errors
   const [usernameError, setUsernameError] = useState<string | null>(null);
-  // State to track loading status
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // File upload state
   const [image, setImage] = useState<File | null>(null);
   const [fileName, setFileName] = useState("No file chosen");
-  const [error, setError] = useState(""); // Current error message
-  const [showError, setShowError] = useState(false); // Show popup
+  const [error] = useState("");
+  const [showError, setShowError] = useState(false);
+  const [documentType, setDocumentType] = useState("GOV_ID");
+  
   const fileInputRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
 
-  // Clear error popup after 3 seconds
   useEffect(() => {
     if (showError) {
       const timer = setTimeout(() => setShowError(false), 3000);
@@ -56,7 +54,6 @@ const SignUp: React.FC<SignUpProps> = () => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
 
-    // Clear the username error immediately when the user starts typing again
     if (name === "username") {
       setUsernameError(null);
     }
@@ -69,21 +66,15 @@ const SignUp: React.FC<SignUpProps> = () => {
     }
   };
 
-  // --- 1. Helper Function: Check Username API ---
-  const checkUsernameAvailability = async (
-    username: string
-  ): Promise<boolean> => {
+  const checkUsernameAvailability = async (username: string): Promise<boolean> => {
     if (!username) return false;
     try {
-      // Connects to: UserController @GetMapping("/exists/{username}")
       const response = await fetch(
         `http://localhost:8080/api/user/exists/${username}`
       );
-
       if (response.ok) {
         return await response.json();
       } else {
-        console.warn("Username check endpoint error:", response.status);
         return false;
       }
     } catch (error) {
@@ -92,10 +83,10 @@ const SignUp: React.FC<SignUpProps> = () => {
     }
   };
 
+  // --- UPDATED SUBMIT LOGIC ---
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    // Basic Password Match Check
     if (formData.password !== formData.confirmPassword) {
       alert("Passwords do not match!");
       return;
@@ -105,23 +96,20 @@ const SignUp: React.FC<SignUpProps> = () => {
     setUsernameError(null);
 
     try {
-      // --- 2. Check Username Availability Logic ---
+      // 1. Check Username
       const isTaken = await checkUsernameAvailability(formData.username);
-
       if (isTaken) {
-        const errorMsg = "This username is already taken. Please choose another.";
-        setUsernameError(errorMsg);
+        setUsernameError("This username is already taken.");
         setIsSubmitting(false);
         return;
       }
 
-      // --- 3. Prepare Payload ---
-      // CRITICAL FIX: Ensure keys match Java 'Name' class exactly
+      // 2. Prepare User Data Object
       const userPayload = {
         name: {
-          firstName: formData.firstName,   // Matches Java 'firstName'
-          middleName: formData.middleName, // Matches Java 'middleName'
-          lastName: formData.lastName,     // Matches Java 'lastName'
+          firstName: formData.firstName,
+          middleName: formData.middleName,
+          lastName: formData.lastName,
         },
         address: {
           street: formData.street,
@@ -138,24 +126,31 @@ const SignUp: React.FC<SignUpProps> = () => {
         birthdate: formData.birthdate,
       };
 
-      console.log("Sending Payload:", userPayload); // Debugging line
+      // 3. Prepare FormData (Multipart)
+      const data = new FormData();
+      
+      data.append("user", JSON.stringify(userPayload));
 
-      // --- 4. Register User ---
-      const response = await fetch("http://localhost:8080/api/user/postUser", {
+      if (image) {
+        data.append("file", image);
+        data.append("docType", documentType);
+      }
+
+      // 4. Send Request to the NEW endpoint
+      const response = await fetch("http://localhost:8080/api/user/register", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(userPayload),
+        // IMPORTANT: Do NOT set Content-Type header manually when using FormData.
+        // The browser automatically sets it to "multipart/form-data; boundary=..."
+        body: data, 
       });
 
       if (response.ok) {
-        alert("Registration Successful!");
+        alert("Registration and Document Upload Successful!");
         navigate("/signin");
       } else {
         const errorText = await response.text();
         console.error("Registration Error:", errorText);
-        alert("Registration Failed. Please check console for details.");
+        alert(`Registration Failed: ${errorText}`);
       }
     } catch (error) {
       console.error("Network Error:", error);
@@ -193,6 +188,7 @@ const SignUp: React.FC<SignUpProps> = () => {
 
       {/* --- Sign Up Card --- */}
       <div className="relative flex flex-col md:flex-row w-full max-w-5xl bg-white rounded-3xl shadow-2xl overflow-hidden z-10 m-4 max-h-[90vh] border border-gray-100">
+        
         {/* Left Section - Fixed */}
         <div className="relative md:w-1/3 bg-gradient-to-br from-blue-50 to-white p-8 flex flex-col items-center justify-center text-center overflow-hidden shrink-0 border-r border-gray-100">
           <div className="absolute top-0 left-0 w-full h-full opacity-30">
@@ -236,45 +232,42 @@ const SignUp: React.FC<SignUpProps> = () => {
                 Personal Information
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                {/* FIRST NAME INPUT */}
                 <div>
                   <label className="block text-xs font-semibold text-gray-600 mb-1">
                     First Name
                   </label>
                   <input
-                    name="firstName" // Changed from fname
+                    name="firstName"
                     type="text"
                     placeholder="John"
-                    value={formData.firstName} // Changed
+                    value={formData.firstName}
                     onChange={handleChange}
                     required
                     className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#3d6691]/20 focus:border-[#3d6691] outline-none transition-all"
                   />
                 </div>
-                {/* MIDDLE NAME INPUT */}
                 <div>
                   <label className="block text-xs font-semibold text-gray-600 mb-1">
                     Middle Name
                   </label>
                   <input
-                    name="middleName" // Changed from middlename
+                    name="middleName"
                     type="text"
                     placeholder="Quincy"
-                    value={formData.middleName} // Changed
+                    value={formData.middleName}
                     onChange={handleChange}
                     className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#3d6691]/20 focus:border-[#3d6691] outline-none transition-all"
                   />
                 </div>
-                {/* LAST NAME INPUT */}
                 <div>
                   <label className="block text-xs font-semibold text-gray-600 mb-1">
                     Last Name
                   </label>
                   <input
-                    name="lastName" // Changed from lname
+                    name="lastName"
                     type="text"
                     placeholder="Doe"
-                    value={formData.lastName} // Changed
+                    value={formData.lastName}
                     onChange={handleChange}
                     required
                     className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#3d6691]/20 focus:border-[#3d6691] outline-none transition-all"
@@ -494,29 +487,56 @@ const SignUp: React.FC<SignUpProps> = () => {
             </div>
 
             {/* Government ID Upload */}
-            <div>
-              <label className="block text-xs font-semibold text-gray-600 mb-1">
-                Government ID
-              </label>
-              <div className="mt-1 flex items-center">
-                <input
-                  type="file"
-                  id="govId"
-                  accept="image/*"
-                  onChange={handleFileChange}
-                  className="hidden"
-                  ref={fileInputRef}
-                />
-                <button
-                  type="button"
-                  onClick={() => fileInputRef.current?.click()}
-                  className="px-4 py-2.5 bg-gray-100 text-gray-700 font-medium rounded-l-lg hover:bg-gray-200 focus:outline-none transition-colors border border-r-0 border-gray-200 text-sm"
-                >
-                  Upload File
-                </button>
-                <span className="flex-1 px-4 py-2.5 border border-l-0 border-gray-200 rounded-r-lg text-sm text-gray-500 truncate bg-gray-50">
-                  {fileName}
-                </span>
+            {/* --- Document Verification Section --- */}
+            <div className="space-y-2 pt-2">
+              <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wide">
+                Document Verification
+              </h3>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* ID Type Dropdown */}
+                <div>
+                  <label className="block text-xs font-semibold text-gray-600 mb-1">
+                    ID Type
+                  </label>
+                  <select
+                    value={documentType}
+                    onChange={(e) => setDocumentType(e.target.value)}
+                    className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#3d6691]/20 focus:border-[#3d6691] outline-none transition-all cursor-pointer"
+                  >
+                    <option value="GOV_ID">Government ID</option>
+                    <option value="PASSPORT">Passport</option>
+                    <option value="DRIVER_LICENSE">Driver's License</option>
+                    <option value="OTHER">Other</option>
+                  </select>
+                </div>
+
+                {/* File Upload Input */}
+                <div>
+                  <label className="block text-xs font-semibold text-gray-600 mb-1">
+                    Upload Document
+                  </label>
+                  <div className="flex items-center">
+                    <input
+                      type="file"
+                      id="govId"
+                      accept="image/*,application/pdf"
+                      onChange={handleFileChange}
+                      className="hidden"
+                      ref={fileInputRef}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => fileInputRef.current?.click()}
+                      className="px-4 py-2 bg-gray-100 text-gray-700 font-medium rounded-l-lg hover:bg-gray-200 focus:outline-none transition-colors border border-r-0 border-gray-200 text-sm whitespace-nowrap"
+                    >
+                      Choose File
+                    </button>
+                    <span className="flex-1 px-4 py-2 border border-l-0 border-gray-200 rounded-r-lg text-sm text-gray-500 truncate bg-gray-50 block min-w-0">
+                      {fileName}
+                    </span>
+                  </div>
+                </div>
               </div>
             </div>
 
