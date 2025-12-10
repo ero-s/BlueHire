@@ -34,9 +34,11 @@ const SignUp: React.FC<SignUpProps> = ({ onSelectRole }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showError, setShowError] = useState(false);
   const [error, setError] = useState("");
+  
+  // --- FIX 1: Added image state ---
+  const [image, setImage] = useState<File | null>(null);
   const [fileName, setFileName] = useState("No file chosen");
-  const [error] = useState("");
-  const [showError, setShowError] = useState(false);
+
   const [documentType, setDocumentType] = useState("GOV_ID");
   
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -57,9 +59,11 @@ const SignUp: React.FC<SignUpProps> = ({ onSelectRole }) => {
     if (name === "username") setUsernameError(null);
   };
 
+  // --- FIX 2: Save the file object ---
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
-      setFileName(e.target.files[0].name);
+      setImage(e.target.files[0]); // Save the actual file
+      setFileName(e.target.files[0].name); // Save the name for display
     }
   };
 
@@ -100,7 +104,6 @@ const SignUp: React.FC<SignUpProps> = ({ onSelectRole }) => {
         return;
       }
 
-      // 2. Prepare User Data Object
       const userPayload = {
         name: {
           firstName: formData.firstName,
@@ -122,10 +125,9 @@ const SignUp: React.FC<SignUpProps> = ({ onSelectRole }) => {
         birthdate: formData.birthdate,
       };
 
-      // --- MERGED LOGIC ---
       let response;
 
-      // SCENARIO 1: CLIENT (Standard JSON)
+      // SCENARIO 1: CLIENT
       if (formData.role === "client") {
         const clientPayload = {
           company_name: formData.companyName || "N/A",
@@ -140,7 +142,7 @@ const SignUp: React.FC<SignUpProps> = ({ onSelectRole }) => {
         });
       } 
       
-      // SCENARIO 2: WORKER (FormData with File to /api/worker/postWorker)
+      // SCENARIO 2: WORKER
       else {
         const workerPayload = {
           user: userPayload,
@@ -154,11 +156,7 @@ const SignUp: React.FC<SignUpProps> = ({ onSelectRole }) => {
           totalEarnings: 0.0,
         };
 
-        // 1. Prepare FormData (Required for File Upload)
         const data = new FormData();
-        
-        // Append the Worker JSON structure as a string
-        // NOTE: Your Backend @RequestPart must match this key ("worker")
         data.append("worker", JSON.stringify(workerPayload));
 
         // Append the File
@@ -175,7 +173,6 @@ const SignUp: React.FC<SignUpProps> = ({ onSelectRole }) => {
         });
       }
 
-      // --- RESPONSE HANDLING ---
       if (response.ok) {
         // Parse response safely
         const data = await response.json().catch(() => ({}));
