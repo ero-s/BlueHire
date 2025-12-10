@@ -3,22 +3,16 @@ package com.appdevf2.bluehire.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*; // Imports CrossOrigin, PutMapping, etc.
 
 import com.appdevf2.bluehire.model.Booking;
 import com.appdevf2.bluehire.service.BookingService;
 
+@CrossOrigin(origins = "http://localhost:5173") // Allow React to talk to this
 @RestController
 @RequestMapping("/booking")
 public class BookingController {
+    
     @Autowired
     private BookingService bookingService;
 
@@ -40,6 +34,14 @@ public class BookingController {
     @PutMapping("/update")
     public Booking updateBooking(@RequestParam Long id, @RequestBody Booking booking) {
         return bookingService.updateBooking(id, booking);
+    }
+
+    // =========================================================
+    //  MISSING ENDPOINT ADDED HERE
+    // =========================================================
+    @PutMapping("/apply/{bookingId}/{workerId}")
+    public Booking applyForJob(@PathVariable Long bookingId, @PathVariable Integer workerId) {
+        return bookingService.assignWorkerToBooking(bookingId, workerId);
     }
 
     @DeleteMapping("/delete/{id}")

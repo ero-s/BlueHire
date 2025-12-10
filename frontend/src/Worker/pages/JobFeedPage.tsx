@@ -1,15 +1,8 @@
-import React, { useState, useMemo } from "react";
-import WorkerHeader from "../components/WorkerHeader"; // Assuming you have this
+import React, { useState, useEffect, useMemo } from "react";
+import WorkerHeader from "../components/WorkerHeader"; 
 import { 
-  Briefcase, 
-  MapPin, 
-  DollarSign, 
-  Calendar, 
-  Star, 
-  Filter, 
-  ArrowUpDown, 
-  X 
-} from "lucide-react"; // Replaced react-icons with lucide-react for consistency
+  Briefcase, MapPin, DollarSign, Calendar, Star, Filter, ArrowUpDown, X, Loader2 
+} from "lucide-react"; 
 import Footer from "../components/WorkerFooter";
 
 // --- Types ---
@@ -27,72 +20,7 @@ interface JobPost {
   featured?: boolean;
 }
 
-// --- Mock Data ---
-const MOCK_JOB_POSTS: JobPost[] = [
-  {
-    id: "1",
-    title: "Urgent: Leaky Pipe Repair",
-    clientName: "Jane Doe",
-    clientAvatar: "https://picsum.photos/seed/client1/100/100",
-    location: "San Francisco, CA",
-    pay: 75,
-    payType: "hourly",
-    description: "I have a persistent leak under my kitchen sink that needs immediate attention. Experience with copper pipes is a must. Please bring your own tools.",
-    tags: ["Plumbing", "Urgent", "Residential"],
-    postedAt: new Date(Date.now() - 3600000 * 2),
-    featured: true,
-  },
-  {
-    id: "2",
-    title: "Full House Rewiring Project",
-    clientName: "John Smith",
-    clientAvatar: "https://picsum.photos/seed/client2/100/100",
-    location: "Oakland, CA",
-    pay: 8000,
-    payType: "fixed",
-    description: "Looking for a certified electrician to rewire a 3-bedroom house. Project includes new panel installation and bringing everything up to code.",
-    tags: ["Electrical", "Commercial", "Full-time"],
-    postedAt: new Date(Date.now() - 86400000 * 1),
-  },
-  {
-    id: "3",
-    title: "Backyard Deck Construction",
-    clientName: "Emily White",
-    clientAvatar: "https://picsum.photos/seed/client3/100/100",
-    location: "San Francisco, CA",
-    pay: 55,
-    payType: "hourly",
-    description: "Need a skilled carpenter to build a 200 sq. ft. redwood deck in my backyard. I have the plans and materials ready.",
-    tags: ["Carpentry", "Construction", "Outdoor"],
-    postedAt: new Date(Date.now() - 86400000 * 3),
-  },
-  {
-    id: "4",
-    title: "Install New Light Fixtures",
-    clientName: "Michael Brown",
-    clientAvatar: "https://picsum.photos/seed/client4/100/100",
-    location: "Berkeley, CA",
-    pay: 250,
-    payType: "fixed",
-    description: "I need 5 ceiling light fixtures and 2 ceiling fans installed in my new apartment. The wiring is already in place.",
-    tags: ["Electrical", "Residential"],
-    postedAt: new Date(Date.now() - 86400000 * 5),
-  },
-  {
-    id: "5",
-    title: "Drywall Repair and Painting",
-    clientName: "Sarah Green",
-    clientAvatar: "https://picsum.photos/seed/client5/100/100",
-    location: "San Mateo, CA",
-    pay: 40,
-    payType: "hourly",
-    description: "A small section of drywall in my living room was damaged. It needs to be patched, sanded, and painted.",
-    tags: ["Painting", "Handyman", "Interior"],
-    postedAt: new Date(Date.now() - 86400000 * 7),
-  },
-];
-
-const JOB_CATEGORIES = ["All", "Plumbing", "Electrical", "Carpentry", "Painting", "Handyman"];
+const JOB_CATEGORIES = ["All", "Plumbing", "Electrical", "Carpentry", "Cleaning", "Gardening"];
 
 // --- Helper Functions ---
 const timeAgo = (date: Date): string => {
@@ -112,15 +40,9 @@ const timeAgo = (date: Date): string => {
 
 // --- Sub-Components ---
 
-const JobPostCard: React.FC<{ job: JobPost }> = ({ job }) => {
+const JobPostCard: React.FC<{ job: JobPost; onApply: (id: string) => void; isApplying: boolean }> = ({ job, onApply, isApplying }) => {
   return (
     <article className="bg-white rounded-2xl p-6 shadow-sm hover:shadow-lg transition-all duration-300 flex flex-col sm:flex-row gap-6 relative overflow-hidden border border-transparent hover:border-[#5AB3E6]">
-      {job.featured && (
-        <div className="absolute top-0 right-0 bg-[#FCD34D] text-yellow-900 text-xs font-bold px-3 py-1 rounded-bl-lg rounded-tr-xl flex items-center gap-1">
-          <Star size={12} fill="currentColor" />
-          <span>Featured</span>
-        </div>
-      )}
       <img
         src={job.clientAvatar}
         alt={job.clientName}
@@ -145,7 +67,8 @@ const JobPostCard: React.FC<{ job: JobPost }> = ({ job }) => {
             {job.location}
           </span>
           <span className="flex items-center gap-1.5 font-medium text-gray-800">
-            <DollarSign size={16} className="text-[#5AB3E6]" />${job.pay} <span className="text-gray-500 font-normal">{job.payType}</span>
+            <DollarSign size={16} className="text-[#5AB3E6]" />
+            ₱{job.pay.toFixed(2)} <span className="text-gray-500 font-normal">{job.payType}</span>
           </span>
         </div>
 
@@ -164,8 +87,12 @@ const JobPostCard: React.FC<{ job: JobPost }> = ({ job }) => {
               </span>
             ))}
           </div>
-          <button className="px-6 py-2 text-sm font-semibold bg-[#4D7EAF] text-white rounded-full hover:bg-[#3d6691] transition-all hover:-translate-y-0.5 transform whitespace-nowrap shadow-sm">
-            Apply Now
+          <button 
+            onClick={() => onApply(job.id)}
+            disabled={isApplying}
+            className="px-6 py-2 text-sm font-semibold bg-[#4D7EAF] text-white rounded-full hover:bg-[#3d6691] transition-all hover:-translate-y-0.5 transform whitespace-nowrap shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {isApplying ? "Applying..." : "Apply Now"}
           </button>
         </div>
       </div>
@@ -252,7 +179,6 @@ const JobFilters: React.FC<{
               <option value="pay_high">Pay: High to Low</option>
               <option value="pay_low">Pay: Low to High</option>
             </select>
-            {/* Custom Arrow for select */}
             <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-gray-500">
               <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
@@ -276,11 +202,118 @@ const JobFilters: React.FC<{
 // --- Main Page Component ---
 
 const JobFeedPage: React.FC = () => {
-  const [jobs] = useState<JobPost[]>(MOCK_JOB_POSTS);
+  const [jobs, setJobs] = useState<JobPost[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [currentWorkerId, setCurrentWorkerId] = useState<number | null>(null);
+  const [applyingId, setApplyingId] = useState<string | null>(null);
+  
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [sortOption, setSortOption] = useState("newest");
   const [locationFilter, setLocationFilter] = useState("");
 
+  // 1. Fetch current Worker ID based on logged in user
+  useEffect(() => {
+    const fetchWorkerProfile = async () => {
+      const storedUser = localStorage.getItem("currentUser");
+      if (storedUser) {
+        const user = JSON.parse(storedUser);
+        try {
+            const response = await fetch("http://localhost:8080/api/worker/getAllWorkers");
+            if (response.ok) {
+                const workers = await response.json();
+                const myProfile = workers.find((w: any) => w.user.userId === user.userId);
+                if (myProfile) {
+                    setCurrentWorkerId(myProfile.workerID);
+                }
+            }
+        } catch (error) {
+            console.error("Failed to load worker profile", error);
+        }
+      }
+    };
+    fetchWorkerProfile();
+  }, []);
+
+  // 2. Fetch Jobs
+  useEffect(() => {
+    const fetchJobs = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const response = await fetch("http://localhost:8080/booking/getAll");
+        if (!response.ok) throw new Error("Failed to connect to server");
+        
+        const bookings = await response.json();
+        
+        const mappedJobs: JobPost[] = bookings
+          .filter((b: any) => b.status === "Pending" && b.worker === null) 
+          .map((b: any) => {
+              let clientName = "Client";
+              if (b.client?.user?.name) {
+                  const { firstName, lastName } = b.client.user.name;
+                  if (firstName && lastName) clientName = `${firstName} ${lastName}`;
+              }
+
+              return {
+                id: b.bookingID.toString(),
+                title: b.jobTitle || "Untitled Job", 
+                clientName: clientName,
+                clientAvatar: b.client?.user?.photoURL || `https://ui-avatars.com/api/?name=${clientName}&background=random`,
+                location: b.location,
+                pay: b.payment ? b.payment.amount : 0, 
+                payType: "fixed", 
+                description: b.description,
+                tags: [b.serviceCategory], 
+                postedAt: new Date(b.createdAt),
+                featured: false
+              };
+          });
+
+        setJobs(mappedJobs);
+      } catch (err) {
+        console.error("Error fetching jobs:", err);
+        setError("Unable to load jobs at this time.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchJobs();
+  }, []);
+
+  // 3. Handle Apply Logic
+  const handleApply = async (jobId: string) => {
+    if (!currentWorkerId) {
+        alert("Please log in as a worker to apply.");
+        return;
+    }
+
+    setApplyingId(jobId);
+
+    try {
+        // CALL BACKEND TO ASSIGN WORKER
+        const response = await fetch(`http://localhost:8080/booking/apply/${jobId}/${currentWorkerId}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" }
+        });
+
+        if (response.ok) {
+            alert("Application successful! You have been assigned to this job.");
+            // Remove the job from the local list immediately so it looks "gone"
+            setJobs(prevJobs => prevJobs.filter(job => job.id !== jobId));
+        } else {
+            alert("Failed to apply. This job might already be taken.");
+        }
+    } catch (error) {
+        console.error("Application error:", error);
+        alert("An error occurred while applying.");
+    } finally {
+        setApplyingId(null);
+    }
+  };
+
+  // --- Filter & Sort Logic ---
   const filteredAndSortedJobs = useMemo(() => {
     let result = jobs;
 
@@ -296,17 +329,9 @@ const JobFeedPage: React.FC = () => {
 
     result.sort((a, b) => {
       switch (sortOption) {
-        case "pay_high":
-          const payA_high = a.payType === "hourly" ? a.pay * 40 * 52 : a.pay;
-          const payB_high = b.payType === "hourly" ? b.pay * 40 * 52 : b.pay;
-          return payB_high - payA_high;
-        case "pay_low":
-          const payA_low = a.payType === "hourly" ? a.pay * 40 * 52 : a.pay;
-          const payB_low = b.payType === "hourly" ? b.pay * 40 * 52 : b.pay;
-          return payA_low - payB_low;
-        case "newest":
-        default:
-          return b.postedAt.getTime() - a.postedAt.getTime();
+        case "pay_high": return b.pay - a.pay;
+        case "pay_low": return a.pay - b.pay;
+        case "newest": default: return b.postedAt.getTime() - a.postedAt.getTime();
       }
     });
 
@@ -321,8 +346,6 @@ const JobFeedPage: React.FC = () => {
 
   return (
     <div className="flex flex-col min-h-screen bg-[#F6F6F6] font-sans">
-      
-      {/* Fixed Header */}
       <div className="fixed top-0 w-full z-40 bg-[#F6F6F6]">
         <WorkerHeader userName="Sherielyn Guadiana" />
       </div>
@@ -330,7 +353,6 @@ const JobFeedPage: React.FC = () => {
       <main className="flex-1 w-full max-w-[1400px] mx-auto pt-24 pb-12 px-4 sm:px-6 lg:px-12 mt-4">
         <div className="flex flex-col lg:flex-row gap-8">
           
-          {/* Left Side: Job Feed */}
           <div className="flex-1 min-w-0">
             <div className="flex items-center justify-between mb-6">
               <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 flex items-center gap-3">
@@ -342,23 +364,32 @@ const JobFeedPage: React.FC = () => {
             </div>
             
             <div className="flex flex-col gap-6">
-              {filteredAndSortedJobs.length > 0 ? (
+              {loading ? (
+                <div className="flex flex-col items-center justify-center py-20">
+                    <Loader2 className="h-10 w-10 text-[#4D7EAF] animate-spin mb-4" />
+                    <p className="text-gray-500">Finding opportunities...</p>
+                </div>
+              ) : error ? (
+                <div className="bg-red-50 border border-red-200 text-red-600 px-6 py-8 rounded-2xl text-center">
+                    <p className="font-semibold">{error}</p>
+                </div>
+              ) : filteredAndSortedJobs.length > 0 ? (
                 filteredAndSortedJobs.map((job) => (
-                  <JobPostCard key={job.id} job={job} />
+                  <JobPostCard 
+                    key={job.id} 
+                    job={job} 
+                    onApply={handleApply} 
+                    isApplying={applyingId === job.id} 
+                  />
                 ))
               ) : (
                 <div className="flex flex-col items-center justify-center py-20 bg-white rounded-3xl shadow-sm border border-dashed border-gray-300">
-                   <div className="bg-gray-50 p-4 rounded-full mb-4">
-                      <Briefcase size={32} className="text-gray-400" />
-                   </div>
                    <h3 className="text-lg font-semibold text-gray-600">No jobs found</h3>
-                   <p className="text-gray-400 text-sm mt-1">Try adjusting your filters.</p>
                 </div>
               )}
             </div>
           </div>
 
-          {/* Right Side: Filters */}
           <div className="w-full lg:w-80 xl:w-96">
             <JobFilters
               categories={JOB_CATEGORIES}
