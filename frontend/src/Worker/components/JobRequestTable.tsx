@@ -10,7 +10,7 @@ interface JobRequest {
   location: string;
   schedule: string;
   status: string;
-  rawBooking: any;
+  rawBooking: any; // Contains the full backend object for reference
 }
 
 const JobRequestTable: React.FC = () => {
@@ -27,6 +27,7 @@ const JobRequestTable: React.FC = () => {
       if (storedUser) {
         const user = JSON.parse(storedUser);
         try {
+          // Fetch all workers to find the current worker's ID based on userId
           const response = await fetch("http://localhost:8080/api/worker/getAllWorkers");
           if (response.ok) {
             const workers = await response.json();
@@ -37,40 +38,54 @@ const JobRequestTable: React.FC = () => {
           console.error("Failed to load worker profile", error);
         }
       }
+      if (!storedUser) setLoading(false);
     };
     fetchWorkerProfile();
   }, []);
 
-  // 2. Fetch Job Requests
+  // 2. Fetch Job Requests (Dependent on currentWorkerId)
   useEffect(() => {
     const fetchRequests = async () => {
-      if (!currentWorkerId) return;
+      if (!currentWorkerId) return; // Wait until worker ID is established
+      
       setLoading(true);
       try {
         const response = await fetch("http://localhost:8080/booking/getAll");
         if (response.ok) {
           const allBookings = await response.json();
           
-          // --- FILTER LOGIC UPDATED --- 
-          // Show bookings where status is 'Responded' (Client Accepted the worker's application)
+          // --- FILTER LOGIC: Status must be 'Responded' AND worker ID must match --- 
           const myRequests = allBookings.filter((b: any) => 
             b.worker && 
             b.worker.workerID === currentWorkerId && 
             b.status === 'Responded' 
           );
 
-          const mappedRequests: JobRequest[] = myRequests.map((b: any) => ({
-            id: b.bookingID.toString(),
-            clientName: b.client?.user?.name ? `${b.client.user.name.firstName} ${b.client.user.name.lastName}` : "Unknown Client",
-            clientAvatar: b.client?.user?.photoURL || `https://ui-avatars.com/api/?name=Client&background=random`,
-            jobType: b.serviceCategory || "General Service",
-            location: b.location,
-            schedule: new Date(b.scheduledDateTime).toLocaleDateString(),
-            status: 'Accept', // Button label
-            rawBooking: b
-          }));
+          const mappedRequests: JobRequest[] = myRequests.map((b: any) => {
+              
+              // --- Initial/Name Extraction for Avatar Logic ---
+              const firstName = b.client?.user?.name?.firstName || '';
+              const lastName = b.client?.user?.name?.lastName || '';
+              const fullName = `${firstName} ${lastName}`.trim();
+
+              return {
+                  id: b.bookingID.toString(),
+                  clientName: fullName || "Unknown Client",
+                  // CORRECTED AVATAR FALLBACK: Uses initials (FirstName + LastName) for ui-avatars API
+                  clientAvatar: b.client?.user?.photoURL || 
+                      `https://ui-avatars.com/api/?name=${firstName}+${lastName}&background=random&color=fff&size=128&rounded=true`,
+                  jobType: b.serviceCategory || "General Service",
+                  location: b.location || "N/A Location",
+                  // Format the date for display
+                  schedule: b.scheduledDateTime ? new Date(b.scheduledDateTime).toLocaleDateString() : "N/A Date",
+                  status: 'Accept',
+                  rawBooking: b
+              };
+          });
 
           setRequests(mappedRequests);
+        } else {
+            console.error("Failed to fetch bookings:", response.statusText);
         }
       } catch (error) {
         console.error("Error fetching requests:", error);
@@ -85,23 +100,12 @@ const JobRequestTable: React.FC = () => {
   // 3. Handle Accept Action
   const handleAccept = async (request: JobRequest) => {
     try {
-        // --- ACTION LOGIC ---
-        // Worker clicks Accept -> Status becomes 'Accepted' (Ongoing)
+        // Status becomes 'Accepted' (Ongoing)
         
-        // Use sanitized payload if necessary, but typically this is fine if backend is fixed
+        // Minimal payload for status update
         const payload = { 
             bookingID: request.rawBooking.bookingID,
             status: 'Accepted',
-            // Send null relations just in case backend needs it
-            client: null,
-            worker: null,
-            payment: null,
-            // Re-send text fields to avoid null overwrites
-            jobTitle: request.rawBooking.jobTitle || "",
-            description: request.rawBooking.description || "",
-            location: request.rawBooking.location || "",
-            scheduledDateTime: request.rawBooking.scheduledDateTime,
-            serviceCategory: request.rawBooking.serviceCategory || ""
         };
 
         const response = await fetch(`http://localhost:8080/booking/update?id=${request.id}`, {
@@ -115,10 +119,13 @@ const JobRequestTable: React.FC = () => {
             // Remove from this table locally
             setRequests(prev => prev.filter(r => r.id !== request.id));
         } else {
-            alert("Failed to accept job.");
+            const errorText = await response.text();
+            console.error("Accept failed, response:", response.status, errorText);
+            alert(`Failed to accept job. Status: ${response.status}`);
         }
     } catch (error) {
         console.error("Error accepting job:", error);
+        alert("An unexpected error occurred while accepting the job.");
     }
   };
 
@@ -143,11 +150,14 @@ const JobRequestTable: React.FC = () => {
       {/* Table Container */}
       <div className="overflow-x-auto min-h-[300px]">
         {requests.length === 0 ? (
-             <div className="text-center text-gray-400 py-10">No new job requests at the moment.</div>
+              <div className="text-center text-gray-400 py-10">
+                <p className="text-lg mb-2">🎉 No New Job Requests</p>
+                <p>There are no client applications waiting for your final acceptance right now.</p>
+              </div>
         ) : (
         <table className="min-w-full divide-y divide-gray-200">
           <thead>
-            <tr className="border-b border-gray-200">
+            <tr className="border-b border-gray-200 bg-gray-50">
               <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider">Client Name</th>
               <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider">Job Type</th>
               <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider">Location</th>
@@ -160,34 +170,49 @@ const JobRequestTable: React.FC = () => {
               <tr key={request.id} className="hover:bg-blue-50/50 transition duration-100">
                 <td className="px-6 py-3 whitespace-nowrap text-sm font-medium">
                   <div className="flex items-center gap-3">
-                    <img src={request.clientAvatar} alt="" className="w-8 h-8 rounded-full" />
+                    <img src={request.clientAvatar} alt="Client Avatar" className="w-8 h-8 rounded-full object-cover" />
                     <button 
                         onClick={() => { setSelectedClient(request); setShowProfile(true); }}
-                        className="text-[#477EE5] hover:text-blue-800 underline"
+                        className="text-[#477EE5] hover:text-blue-800 underline font-medium"
                     >
                         {request.clientName}
                     </button>
                   </div>
                 </td>
-                <td className="px-6 py-3 whitespace-nowrap text-sm text-gray-700">{request.jobType}</td>
-                <td className="px-6 py-3 whitespace-nowrap text-sm text-gray-700">{request.location}</td>
-                <td className="px-6 py-3 whitespace-nowrap text-sm text-gray-700">{request.schedule}</td>
+                <td className="px-6 py-3 whitespace-nowrap text-sm text-gray-700">
+                    <div className="flex items-center gap-1">
+                        <User className="w-4 h-4 text-gray-400"/>
+                        {request.jobType}
+                    </div>
+                </td>
+                <td className="px-6 py-3 whitespace-nowrap text-sm text-gray-700">
+                    <div className="flex items-center gap-1">
+                        <MapPin className="w-4 h-4 text-gray-400"/>
+                        {request.location}
+                    </div>
+                </td>
+                <td className="px-6 py-3 whitespace-nowrap text-sm text-gray-700">
+                    <div className="flex items-center gap-1">
+                        <Calendar className="w-4 h-4 text-gray-400"/>
+                        {request.schedule}
+                    </div>
+                </td>
                 <td className="px-6 py-3 whitespace-nowrap text-sm">
-                  <div className="flex flex-col gap-2">
-                    {/* Accept Button - Triggers API */}
+                  <div className="flex gap-3">
+                    {/* Accept Button - Uses bg-[#26466F] */}
                     <button
                       onClick={() => handleAccept(request)}
-                      className="w-32 py-1.5 text-sm font-medium rounded-full text-white bg-[#5AB3E6] shadow hover:bg-opacity-90 transition"
+                      className="px-4 py-2 text-sm font-medium rounded-full text-white bg-[#26466F] shadow-md hover:bg-[#1E3A5A] transition duration-200"
                     >
-                      Accept
+                      Accept Job
                     </button>
 
-                    {/* View Profile Button */}
+                    {/* View Profile Button - Uses border-gray-300 */}
                     <button
                       onClick={() => { setSelectedClient(request); setShowProfile(true); }}
-                      className="w-32 py-1.5 text-sm font-medium rounded-full border border-[#5AB3E6] text-[#5AB3E6] bg-white shadow hover:bg-[#5AB3E6] hover:text-white transition"
+                      className="px-4 py-2 text-sm font-medium rounded-full border border-gray-300 text-gray-700 bg-white shadow-sm hover:bg-gray-50 transition duration-200"
                     >
-                      View Profile
+                      View Details
                     </button>
                   </div>
                 </td>
@@ -198,30 +223,58 @@ const JobRequestTable: React.FC = () => {
         )}
       </div>
 
-      {/* Mock Profile Modal */}
+      {/* Profile/Details Modal */}
       {showProfile && selectedClient && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 px-4">
-          <div className="bg-white rounded-2xl shadow-xl w-full max-w-lg p-6 md:p-8 relative animate-in zoom-in duration-200">
-            <div className="flex flex-col items-center">
-              <img src={selectedClient.clientAvatar} alt="Client" className="w-28 h-28 rounded-full object-cover border-4 border-gray-100 shadow-md" />
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg p-6 md:p-8 relative animate-in zoom-in duration-200">
+            {/* Close Button */}
+            <button 
+                onClick={() => setShowProfile(false)} 
+                className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition"
+                aria-label="Close modal"
+            >
+                &times;
+            </button>
+            
+            <div className="flex flex-col items-center border-b pb-4 mb-4">
+              <img src={selectedClient.clientAvatar} alt="Client" className="w-24 h-24 rounded-full object-cover border-4 border-blue-100 shadow-md" />
               <h2 className="mt-4 text-2xl font-bold text-gray-800">{selectedClient.clientName}</h2>
-              <p className="text-gray-500 mt-1">{selectedClient.jobType}</p>
+              <p className="text-blue-600 mt-1 font-semibold">{selectedClient.jobType}</p>
             </div>
             
-            <div className="mt-6 space-y-4 text-gray-700">
-               <div className="flex items-start">
-                 <span className="font-semibold w-32">Address:</span>
-                 <span>{selectedClient.location}</span>
+            <h3 className="text-lg font-semibold text-gray-700 mb-3">Job Details</h3>
+
+            <div className="space-y-3 text-gray-700 text-sm">
+               <div className="flex items-center">
+                 <MapPin className="w-5 h-5 text-blue-500 mr-3 shrink-0"/>
+                 <span className="font-medium w-24">Location:</span>
+                 <span className="flex-1">{selectedClient.location}</span>
                </div>
-               <div className="flex items-start">
-                 <span className="font-semibold w-32">Schedule:</span>
-                 <span>{selectedClient.schedule}</span>
+               <div className="flex items-center">
+                 <Calendar className="w-5 h-5 text-blue-500 mr-3 shrink-0"/>
+                 <span className="font-medium w-24">Date:</span>
+                 <span className="flex-1">{selectedClient.schedule}</span>
+               </div>
+               <div className="flex items-start pt-3 border-t mt-3">
+                 <Clock className="w-5 h-5 text-blue-500 mr-3 shrink-0 mt-1"/>
+                 <span className="font-medium w-24">Description:</span>
+                 <span className="flex-1 text-gray-600 italic">
+                    {selectedClient.rawBooking.description || "No description provided."}
+                 </span>
                </div>
             </div>
 
-            <div className="mt-5 flex justify-end gap-2">
-               <button onClick={() => setShowProfile(false)} className="px-3 py-1.5 text-sm rounded-full border border-gray-400 text-gray-700 hover:bg-gray-100">Close</button>
-            </div>      
+            <div className="mt-6 flex justify-end gap-3">
+                {/* Accept & Close Button - Uses bg-[#26466F] */}
+                <button 
+                    onClick={() => handleAccept(selectedClient)}
+                    className="px-4 py-2 text-sm font-medium rounded-full text-white bg-[#26466F] shadow-md hover:bg-[#1E3A5A] transition"
+                >
+                    Accept & Close
+                </button>
+               {/* Close Button - Uses border-gray-400 */}
+               <button onClick={() => setShowProfile(false)} className="px-4 py-2 text-sm rounded-full border border-gray-400 text-gray-700 hover:bg-gray-100 transition">Close</button>
+            </div>      
           </div>
         </div>
       )}
