@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.time.LocalDateTime;
 
 @Entity
-public class Booking {
+public class    Booking {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
