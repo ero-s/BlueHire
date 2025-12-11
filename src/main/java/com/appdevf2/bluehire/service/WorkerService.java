@@ -22,6 +22,9 @@ public class WorkerService {
 
     @Autowired
     private com.appdevf2.bluehire.service.UserService userService; 
+
+    @Autowired
+    private SystemLogService systemLogService;
  
 
     public WorkerService() {
@@ -76,6 +79,9 @@ public class WorkerService {
         worker.setAvailabilityStatus(updatedWorker.isAvailabilityStatus());
         worker.setAverageRating(updatedWorker.getAverageRating());
         worker.setTotalEarnings(updatedWorker.getTotalEarnings());
+
+        // LOG: Worker Profile Update
+        systemLogService.logEvent("Worker Profile Updated: ID " + workerId);
 
         return workerRepository.save(worker);
     }

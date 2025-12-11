@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Loader2 } from 'lucide-react';
 
 // --- 1. Interfaces ---
 
+// ✅ UPDATED: Matches Java Entity
 interface SystemLog {
-  id: string;
-  type: string;
-  description: string;
-  status: 'Success' | 'Warning' | 'Error';
+  logID: number;
+  action: string;
+  timestamp: string;
 }
 
 interface Report {
@@ -16,17 +17,16 @@ interface Report {
   status: 'Open' | 'Resolved' | 'Under Review';
 }
 
-// Interface for the Real Database Response
 interface BackendDocument {
   documentID: number;
-  workerName: string; // Requires the @JsonProperty helper in Java
+  workerName: string; 
   documentType: string;
   status: 'PENDING' | 'VERIFIED' | 'REJECTED';
   uploadedAt: string;
   documentFileURL: string;
 }
 
-// --- 2. Mock Data (For Stats, Logs, Reports) ---
+// --- 2. Mock Data (For Stats & Reports only) ---
 
 const MOCK_STATS = {
   users: "1,240",
@@ -34,14 +34,6 @@ const MOCK_STATS = {
   workers: "890",
   queue: "45",
 };
-
-const MOCK_LOGS: SystemLog[] = [
-  { id: 'LOG-001', type: 'Auth', description: 'Admin login detected', status: 'Success' },
-  { id: 'LOG-002', type: 'System', description: 'Database backup started', status: 'Success' },
-  { id: 'LOG-003', type: 'User', description: 'Failed login attempt (Client)', status: 'Warning' },
-  { id: 'LOG-004', type: 'Payment', description: 'Transaction timeout', status: 'Error' },
-  { id: 'LOG-005', type: 'Worker', description: 'New worker registration', status: 'Success' },
-];
 
 const MOCK_REPORTS: Report[] = [
   { id: 'RPT-102', description: 'Worker no-show complaint', status: 'Open' },
@@ -85,19 +77,10 @@ const StatusBadge: React.FC<{ status: string, type: 'log' | 'report' | 'verifica
     else if (upperStatus === 'PENDING') styles = "bg-yellow-100 text-yellow-700 border border-yellow-200";
     else if (upperStatus === 'REJECTED') styles = "bg-red-100 text-red-700 border border-red-200";
   }
-  else if (type === 'log') {
-    if (status === 'Success') styles = "text-green-600";
-    else if (status === 'Warning') styles = "text-yellow-600";
-    else if (status === 'Error') styles = "text-red-600 font-semibold";
-  }
   else if (type === 'report') {
     if (status === 'Resolved') styles = "bg-green-100 text-green-600";
     else if (status === 'Under Review') styles = "bg-blue-100 text-blue-600";
     else if (status === 'Open') styles = "bg-red-100 text-red-600 animate-pulse";
-  }
-
-  if (type === 'log') {
-    return <span className={`text-xs font-medium ${styles}`}>{status}</span>;
   }
 
   return (
@@ -107,9 +90,48 @@ const StatusBadge: React.FC<{ status: string, type: 'log' | 'report' | 'verifica
   );
 };
 
-// --- Middle Section: System Logs Card ---
+// --- Middle Section: System Logs Card (INTEGRATED) ---
 const SystemLogsCard: React.FC = () => {
   const navigate = useNavigate();
+  const [logs, setLogs] = useState<SystemLog[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  // Fetch Logs
+  useEffect(() => {
+    const fetchLogs = async () => {
+      try {
+        const res = await fetch("http://localhost:8080/system-logs");
+        if (res.ok) {
+          const data: SystemLog[] = await res.json();
+          // Sort by newest ID and take the top 5
+          const sorted = data.sort((a, b) => b.logID - a.logID).slice(0, 5);
+          setLogs(sorted);
+        }
+      } catch (err) {
+        console.error("Error fetching logs:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchLogs();
+  }, []);
+
+  // Helper to determine color based on action keywords
+  const getLogStyle = (action: string) => {
+    const text = action.toLowerCase();
+    if (text.includes("error") || text.includes("deleted") || text.includes("failed")) {
+      return { color: "text-red-600", bg: "bg-red-50", type: "CRITICAL" };
+    } else if (text.includes("updated") || text.includes("warning")) {
+      return { color: "text-amber-600", bg: "bg-amber-50", type: "UPDATE" };
+    } else if (text.includes("created") || text.includes("registered") || text.includes("success")) {
+      return { color: "text-green-600", bg: "bg-green-50", type: "NEW" };
+    }
+    return { color: "text-blue-600", bg: "bg-blue-50", type: "INFO" };
+  };
+
+  const formatDate = (isoStr: string) => {
+    return new Date(isoStr).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  };
 
   return (
     <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-100 flex flex-col h-full min-h-[300px]">
@@ -121,19 +143,41 @@ const SystemLogsCard: React.FC = () => {
         <table className="w-full text-left border-collapse">
           <thead>
             <tr className="text-xs text-gray-400 border-b border-gray-100">
-              <th className="py-2 font-medium">Log ID</th>
-              <th className="py-2 font-medium">Type</th>
-              <th className="py-2 font-medium">Description</th>
+              <th className="py-2 font-medium w-16">ID</th>
+              <th className="py-2 font-medium w-24">Time</th>
+              <th className="py-2 font-medium">Action</th>
             </tr>
           </thead>
           <tbody className="text-sm">
-            {MOCK_LOGS.map((log) => (
-              <tr key={log.id} className="border-b border-gray-50 last:border-0 hover:bg-gray-50 transition-colors">
-                <td className="py-3 text-gray-500 text-xs">{log.id}</td>
-                <td className="py-3 font-medium text-gray-700">{log.type}</td>
-                <td className="py-3 text-gray-600 truncate max-w-[200px]">{log.description}</td>
+            {loading ? (
+              <tr>
+                <td colSpan={3} className="py-8 text-center text-gray-400">
+                   <div className="flex justify-center items-center gap-2">
+                     <Loader2 className="animate-spin" size={16} /> Loading Logs...
+                   </div>
+                </td>
               </tr>
-            ))}
+            ) : logs.length === 0 ? (
+              <tr><td colSpan={3} className="py-8 text-center text-gray-400 text-xs">No logs recorded yet.</td></tr>
+            ) : (
+              logs.map((log) => {
+                const style = getLogStyle(log.action);
+                return (
+                  <tr key={log.logID} className="border-b border-gray-50 last:border-0 hover:bg-gray-50 transition-colors group">
+                    <td className="py-3 text-gray-400 text-xs font-mono group-hover:text-blue-600">#{log.logID}</td>
+                    <td className="py-3 text-gray-500 text-xs whitespace-nowrap">{formatDate(log.timestamp)}</td>
+                    <td className="py-3 text-gray-700">
+                      <div className="flex items-center gap-2">
+                         <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${style.bg} ${style.color}`}>
+                            {style.type}
+                         </span>
+                         <span className="truncate max-w-[180px]" title={log.action}>{log.action}</span>
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })
+            )}
           </tbody>
         </table>
       </div>
@@ -194,7 +238,7 @@ const ReportsCard: React.FC = () => {
   );
 };
 
-// --- Bottom Section: Verifications Table (INTEGRATED WITH DATABASE) ---
+// --- Bottom Section: Verifications Table (INTEGRATED) ---
 const VerificationsTable: React.FC = () => {
   const [documents, setDocuments] = useState<BackendDocument[]>([]);
   const [isLoading, setIsLoading] = useState(true);

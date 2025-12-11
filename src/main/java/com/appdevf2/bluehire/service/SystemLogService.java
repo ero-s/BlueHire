@@ -17,6 +17,19 @@ public class SystemLogService {
         this.systemLogRepository = systemLogRepository;
     }
 
+    // HELPER METHOD TO LOG EVENTS
+    public void logEvent(String actionMessage) {
+
+        if (actionMessage != null && actionMessage.toLowerCase().contains("system log")) {
+            return;
+        }
+        
+        SystemLog log = new SystemLog();
+        log.setAction(actionMessage);
+        // Timestamp is handled automatically by @PrePersist in the Model
+        systemLogRepository.save(log);
+    }
+
     // CREATE
     public SystemLog createLog(SystemLog log) {
         return systemLogRepository.save(log);

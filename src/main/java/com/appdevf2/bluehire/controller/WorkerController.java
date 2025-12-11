@@ -21,20 +21,26 @@ public class WorkerController {
     @Autowired
     private WorkerService workerService;
 
-    // --- UPDATED POST ENDPOINT (Supports File Upload) ---
     @PostMapping(value = "/postWorker", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> postWorker(
             @RequestPart("worker") String workerJson,
-            @RequestPart(value = "file", required = false) MultipartFile file,
+            // Keep required = false so we can handle the error message manually below
+            @RequestPart(value = "file", required = false) MultipartFile file, 
             @RequestParam(value = "docType", defaultValue = "OTHER") String docType
     ) {
         try {
-            // 1. Convert the JSON String back to a Worker Object
+            // --- 1. ENFORCE DOCUMENT UPLOAD ---
+            if (file == null || file.isEmpty()) {
+                return ResponseEntity.badRequest()
+                    .body("Registration Failed: You must upload a document for verification to sign up.");
+            }
+
+            // --- 2. Process JSON ---
             ObjectMapper objectMapper = new ObjectMapper();
             Worker worker = objectMapper.readValue(workerJson, Worker.class);
 
-            // 2. Call Service to save Worker AND handle the File
-            // You must update your WorkerService to have this method (see below)
+            // --- 3. Save Worker with Document ---
+            // We proceed directly to the logic that handles documents
             Worker createdWorker = workerService.createWorkerWithDocument(worker, file, docType);
             
             return ResponseEntity.ok(createdWorker);
