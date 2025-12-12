@@ -1,11 +1,12 @@
 import React, { useState, useRef, useEffect } from "react";
+import axios from "axios"; // ✅ Import Axios
 import { Bell, Mail, Search, Menu, ChevronDown, User, LogOut, X, ChevronRight, Clock } from "lucide-react";
 import Logo from "../../MainComponents/LandingComponents/Logo/Logo";
 import { useNavigate, useLocation, Link } from "react-router-dom";
 
 interface HeaderProps {
   logo?: string;
-  userName: string;
+  userName: string; // This comes from the parent page
 }
 
 interface NavItem {
@@ -20,19 +21,33 @@ const navItems: NavItem[] = [
   { label: "Transactions", href: "/worker/transactions" },
 ];
 
-const MOCK_CLIENTS = [
-  { id: 1, name: "Sherielyn Guadiana", location: "Brgy. Hipodromo, Mabolo" },
-  { id: 2, name: "Raziff Gumapon", location: "Cebu City" },
-  { id: 3, name: "Shervin Dale Tabernero", location: "Mandaue City" },
-  { id: 4, name: "Leni Robredo", location: "Naga City" },
-  { id: 5, name: "Juan Dela Cruz", location: "Manila" },
-];
+// --- Interfaces for API Data ---
+interface BackendClient {
+  clientID: number;
+  user: {
+    name: {
+      firstName: string;
+      lastName: string;
+    };
+    address?: {
+      city?: string;
+      street?: string;
+    };
+    photoURL?: string;
+  };
+  role?: string;
+}
 
+interface SearchResult {
+  id: number;
+  name: string;
+  location: string;
+}
+
+// Mock Notifications (You can replace this with an API call later too)
 const MOCK_NOTIFICATIONS = [
-    { id: 1, message: "New job request received for Electrician from Raziff Gumapon.", time: "10 min ago", type: "job_request" },
-    { id: 2, message: "Booking confirmed by Sherielyn Guadiana. Status: Ongoing.", time: "2 hours ago", type: "booking_update" },
-    { id: 3, message: "Payment of ₱1,500.00 received for Job ID #453.", time: "5 hours ago", type: "payment" },
-    { id: 4, message: "Shervin Dale Tabernero sent a message regarding the job details.", time: "1 day ago", type: "message" },
+    { id: 1, message: "New job request received.", time: "10 min ago", type: "job_request" },
+    { id: 2, message: "Booking confirmed.", time: "2 hours ago", type: "booking_update" },
 ];
 
 const WorkerHeader: React.FC<HeaderProps> = ({ userName }) => {
@@ -41,6 +56,9 @@ const WorkerHeader: React.FC<HeaderProps> = ({ userName }) => {
   const navigate = useNavigate();
   const location = useLocation();
 
+  // --- Real Data State ---
+  const [clients, setClients] = useState<SearchResult[]>([]); // ✅ State for real clients
+
   // --- Notification & Search State ---
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
   const notificationsRef = useRef<HTMLDivElement>(null);
@@ -48,28 +66,50 @@ const WorkerHeader: React.FC<HeaderProps> = ({ userName }) => {
   const [searchQuery, setSearchQuery] = useState("");
   const searchRef = useRef<HTMLDivElement>(null);
 
+  // --- ✅ FETCH CLIENTS FROM DATABASE ---
+  useEffect(() => {
+    const fetchClients = async () => {
+      try {
+        const response = await axios.get("http://localhost:8080/api/client/getAllClients");
+        const backendData: BackendClient[] = response.data;
+
+        // Map the complex Backend Object to a simple Search Result
+        const formattedClients: SearchResult[] = backendData.map((client) => ({
+          id: client.clientID,
+          name: `${client.user.name.firstName} ${client.user.name.lastName}`,
+          location: client.user.address?.city || "Unknown Location",
+        }));
+
+        setClients(formattedClients);
+      } catch (error) {
+        console.error("Error fetching clients for search:", error);
+      }
+    };
+
+    fetchClients();
+  }, []);
+
+  // --- Click Outside Handler ---
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       const targetNode = event.target as Node;
-      
-      // Close Search if clicked outside
+
       if (searchRef.current && !searchRef.current.contains(targetNode)) {
         setIsSearchOpen(false);
       }
-      // Close Notifications if clicked outside
       if (notificationsRef.current && !notificationsRef.current.contains(targetNode)) {
         setIsNotificationsOpen(false);
       }
-      // Close User Menu if clicked outside
       if (isUserMenuOpen && targetNode instanceof Element && !targetNode.closest('.user-menu-button') && !targetNode.closest('.user-menu-dropdown')) {
         setIsUserMenuOpen(false);
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [isUserMenuOpen]); // Dependency ensures listener stays fresh
+  }, [isUserMenuOpen]);
 
-  const filteredClients = MOCK_CLIENTS.filter((client) =>
+  // --- Filter Logic (Now uses real 'clients' state) ---
+  const filteredClients = clients.filter((client) =>
     client.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
@@ -140,10 +180,9 @@ const WorkerHeader: React.FC<HeaderProps> = ({ userName }) => {
                   onFocus={handleSearchFocus}
                   onChange={(e) => setSearchQuery(e.target.value)}
               />
-              
-              {/* Added Clear Button */}
+
               {searchQuery && (
-                <button 
+                <button
                   onClick={() => { setSearchQuery(""); setIsSearchOpen(false); }}
                   className="absolute right-3 text-gray-400 hover:text-gray-600 z-10"
                 >
@@ -151,7 +190,7 @@ const WorkerHeader: React.FC<HeaderProps> = ({ userName }) => {
                 </button>
               )}
 
-              {/* --- RESTORED: Search Dropdown Results --- */}
+              {/* --- SEARCH RESULTS FROM DB --- */}
               {isSearchOpen && (
                 <div className="absolute top-full right-0 mt-3 w-72 bg-white rounded-2xl shadow-xl border border-gray-100 z-50 overflow-hidden animate-[fadeIn_0.2s_ease-out]">
                   <div className="p-3 bg-gray-50 border-b border-gray-100">
@@ -162,8 +201,13 @@ const WorkerHeader: React.FC<HeaderProps> = ({ userName }) => {
                   <div className="max-h-[200px] overflow-y-auto custom-scrollbar">
                     {filteredClients.length > 0 ? (
                       filteredClients.map((client) => (
-                        <div 
+                        <div
                           key={client.id}
+                          // Example: Navigate to client profile on click
+                          onClick={() => {
+                              console.log("Navigating to client:", client.id);
+                              // navigate(`/worker/client-profile/${client.id}`);
+                          }}
                           className="flex items-center justify-between p-3 hover:bg-blue-50 cursor-pointer transition-colors group border-b last:border-0 border-gray-50"
                         >
                           <div>
@@ -191,7 +235,7 @@ const WorkerHeader: React.FC<HeaderProps> = ({ userName }) => {
             <Mail className="w-5 h-5 text-gray-600 group-hover:text-[#4D7EAF] transition-colors duration-300" />
           </button>
 
-          {/* --- 2. NOTIFICATION BUTTON & DROPDOWN --- */}
+          {/* --- 2. NOTIFICATION BUTTON --- */}
           <div className="relative" ref={notificationsRef}>
              <button
                   onClick={handleNotificationClick}
@@ -203,7 +247,6 @@ const WorkerHeader: React.FC<HeaderProps> = ({ userName }) => {
                   )}
               </button>
 
-             {/* --- RESTORED: Notification Dropdown --- */}
              {isNotificationsOpen && (
                 <div className="absolute top-full right-0 mt-3 w-80 bg-white rounded-2xl shadow-xl border border-gray-100 z-50 overflow-hidden animate-[fadeIn_0.2s_ease-out]">
                   <div className="p-4 border-b border-gray-100 flex justify-between items-center">

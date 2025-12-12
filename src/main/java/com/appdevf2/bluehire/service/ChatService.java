@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import com.appdevf2.bluehire.model.Chat;
 import com.appdevf2.bluehire.repository.ChatRepository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -17,6 +18,10 @@ public class ChatService {
 
     // ✅ CREATE
     public Chat createChat(Chat chat) {
+        // Automatically set the timestamp if the frontend didn't send one
+        if (chat.getSentAt() == null) {
+            chat.setSentAt(LocalDateTime.now());
+        }
         return chatRepository.save(chat);
     }
 
@@ -33,9 +38,17 @@ public class ChatService {
     // ✅ UPDATE
     public Chat updateChat(Long chatID, Chat updatedChat) {
         return chatRepository.findById(chatID).map(chat -> {
+            // Update Content
             chat.setMessageContent(updatedChat.getMessageContent());
+
+            // Update Timestamps
             chat.setSentAt(updatedChat.getSentAt());
             chat.setReadAt(updatedChat.getReadAt());
+
+            // Update Participants (Critical for the new Model)
+            chat.setSenderId(updatedChat.getSenderId());
+            chat.setReceiverId(updatedChat.getReceiverId());
+
             return chatRepository.save(chat);
         }).orElseThrow(() -> new RuntimeException("Chat not found with ID: " + chatID));
     }

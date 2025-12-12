@@ -14,26 +14,24 @@ public class Chat {
 
     private LocalDateTime sentAt;
 
+    // ✅ Added this back
     private LocalDateTime readAt;
 
-    // @ManyToOne
-    // @JoinColumn(name = "sender_id")
-    // private User sender;
-
-    // @ManyToOne
-    // @JoinColumn(name = "receiver_id")
-    // private User receiver;
+    private Integer senderId;
+    private Integer receiverId;
 
     public Chat() {
         super();
     }
 
-    public Chat(String messageContent, LocalDateTime sentAt, LocalDateTime readAt) {
-        super();
+    public Chat(String messageContent, Integer senderId, Integer receiverId) {
         this.messageContent = messageContent;
-        this.sentAt = sentAt;
-        this.readAt = readAt;
+        this.senderId = senderId;
+        this.receiverId = receiverId;
+        this.sentAt = LocalDateTime.now();
     }
+
+    // --- Getters and Setters ---
 
     public Long getChatID() {
         return chatID;
@@ -55,11 +53,28 @@ public class Chat {
         this.sentAt = sentAt;
     }
 
+    // ✅ Added Getters/Setters for readAt
     public LocalDateTime getReadAt() {
         return readAt;
     }
 
     public void setReadAt(LocalDateTime readAt) {
         this.readAt = readAt;
+    }
+
+    public Integer getSenderId() {
+        return senderId;
+    }
+
+    public void setSenderId(Integer senderId) {
+        this.senderId = senderId;
+    }
+
+    public Integer getReceiverId() {
+        return receiverId;
+    }
+
+    public void setReceiverId(Integer receiverId) {
+        this.receiverId = receiverId;
     }
 }

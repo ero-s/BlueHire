@@ -41,7 +41,7 @@ public class    Booking {
 
     @ManyToOne
     @JoinColumn(name = "worker", nullable = true)
-    @JsonIgnoreProperties({"user", "skills", "coverage_areas"})
+    @JsonIgnoreProperties({"skills", "coverage_areas"})
     private Worker worker;
 
     @OneToOne(mappedBy = "booking", cascade = CascadeType.ALL)
