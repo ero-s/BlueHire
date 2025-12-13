@@ -3,6 +3,8 @@ package com.appdevf2.bluehire.model;
 import jakarta.persistence.*;
 import java.math.BigDecimal;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 @Entity
 public class Payment {
 
@@ -26,7 +28,8 @@ public class Payment {
     private String receiptNo;
 
     @OneToOne(optional = false)
-    @JoinColumn(name = "booking_id", nullable = false)
+    @JoinColumn(name = "booking_id", nullable = false, unique = true)
+    @JsonIgnoreProperties("payment")
     private Booking booking;
 
     public enum PaymentMethod {

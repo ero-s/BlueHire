@@ -11,6 +11,8 @@ import com.appdevf2.bluehire.model.Payment;
 import com.appdevf2.bluehire.repository.BookingRepository;
 import com.appdevf2.bluehire.repository.PaymentRepository;
 
+import jakarta.transaction.Transactional;
+
 @Service
 public class PaymentService {
     @Autowired
@@ -41,24 +43,43 @@ public class PaymentService {
 
     public Payment updatePayment(int id, Payment newPayment) {
         Payment payment = paymentRepository.findById(id)
-        .orElseThrow(() -> new NoSuchElementException("Payment with ID " + id + " not found."));
+            .orElseThrow(() -> new NoSuchElementException(
+                "Payment with ID " + id + " not found."
+            ));
 
-        payment.setAmount(newPayment.getAmount());
-        payment.setPaymentMethod(newPayment.getPaymentMethod());
-        payment.setReceiptNo(newPayment.getReceiptNo());
-        payment.setStatus(newPayment.getStatus());
-        payment.setBooking(newPayment.getBooking());
+        // ✅ Update ONLY editable fields
+        if (newPayment.getAmount() != null) {
+            payment.setAmount(newPayment.getAmount());
+        }
+
+        if (newPayment.getPaymentMethod() != null) {
+            payment.setPaymentMethod(newPayment.getPaymentMethod());
+        }
+
+        if (newPayment.getReceiptNo() != null) {
+            payment.setReceiptNo(newPayment.getReceiptNo());
+        }
+
+        if (newPayment.getStatus() != null) {
+            payment.setStatus(newPayment.getStatus());
+        }
+
+        // ❌ DO NOT TOUCH booking
+        // payment.setBooking(...);
+
         return paymentRepository.save(payment);
     }
 
-    public String deletePayment(int id) {
-        String msg = "";
-        if(paymentRepository.findById(id).isPresent()){
-            paymentRepository.deleteById(id);
-            msg = "Payment with ID " + id + " deleted successfully.";
-        }else{
-            msg = "Payment with ID " + id + " not found.";
-        }
-        return msg;
+    @Transactional
+    public void deletePayment(int paymentId) {
+        Payment payment = paymentRepository.findById(paymentId)
+            .orElseThrow(() -> new RuntimeException("Payment not found"));
+
+        Booking booking = payment.getBooking();
+
+        booking.setPayment(null);
+
+        paymentRepository.delete(payment);
     }
+
 }
