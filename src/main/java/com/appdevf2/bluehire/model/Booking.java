@@ -1,42 +1,45 @@
 package com.appdevf2.bluehire.model;
 
 import jakarta.persistence.*;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.time.LocalDateTime;
 
 @Entity
-public class    Booking {
+public class Booking {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "booking_id")
     private Long bookingID;
 
-    @Column(name = "job_title")
+    @Column(name = "job_title", nullable = true)
     private String jobTitle;
 
-    @Column(name = "service_category")
+    @Column(name = "service_category", nullable = true)
     private String serviceCategory;
 
-    @Column(name = "description")
+    @Column(name = "description", nullable = true)
     private String description;
 
-    @Column(name = "location")
+    @Column(name = "location", nullable = true)
     private String location;
 
-    @Column(name = "scheduled_date_time")
+    @Column(name = "scheduled_date_time", nullable = true)
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime scheduledDateTime;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "status")
+    @Column(name = "status", nullable = true)
     private Status status;
 
-    @Column(name = "created_at")
+    @Column(name = "created_at", nullable = true)
     private LocalDateTime createdAt;
 
     @ManyToOne
-    @JoinColumn(name = "client", nullable = false)
-    @JsonIgnoreProperties({"bookings"}) 
+    @JoinColumn(name = "client", nullable = true)
+    @JsonIgnoreProperties({"bookings"})
     private Client client;
 
     @ManyToOne
@@ -44,9 +47,17 @@ public class    Booking {
     @JsonIgnoreProperties({"skills", "coverage_areas"})
     private Worker worker;
 
-    @OneToOne(mappedBy = "booking", cascade = CascadeType.ALL)
-    @JsonIgnoreProperties("booking") 
+    @OneToOne(mappedBy = "booking", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnoreProperties("booking")
     private Payment payment;
+
+    @OneToOne(mappedBy = "booking", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnoreProperties("booking")
+    private Review review;
+
+    @OneToOne(mappedBy = "booking", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnoreProperties("booking")
+    private Report report;
 
     // --- UPDATED ENUM WITH "Responded" ---
     public enum Status {
@@ -62,6 +73,7 @@ public class    Booking {
     public Booking() {}
 
     // --- Getters and Setters ---
+    // (unchanged)
     
     public Long getBookingID() { return bookingID; }
     public void setBookingID(Long bookingID) { this.bookingID = bookingID; }

@@ -45,7 +45,7 @@ public class PaymentController {
     }
 
     @DeleteMapping("/delete/{id}")
-    public String deletePayment(@PathVariable int id) {
-        return paymentService.deletePayment(id);
+    public void deletePayment(@PathVariable int id) {
+        paymentService.deletePayment(id);
     }
 }

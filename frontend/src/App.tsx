@@ -19,6 +19,7 @@ import ClientSide from "./MainPages/ClientSide";
 import AdminLanding from "./Admin/pages/AdminDashboardPage";
 import AdminReport from "./Admin/pages/AdminViewReportPage";
 import AdminSystemLog from "./Admin/pages/AdminViewSystemLogPage";
+import AdminManagementPage from "./Admin/pages/AdminManagementPage";
 
 
 // WORKER PAGES IMPORTS
@@ -61,6 +62,7 @@ export default function App() {
       <Route path="/Admin" element={<AdminLanding />} />
       <Route path="/worker/*" element={<WorkerSide />} />
       <Route path="/client/*" element={<ClientSide />} />
+      <Route path="/AdminManagement" element={<AdminManagementPage />} />
     </Routes>
   );
 }

@@ -50,12 +50,10 @@ const BookingJobManagementMainSection: React.FC = () => {
         if (!myProfile) return;
         setCurrentWorkerId(myProfile.workerID);
 
-        const bookingRes = await fetch("http://localhost:8080/booking/getAll");
-        const allBookings = await bookingRes.json();
-
-        const myBookings = allBookings.filter((b: any) => 
-            b.worker && b.worker.workerID === myProfile.workerID
+        const bookingRes = await fetch(
+          `http://localhost:8080/booking/worker/${myProfile.workerID}`
         );
+        const myBookings = await bookingRes.json();
 
         const mappedJobs: Job[] = myBookings
         // --- CRITICAL FILTER CHANGE ---

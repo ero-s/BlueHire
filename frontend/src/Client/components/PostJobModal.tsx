@@ -60,30 +60,27 @@ const PostJobModal: React.FC<PostJobModalProps> = ({ isOpen, onClose }) => {
     scheduledDate: ''
   });
 
-  // --- FIXED: Updated URL to match your ClientController ---
   useEffect(() => {
     const fetchClientProfile = async () => {
       const storedUser = localStorage.getItem("currentUser");
       if (storedUser) {
         const user = JSON.parse(storedUser);
         try {
-            // UPDATED URL: /api/client/getAllClients
-            const response = await fetch("http://localhost:8080/api/client/getAllClients"); 
-            if (response.ok) {
-                const clients = await response.json();
-                const myClientProfile = clients.find((c: any) => c.user.userId === user.userId);
-                
-                if (myClientProfile) {
-                    setClientId(myClientProfile.clientID);
-                    console.log("Client Identified:", myClientProfile.clientID); // Debug log
-                } else {
-                    console.error("Client profile not found for this user.");
-                }
+          const response = await fetch("http://localhost:8080/api/client/getAllClients"); 
+          if (response.ok) {
+            const clients = await response.json();
+            const myClientProfile = clients.find((c: any) => c.user.userId === user.userId);
+            if (myClientProfile) {
+              setClientId(myClientProfile.clientID);
+              console.log("Client Identified:", myClientProfile.clientID);
             } else {
-                console.error("Failed to fetch clients. Status:", response.status);
+              console.error("Client profile not found for this user.");
             }
+          } else {
+            console.error("Failed to fetch clients. Status:", response.status);
+          }
         } catch (error) {
-            console.error("Network error fetching client profile:", error);
+          console.error("Network error fetching client profile:", error);
         }
       }
     };
@@ -99,7 +96,7 @@ const PostJobModal: React.FC<PostJobModalProps> = ({ isOpen, onClose }) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!clientId) {
         alert("Error: Could not identify your Client Profile. Please log out and log in again.");
         return;
@@ -108,40 +105,45 @@ const PostJobModal: React.FC<PostJobModalProps> = ({ isOpen, onClose }) => {
     setIsSubmitting(true);
 
     try {
-        // STEP 1: Create Booking
+        // --- CLEAN PAYLOAD: remove worker and createdAt ---
         const bookingPayload = {
             jobTitle: formData.title,
             serviceCategory: formData.trade,
             description: formData.description,
             location: formData.location,
-            scheduledDateTime: formData.scheduledDate ? `${formData.scheduledDate}T09:00:00` : new Date().toISOString(), 
-            status: "Pending",
-            createdAt: new Date().toISOString(),
-            client: { clientID: clientId }, 
-            worker: null 
+            scheduledDateTime: formData.scheduledDate
+              ? `${formData.scheduledDate}T09:00:00`
+              : undefined,
+            status: "Pending"
         };
 
-        console.log("Sending Booking:", bookingPayload); // Debug
+        console.log("Sending Booking:", bookingPayload);
 
-        const bookingResponse = await fetch("http://localhost:8080/booking/create", {
+        // POST booking with clientId query param
+        const bookingResponse = await fetch(
+          `http://localhost:8080/booking/create?clientId=${clientId}`, 
+          {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(bookingPayload)
-        });
+          }
+        );
 
         if (!bookingResponse.ok) throw new Error("Failed to post job details");
-        
+
         const createdBooking = await bookingResponse.json();
 
-        // STEP 2: Create Payment
+        // Create payment after booking creation
         const paymentPayload = {
             amount: parseFloat(formData.budget),
-            paymentMethod: "CASH", 
+            paymentMethod: "CASH",
             status: "PENDING",
-            receiptNo: `JOB-${createdBooking.bookingID}-${Date.now()}`, 
-            booking: { bookingID: createdBooking.bookingID } 
+            receiptNo: `JOB-${createdBooking.bookingID}-${Date.now()}`,
+            booking: { bookingID: createdBooking.bookingID }
         };
 
+        console.log("Sending Payment:", paymentPayload);
+        
         const paymentResponse = await fetch("http://localhost:8080/payment/create", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -151,7 +153,6 @@ const PostJobModal: React.FC<PostJobModalProps> = ({ isOpen, onClose }) => {
         if (!paymentResponse.ok) throw new Error("Failed to set budget");
 
         alert("Job Posted Successfully!");
-        // Reset form
         setFormData({ title: '', description: '', location: '', budget: '', payType: 'Fixed', trade: '', scheduledDate: '' });
         onClose();
 
@@ -165,7 +166,7 @@ const PostJobModal: React.FC<PostJobModalProps> = ({ isOpen, onClose }) => {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 animate-in fade-in duration-200">
-      <div className="bg-white rounded-3xl shadow-2xl w-full max-w-lg overflow-hidden transform transition-all scale-100">
+      <div className="bg-white rounded-3xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-hidden transform transition-all scale-100">
         
         {/* Header */}
         <div className="bg-[#F6F6F6] px-6 py-4 flex justify-between items-center border-b border-gray-100">
@@ -179,7 +180,7 @@ const PostJobModal: React.FC<PostJobModalProps> = ({ isOpen, onClose }) => {
         </div>
 
         {/* Form */}
-        <form onSubmit={handleSubmit} className="p-6 space-y-4">
+        <form onSubmit={handleSubmit} className="p-6 space-y-4 overflow-y-auto max-h-[calc(90vh-64px)]">
           
           {/* Title */}
           <div>
@@ -233,18 +234,18 @@ const PostJobModal: React.FC<PostJobModalProps> = ({ isOpen, onClose }) => {
 
           {/* Date Picker */}
           <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-1">Date Needed</label>
-              <div className="relative">
-                <input 
-                  type="date" 
-                  name="scheduledDate"
-                  required
-                  className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#5AB3E6]"
-                  value={formData.scheduledDate}
-                  onChange={handleChange}
-                />
-                <Calendar size={16} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
-              </div>
+            <label className="block text-sm font-semibold text-gray-700 mb-1">Date Needed</label>
+            <div className="relative">
+              <input 
+                type="date" 
+                name="scheduledDate"
+                required
+                className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#5AB3E6]"
+                value={formData.scheduledDate}
+                onChange={handleChange}
+              />
+              <Calendar size={16} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+            </div>
           </div>
 
           {/* Budget & Type Row */}
