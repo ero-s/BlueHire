@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom"; 
-import { Star, CheckSquare, Square, Loader2 } from "lucide-react"; 
+import { Star, Square, Loader2 } from "lucide-react"; 
 import {
   BarChart,
   Bar,
@@ -17,23 +17,21 @@ interface BookingOverview {
   jobType: string;
   location: string;
   status: 'Responded' | 'Accepted' | 'Completed' | 'Cancelled';
-  checked: boolean; // Assuming this relates to acceptance status
+  checked: boolean;
 }
 
 interface DashboardStats {
   ongoingJobs: number;
   completedJobs: number;
-  // NOTE: Earnings data structure is assumed based on the mock CHART_DATA
   chartData: { name: string; value: number }[];
   jobRequests: BookingOverview[];
-  // NOTE: Assuming single latest review for the overview card
   latestReview: {
     clientName: string;
     rating: number;
     comment: string;
     date: string;
     clientPhotoUrl: string;
-    totalSpent: number; // Placeholder for worker dashboard
+    amountPaid: string; // Changed from totalSpent to specific job amount
   } | null;
 }
 
@@ -52,7 +50,7 @@ const DashboardMainSection: React.FC = () => {
     latestReview: null,
   });
 
-  // Helper to safely get worker ID from local storage
+  // 1. Get Worker Profile ID
   useEffect(() => {
     const fetchWorkerProfile = async () => {
       const storedUser = localStorage.getItem("currentUser");
@@ -69,77 +67,101 @@ const DashboardMainSection: React.FC = () => {
           console.error("Failed to load worker profile", error);
         }
       } else {
-        setLoading(false); // Stop loading if no user is found
+        setLoading(false);
       }
     };
     fetchWorkerProfile();
   }, []);
 
-  // Fetch Dashboard Data
+  // 2. Fetch Dashboard Data (Bookings & Reviews)
   useEffect(() => {
     const fetchDashboardData = async () => {
       if (!currentWorkerId) return;
 
       setLoading(true);
       try {
-        const response = await fetch("http://localhost:8080/booking/getAll");
-        if (response.ok) {
-          const allBookings = await response.json();
-          
-          const workerBookings = allBookings.filter((b: any) => 
-            b.worker && b.worker.workerID === currentWorkerId
-          );
+        // A. Fetch Bookings
+        const bookingResponse = await fetch("http://localhost:8080/booking/getAll");
+        const allBookings = await bookingResponse.json();
+        
+        // B. Fetch Reviews (NEW)
+        let allReviews: any[] = [];
+        try {
+            const reviewResponse = await fetch("http://localhost:8080/reviews");
+            if(reviewResponse.ok) allReviews = await reviewResponse.json();
+        } catch(e) { console.error("Error fetching reviews", e); }
 
-          // 1. Calculate Stats
-          const ongoingJobs = workerBookings.filter((b: any) => b.status === 'Accepted').length;
-          const completedJobs = workerBookings.filter((b: any) => b.status === 'Completed').length;
-          
-          // 2. Fetch Job Requests (Status: 'Responded') - Limit to 3 for dashboard overview
-          const jobRequests: BookingOverview[] = workerBookings
-            .filter((b: any) => b.status === 'Responded')
-            .slice(0, 3)
-            .map((b: any) => ({
-              id: b.bookingID.toString(),
-              clientName: b.client?.user?.name ? `${b.client.user.name.firstName} ${b.client.user.name.lastName}` : "Unknown Client",
-              jobType: b.serviceCategory || "General Service",
-              location: b.location || "N/A Location",
-              status: b.status,
-              checked: false, // Dashboard overview treats requests as unchecked
-            }));
+        // Filter Bookings for this worker
+        const workerBookings = allBookings.filter((b: any) => 
+          b.worker && b.worker.workerID === currentWorkerId
+        );
 
-          // 3. Mock Chart Data (Replacing with hardcoded mock as real endpoint is unknown)
-          const chartData = [
-            { name: "Mon", value: 15 },
-            { name: "Tue", value: 35 },
-            { name: "Wed", value: 45 },
-            { name: "Thu", value: 30 },
-            { name: "Fri", value: 50 },
-            { name: "Sat", value: 40 },
-            { name: "Sun", value: 25 },
-          ];
+        // --- Calculate Stats ---
+        const ongoingJobs = workerBookings.filter((b: any) => b.status === 'Accepted').length;
+        const completedJobs = workerBookings.filter((b: any) => b.status === 'Completed').length;
+        
+        // --- Process Job Requests ---
+        const jobRequests: BookingOverview[] = workerBookings
+          .filter((b: any) => b.status === 'Responded') // 'Responded' means waiting for worker
+          .slice(0, 3)
+          .map((b: any) => ({
+            id: b.bookingID.toString(),
+            clientName: b.client?.user?.name ? `${b.client.user.name.firstName} ${b.client.user.name.lastName}` : "Unknown Client",
+            jobType: b.serviceCategory || "General Service",
+            location: b.location || "N/A Location",
+            status: b.status,
+            checked: false,
+          }));
 
-          // 4. Mock Latest Review (Replacing with mock data as real endpoint is unknown)
-          const latestReview = {
-            clientName: "Joseph Sabello (Mock)",
-            rating: 4,
-            comment: "Excellent service from start to finish! The worker arrived on time, quickly identified his task, and clean it efficiently—everything was left clean and working perfectly, and the pricing was fair and transparent.",
-            date: "2025-09-14",
-            clientPhotoUrl: `https://ui-avatars.com/api/?name=JS&background=random&color=fff&size=128&rounded=true`,
-            totalSpent: 1550, 
-          };
+        // --- Process Latest Review (NEW LOGIC) ---
+        // 1. Filter reviews linked to bookings handled by this worker
+        const myReviews = allReviews.filter((r: any) => 
+            r.booking && 
+            r.booking.worker && 
+            r.booking.worker.workerID === currentWorkerId
+        );
 
+        // 2. Sort by Date Descending (Newest first)
+        // Assuming reviewDate is YYYY-MM-DD string
+        myReviews.sort((a: any, b: any) => new Date(b.reviewDate).getTime() - new Date(a.reviewDate).getTime());
 
-          setStats({
-            ongoingJobs,
-            completedJobs,
-            jobRequests,
-            chartData,
-            latestReview,
-          });
+        // 3. Pick the top one
+        const latestReviewData = myReviews.length > 0 ? myReviews[0] : null;
 
-        } else {
-          console.error("Failed to fetch bookings:", response.statusText);
+        let latestReviewFormatted = null;
+        if (latestReviewData) {
+            const client = latestReviewData.booking.client.user;
+            const amount = latestReviewData.booking.payment ? `₱${latestReviewData.booking.payment.amount.toFixed(2)}` : "₱0.00";
+            
+            latestReviewFormatted = {
+                clientName: `${client.name.firstName} ${client.name.lastName}`,
+                rating: latestReviewData.rating,
+                comment: latestReviewData.feedback,
+                date: latestReviewData.reviewDate,
+                clientPhotoUrl: client.photoURL || "https://i.pravatar.cc/150?u=default",
+                amountPaid: amount
+            };
         }
+
+        // --- Mock Chart Data (Keep mock until earnings endpoint exists) ---
+        const chartData = [
+          { name: "Mon", value: 15 },
+          { name: "Tue", value: 35 },
+          { name: "Wed", value: 45 },
+          { name: "Thu", value: 30 },
+          { name: "Fri", value: 50 },
+          { name: "Sat", value: 40 },
+          { name: "Sun", value: 25 },
+        ];
+
+        setStats({
+          ongoingJobs,
+          completedJobs,
+          jobRequests,
+          chartData,
+          latestReview: latestReviewFormatted,
+        });
+
       } catch (error) {
         console.error("Error fetching dashboard data:", error);
       } finally {
@@ -203,7 +225,7 @@ const DashboardMainSection: React.FC = () => {
         {/* Earnings & Reports Chart */}
         <div className="bg-white p-6 rounded-3xl shadow-sm col-span-1 md:col-span-2 h-[200px] flex flex-col relative hover:shadow-md transition-shadow">
           <div className="flex justify-between items-center mb-2">
-            <h3 className="text-lg text-gray-700 font-medium">Earnings & Reports (Mock Data)</h3>
+            <h3 className="text-lg text-gray-700 font-medium">Earnings Report</h3>
             <button 
               onClick={() => navigate('/worker/earnings')}
               className="text-sm font-semibold text-[#4D7EAF] hover:underline hover:text-[#3a628a] transition-colors"
@@ -269,7 +291,6 @@ const DashboardMainSection: React.FC = () => {
                 {stats.jobRequests.map((job) => (
                   <tr key={job.id} className="group hover:bg-gray-50 transition-colors border-b border-gray-50 last:border-0 text-sm">
                     <td className="py-4 pr-4">
-                      {/* Checkbox logic is often tied to selection, simplifying here */}
                       <Square className="text-gray-300 cursor-pointer hover:text-gray-400" size={20} />
                     </td>
                     <td className="py-4 px-2">
@@ -290,10 +311,10 @@ const DashboardMainSection: React.FC = () => {
           </div>
         </div>
 
-        {/* Recent Reviews Card */}
+        {/* Recent Reviews Card (REAL DATA) */}
         <div className="bg-white p-8 rounded-3xl shadow-sm hover:shadow-md transition-shadow">
           <div className="flex justify-between items-center mb-8">
-            <h3 className="text-xl font-semibold text-gray-800">Recent Reviews (Mock Data)</h3>
+            <h3 className="text-xl font-semibold text-gray-800">Recent Review</h3>
             <button 
               onClick={() => navigate('/worker/reviews')}
               className="text-sm font-semibold text-[#4D7EAF] hover:underline hover:text-[#3a628a] transition-colors"
@@ -312,9 +333,9 @@ const DashboardMainSection: React.FC = () => {
                    className="w-20 h-20 rounded-full object-cover border-4 border-white shadow-md"
                  />
               </div>
-              <h4 className="text-lg font-bold text-gray-900">{stats.latestReview.clientName.replace('(Mock)', '').trim()}</h4>
-              <p className="text-sm text-gray-500 mt-1">Total Spent: <span className="font-semibold text-gray-800">₱{stats.latestReview.totalSpent}</span></p>
-              <p className="text-sm text-gray-500">Review Date: <span className="font-semibold text-gray-800">{stats.latestReview.date}</span></p>
+              <h4 className="text-lg font-bold text-gray-900">{stats.latestReview.clientName}</h4>
+              <p className="text-sm text-gray-500 mt-1">Paid: <span className="font-semibold text-gray-800">{stats.latestReview.amountPaid}</span></p>
+              <p className="text-sm text-gray-500">Date: <span className="font-semibold text-gray-800">{stats.latestReview.date}</span></p>
             </div>
 
             <div className="flex-1">
@@ -331,7 +352,10 @@ const DashboardMainSection: React.FC = () => {
             </div>
           </div>
           ) : (
-            <div className="text-center text-gray-400 py-10">No reviews yet.</div>
+            <div className="text-center text-gray-400 py-10 flex flex-col items-center">
+                <Star size={40} className="mb-2 opacity-20"/>
+                <p>No reviews received yet.</p>
+            </div>
           )}
         </div>
 

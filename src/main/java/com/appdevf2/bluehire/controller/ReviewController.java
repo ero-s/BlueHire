@@ -10,7 +10,8 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/reviews")
-@CrossOrigin(origins = "*")
+// FIX: Explicitly allow the frontend URL and credentials to prevent the security crash
+@CrossOrigin(origins = "http://localhost:5173", allowCredentials = "true")
 public class ReviewController {
 
     @Autowired
