@@ -15,6 +15,9 @@ public class DocumentService {
     @Autowired
     private DocumentRepository documentRepository;
 
+    @Autowired
+    private SystemLogService systemLogService;
+
     // ✅ CREATE
     public Document createDocument(Document document) {
         return documentRepository.save(document);
@@ -39,7 +42,18 @@ public class DocumentService {
             document.setUploadedAt(updatedDocument.getUploadedAt());
             document.setDocumentType(updatedDocument.getDocumentType());
             document.setReviewedAt(updatedDocument.getReviewedAt());
-            return documentRepository.save(document);
+
+            Document savedDoc = documentRepository.save(document);
+
+            String username = (savedDoc.getUser() != null) ? savedDoc.getUser().getUsername() : "Unknown";
+            
+            String logMessage = "Document " + savedDoc.getStatus() + 
+                                " for User: " + username;
+
+            systemLogService.logEvent(logMessage);
+
+            return savedDoc;
+
         }).orElseThrow(() -> new RuntimeException("Document not found with ID: " + documentID));
     }
 
