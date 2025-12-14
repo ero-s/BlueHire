@@ -32,12 +32,18 @@ public class UserService {
     @Autowired
     private DocumentRepository documentRepository;
 
+    @Autowired
+    private SystemLogService systemLogService; // ✅ Injected for logging
+
     private static final String UPLOAD_DIR = "uploads/";
 
     // ----------------------------- BASIC USER METHODS -----------------------------
 
     public User postUserRecord(User user) {
-        return userRepository.save(user);
+        User savedUser = userRepository.save(user);
+        // ✅ LOG: User Creation
+        systemLogService.logEvent("User Created Manually: " + savedUser.getUsername());
+        return savedUser;
     }
 
     public List<User> getAllUsers() {
@@ -66,19 +72,38 @@ public class UserService {
                     user.setContactNumber(updatedUser.getContactNumber());
                     user.setName(updatedUser.getName());
                     user.setRole(updatedUser.getRole());
-                    return userRepository.save(user);
+                    
+                    User saved = userRepository.save(user);
+                    
+                    // ✅ LOG: User Update
+                    systemLogService.logEvent("User Updated: ID " + userId + " (" + saved.getUsername() + ")");
+                    
+                    return saved;
                 })
                 .orElseThrow(() -> new RuntimeException("User not found with ID " + userId));
     }
 
     public void deleteUser(Integer userId) {
-        userRepository.deleteById(userId);
+        if(userRepository.existsById(userId)){
+            userRepository.deleteById(userId);
+            // ✅ LOG: User Deletion
+            systemLogService.logEvent("User Deleted: ID " + userId);
+        }
     }
 
     public User authenticate(String username, String password) {
-        return userRepository.findByUsername(username)
-                .filter(user -> user.getPassword().equals(password))
-                .orElse(null);
+        Optional<User> userOpt = userRepository.findByUsername(username)
+                .filter(user -> user.getPassword().equals(password));
+        
+        if (userOpt.isPresent()) {
+            // ✅ LOG: Successful Login
+            systemLogService.logEvent("User Logged In: " + username);
+            return userOpt.get();
+        } else {
+            // Optional: Log failed attempts (careful with spam)
+            systemLogService.logEvent("Failed Login Attempt: " + username);
+            return null;
+        }
     }
 
     // ----------------------------- REGISTER WITH DOCUMENT -----------------------------
@@ -87,6 +112,9 @@ public class UserService {
 
         // 1. Save user first
         User savedUser = userRepository.save(user);
+
+        // ✅ LOG: Registration
+        systemLogService.logEvent("New Registration: " + savedUser.getUsername() + " [" + savedUser.getRole() + "]");
 
         // 2. Process file upload if exists
         if (file != null && !file.isEmpty()) {
@@ -107,19 +135,28 @@ public class UserService {
             // 3. Create document entry
             Document doc = new Document();
             doc.setUser(savedUser);
-            doc.setDocumentFileURL(filePath.toString());
+            doc.setDocumentFileURL(filePath.toString()); // Stores path like "uploads/uuid_file.jpg"
             doc.setUploadedAt(LocalDateTime.now());
             doc.setStatus(Status.PENDING);
 
-            // Handle document type safely
+            // Handle document type safely (Avoid NullPointerException)
             try {
-                doc.setDocumentType(DocumentType.valueOf(docTypeStr.toUpperCase()));
-            } catch (Exception e) {
+                if (docTypeStr != null && !docTypeStr.isEmpty()) {
+                    doc.setDocumentType(DocumentType.valueOf(docTypeStr.toUpperCase()));
+                } else {
+                    doc.setDocumentType(DocumentType.OTHER);
+                }
+            } catch (IllegalArgumentException e) {
+                // If the string doesn't match the Enum
                 doc.setDocumentType(DocumentType.OTHER);
             }
 
             // Save document to DB
             documentRepository.save(doc);
+
+            // ✅ LOG: Document Upload
+            // Using savedUser.getUserID() assuming your model uses that name based on previous errors
+            systemLogService.logEvent("Document Uploaded: " + doc.getDocumentType() + " | UserID: " + savedUser.getUserId());
         }
 
         return savedUser;

@@ -35,10 +35,9 @@ const SignUp: React.FC<SignUpProps> = ({ onSelectRole }) => {
   const [showError, setShowError] = useState(false);
   const [error, setError] = useState("");
   
-  // --- FIX 1: Added image state ---
+  // Image State
   const [image, setImage] = useState<File | null>(null);
   const [fileName, setFileName] = useState("No file chosen");
-
   const [documentType, setDocumentType] = useState("GOV_ID");
   
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -59,11 +58,11 @@ const SignUp: React.FC<SignUpProps> = ({ onSelectRole }) => {
     if (name === "username") setUsernameError(null);
   };
 
-  // --- FIX 2: Save the file object ---
+  // Handle File Selection
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
-      setImage(e.target.files[0]); // Save the actual file
-      setFileName(e.target.files[0].name); // Save the name for display
+      setImage(e.target.files[0]); 
+      setFileName(e.target.files[0].name); 
     }
   };
 
@@ -88,8 +87,15 @@ const SignUp: React.FC<SignUpProps> = ({ onSelectRole }) => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
+    // 1. Password Match Check
     if (formData.password !== formData.confirmPassword) {
       alert("Passwords do not match!");
+      return;
+    }
+
+    // 2. MANDATORY FILE CHECK
+    if (!image) {
+      alert("Verification Failed: Please upload a valid Government ID or Document.");
       return;
     }
 
@@ -104,6 +110,7 @@ const SignUp: React.FC<SignUpProps> = ({ onSelectRole }) => {
         return;
       }
 
+      // Shared User Payload
       const userPayload = {
         name: {
           firstName: formData.firstName,
@@ -126,8 +133,9 @@ const SignUp: React.FC<SignUpProps> = ({ onSelectRole }) => {
       };
 
       let response;
+      const data = new FormData(); // Create FormData envelope
 
-      // SCENARIO 1: CLIENT
+      // --- SCENARIO 1: CLIENT ---
       if (formData.role === "client") {
         const clientPayload = {
           company_name: formData.companyName || "N/A",
@@ -135,14 +143,18 @@ const SignUp: React.FC<SignUpProps> = ({ onSelectRole }) => {
           user: userPayload,
         };
 
+        // Append to FormData
+        data.append("client", JSON.stringify(clientPayload)); // Pocket 1: JSON
+        data.append("file", image);                           // Pocket 2: File
+        data.append("docType", documentType);
+
         response = await fetch("http://localhost:8080/api/client/postClient", {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(clientPayload),
+          body: data, // No Content-Type header! Browser handles it.
         });
       } 
       
-      // SCENARIO 2: WORKER
+      // --- SCENARIO 2: WORKER ---
       else {
         const workerPayload = {
           user: userPayload,
@@ -156,42 +168,34 @@ const SignUp: React.FC<SignUpProps> = ({ onSelectRole }) => {
           totalEarnings: 0.0,
         };
 
-        const data = new FormData();
-        data.append("worker", JSON.stringify(workerPayload));
+        // Append to FormData
+        data.append("worker", JSON.stringify(workerPayload)); // Pocket 1: JSON
+        data.append("file", image);                           // Pocket 2: File
+        data.append("docType", documentType);
 
-        // Append the File
-        if (image) {
-          data.append("file", image);
-          data.append("docType", documentType);
-        }
-
-        // 2. Send Request to the specific WORKER endpoint
         response = await fetch("http://localhost:8080/api/worker/postWorker", {
           method: "POST",
-          // IMPORTANT: Do NOT set Content-Type header manually for FormData
           body: data, 
         });
       }
 
+      // --- HANDLE RESPONSE ---
       if (response.ok) {
-        // Parse response safely
-        const data = await response.json().catch(() => ({}));
+        const responseData = await response.json().catch(() => ({}));
 
-        if (formData.role === "client" && data.clientID) {
-          localStorage.setItem("currentUserId", data.clientID.toString());
+        if (formData.role === "client" && responseData.clientID) {
+          localStorage.setItem("currentUserId", responseData.clientID.toString());
           localStorage.setItem("userRole", "CLIENT");
-          alert("Client Account Created!");
+          alert("Client Account Created Successfully!");
           navigate("/client/dashboard");
         } else if (formData.role === "worker") {
-          // If the backend returns the workerID
-          if (data.workerID) {
-             localStorage.setItem("currentUserId", data.workerID.toString());
+          if (responseData.workerID) {
+             localStorage.setItem("currentUserId", responseData.workerID.toString());
           }
           localStorage.setItem("userRole", "WORKER");
-          alert("Worker Account Created with Document!");
+          alert("Worker Account Created Successfully!");
           navigate("/worker/dashboard");
         } else {
-          // Fallback
           alert("Registration Successful! Please Sign In.");
           navigate("/signin");
         }
@@ -202,7 +206,7 @@ const SignUp: React.FC<SignUpProps> = ({ onSelectRole }) => {
       }
     } catch (error) {
       console.error("Network Error:", error);
-      alert("Connection Failed.");
+      alert("Connection Failed. Is the backend running?");
     } finally {
       setIsSubmitting(false);
     }
@@ -468,8 +472,7 @@ const SignUp: React.FC<SignUpProps> = ({ onSelectRole }) => {
               </div>
             </div>
 
-            {/* Government ID Upload */}
-            {/* --- Document Verification Section --- */}
+            {/* Document Verification Section */}
             <div className="space-y-2 pt-2">
               <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wide">
                 Document Verification

@@ -60,7 +60,7 @@ const ReportsTable: React.FC = () => {
       {/* Back Arrow Navigation */}
       <div className="mb-4">
         <Link
-          to="/"
+          to="/Admin"
           className="inline-flex items-center text-gray-500 hover:text-[#26466F] transition-colors group"
         >
           <ArrowLeft size={20} className="mr-2 group-hover:-translate-x-1 transition-transform" />
