@@ -22,8 +22,13 @@ public class Report {
     @JoinColumn(name = "booking_id", unique = true, nullable = false)
     private Booking booking;
 
+    /**
+     * Enumeration for the possible states of a Report.
+     * PENDING is added as the initial status when a client submits a new report.
+     */
     public enum Status {
         OPEN,
+        PENDING, // <-- ADDED PENDING STATUS
         RESOLVED
     }
 
@@ -39,9 +44,13 @@ public class Report {
         this.proofFileURL = proofFileURL;
     }
 
+    // --- Getters and Setters ---
+
     public Long getReportID() {
         return reportID;
     }
+    
+    // Note: reportID setter omitted as it is auto-generated
 
     public String getDescription() {
         return description;

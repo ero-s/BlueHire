@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import axios from "axios"; // ✅ Axios for Database calls
+import axios from "axios"; 
 import {
   Search,
   Info,
@@ -7,33 +7,45 @@ import {
   Send,
   Paperclip,
   X,
-  Upload,
+  Upload, // Used for the Upload icon
   ArrowLeft,
+  Loader2 // Used for loading states
 } from "lucide-react";
 
-// --- Interfaces for Backend Data ---
+// --- PLACEHOLDER INTERFACES ---
+interface Message {
+  id: string;
+  text: string;
+  sender: "me" | "other";
+  time: string;
+}
+
+interface BackendChat {
+    chatID: number;
+    messageContent: string;
+    senderId: number;
+    receiverId: number;
+    sentAt: string;
+}
+
+// --- Interfaces (Backend and UI remain correct) ---
 interface BackendUser {
   userId: number;
   username: string;
-  name: {
-    firstName: string;
-    lastName: string;
-  };
+  name: { firstName: string; lastName: string; };
   photoURL?: string;
   role?: string;
 }
 
-interface BackendChat {
-  chatID: number;
-  messageContent: string;
-  senderId: number;
-  receiverId: number;
-  sentAt: string;
+interface Booking {
+    bookingID: number;
+    client: { clientID: number, user: BackendUser } | null;
+    worker: { workerID: number, user: BackendUser } | null;
+    status: string; 
 }
 
-// --- UI Interfaces ---
 interface Contact {
-  id: string;
+  id: string; // Worker's USER ID
   name: string;
   status: "Active" | "Offline";
   avatar: string;
@@ -43,122 +55,292 @@ interface Contact {
   role?: string;
 }
 
-interface Message {
-  id: string;
-  text: string;
-  sender: "me" | "other";
-  time: string;
-}
+// =========================================================
+// 🚀 REPORT MODAL COMPONENT (Only First Name Displayed)
+// =========================================================
 
-// --- Sub-Component: Report Modal ---
 interface ReportModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  targetUser: string;
+    isOpen: boolean;
+    onClose: () => void;
+    targetUser: string;
+    workerUserId: string | null;
 }
 
-const ReportModal: React.FC<ReportModalProps> = ({
-  isOpen,
-  onClose,
-  targetUser,
-}) => {
-  const [description, setDescription] = useState("");
-  const [file, setFile] = useState<File | null>(null);
-  const [isSubmitting, setIsSubmitting] = useState(false);
+const ReportModal: React.FC<ReportModalProps> = ({ isOpen, onClose, targetUser }) => {
+    
+    // State for form inputs
+    const [bookingIdInput, setBookingIdInput] = useState<string>('');
+    const [description, setDescription] = useState('');
+    
+    // State for file upload
+    const [selectedFile, setSelectedFile] = useState<File | null>(null);
+    const [proofFileURL, setProofFileURL] = useState<string | null>(null); // Stores the URL returned *after* upload
+    const [isUploading, setIsUploading] = useState(false);
+    
+    // State for UI feedback
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
+    const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  if (!isOpen) return null;
+    // Ref for file input
+    const fileInputRef = useRef<HTMLInputElement>(null);
+    
+    // ********** CHANGE: EXTRACT FIRST NAME **********
+    const firstName = targetUser.split(' ')[0];
+    // ************************************************
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-    setTimeout(() => {
-      console.log("Report Submitted for", targetUser);
-      setIsSubmitting(false);
-      onClose();
-    }, 1000);
-  };
+    // Reset state when the modal opens or closes
+    useEffect(() => {
+        if (!isOpen) {
+            // Reset form fields
+            setBookingIdInput('');
+            setDescription('');
+            setSelectedFile(null);
+            setProofFileURL(null);
+            setIsUploading(false);
+            // Reset status feedback
+            setSubmitStatus('idle');
+            setErrorMessage(null);
+        }
+    }, [isOpen]);
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-      <div className="bg-white rounded-xl shadow-2xl w-full max-w-md p-6 transition-all transform scale-100 opacity-100">
-        <div className="flex justify-between items-center mb-4 border-b pb-2">
-          <h3 className="text-xl font-bold text-[#3b82f6]">Report User</h3>
-          <button
-            onClick={onClose}
-            className="text-gray-400 hover:text-gray-600"
-          >
-            <X size={20} />
-          </button>
-        </div>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Reporting:{" "}
-              <span className="font-bold text-[#3b82f6]">{targetUser}</span>
-            </label>
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Description
-            </label>
-            <textarea
-              className="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#60a5fa] h-32 resize-none"
-              placeholder="Describe the issue..."
-              required
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Proof (Optional)
-            </label>
-            <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 flex flex-col items-center justify-center cursor-pointer hover:bg-gray-50 transition">
-              <input
-                type="file"
-                className="hidden"
-                id="proof-upload"
-                onChange={(e) =>
-                  setFile(e.target.files ? e.target.files[0] : null)
-                }
-              />
-              <label
-                htmlFor="proof-upload"
-                className="flex flex-col items-center cursor-pointer"
-              >
-                <Upload className="text-gray-400 mb-1" size={24} />
-                <span className="text-xs text-gray-500">
-                  {file ? file.name : "Click to upload image/file"}
-                </span>
-              </label>
+    if (!isOpen) return null;
+
+    // --- File Handling Logic ---
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files && e.target.files.length > 0) {
+            setSelectedFile(e.target.files[0]);
+            // Automatically start the upload process upon file selection
+            handleUploadFile(e.target.files[0]);
+        }
+    };
+
+    const handleUploadFile = (file: File) => {
+        if (!file) return;
+
+        setIsUploading(true);
+        setProofFileURL(null);
+        setErrorMessage(null);
+
+        // --- START SIMULATED UPLOAD ---
+        setTimeout(() => {
+            const simulatedUrl = `http://cdn.bluehire.com/proofs/${Date.now()}_${file.name.replace(/[^a-z0-9]/gi, '_')}`;
+            setProofFileURL(simulatedUrl);
+            setIsUploading(false);
+            console.log("Simulated upload successful. URL:", simulatedUrl);
+        }, 1500); // Simulate network latency
+        // --- END SIMULATED UPLOAD ---
+    };
+
+    // --- Report Submission Logic ---
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+
+        const bookingId = Number(bookingIdInput);
+        if (!bookingId || isNaN(bookingId) || description.trim() === '') {
+            setErrorMessage('Please enter a valid numeric Booking ID and a description.');
+            setSubmitStatus('error');
+            return;
+        }
+
+        if (isUploading) {
+            setErrorMessage('Please wait for the file upload to complete before submitting.');
+            setSubmitStatus('error');
+            return;
+        }
+
+        setIsSubmitting(true);
+        setSubmitStatus('idle');
+        setErrorMessage(null);
+
+        try {
+            const reportPayload = {
+                description: description,
+                // Use the URL from the successful upload, or null if no file was uploaded
+                proofFileURL: proofFileURL, 
+            };
+
+            // Backend endpoint: POST /reports/booking/{bookingId}
+            const response = await axios.post(
+                `http://localhost:8080/reports/booking/${bookingId}`,
+                reportPayload
+            );
+
+            console.log("Report submitted successfully:", response.data);
+            setSubmitStatus('success');
+            setTimeout(onClose, 2000); 
+
+        } catch (error: any) {
+            console.error("Report submission failed:", error);
+            setSubmitStatus('error');
+            
+            const errorMsg = error.response?.data?.message || error.message;
+            setErrorMessage(typeof errorMsg === 'string' 
+                ? errorMsg 
+                : "Failed to submit report. Please check the Booking ID or console for network details."
+            );
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+
+    return (
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+            <div className="bg-white p-6 rounded-3xl shadow-2xl w-full max-w-md transform transition-all duration-300">
+                
+                {/* Header (Styling adjusted for black title, smaller blue name) */}
+                <div className="flex justify-between items-center mb-6 border-b pb-3">
+                    <h3 className="text-xl font-bold text-gray-800 flex items-center gap-2 min-w-0 whitespace-nowrap"> 
+                        <Info size={24} className="text-blue-600 flex-shrink-0" />
+                        <span className="truncate"> 
+                            Submit Report for: 
+                            <span className="text-lg text-blue-600 font-extrabold ml-1"> 
+                                 {firstName} {/* DISPLAYING ONLY FIRST NAME */}
+                            </span>
+                        </span>
+                    </h3>
+                    <button onClick={onClose} className="flex-shrink-0 text-gray-400 hover:text-gray-700 p-1 rounded-full transition" disabled={isSubmitting || isUploading}>
+                        <X size={20} />
+                    </button>
+                </div>
+
+                {/* Status/Error Message */}
+                {submitStatus === 'error' && errorMessage && (
+                    <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded-lg text-sm">
+                        **Error:** {errorMessage}
+                    </div>
+                )}
+                {submitStatus === 'success' && (
+                    <div className="mb-4 p-3 bg-green-100 border border-green-400 text-green-700 rounded-lg text-sm">
+                        Report submitted successfully! The team will review it shortly.
+                    </div>
+                )}
+
+
+                <form onSubmit={handleSubmit} className="space-y-4">
+                    
+                    {/* Booking ID Input */}
+                    <div>
+                        <label htmlFor="bookingId" className="block text-sm font-medium text-gray-700 mb-1">
+                            Booking ID (Required to specify the job)
+                        </label>
+                        <input
+                            id="bookingId"
+                            type="number"
+                            value={bookingIdInput}
+                            onChange={(e) => setBookingIdInput(e.target.value)}
+                            placeholder="e.g., 101"
+                            required
+                            className="w-full px-4 py-2 border border-gray-300 rounded-xl focus:ring-blue-500 focus:border-blue-500 transition"
+                            disabled={isSubmitting || submitStatus === 'success' || isUploading}
+                        />
+                    </div>
+
+                    {/* Description Input */}
+                    <div>
+                        <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-1">
+                            Detailed Description of the Issue
+                        </label>
+                        <textarea
+                            id="description"
+                            rows={4}
+                            value={description}
+                            onChange={(e) => setDescription(e.target.value)}
+                            placeholder="Describe what happened clearly and professionally..."
+                            required
+                            className="w-full px-4 py-2 border border-gray-300 rounded-xl focus:ring-blue-500 focus:border-blue-500 transition"
+                            disabled={isSubmitting || submitStatus === 'success' || isUploading}
+                        />
+                    </div>
+
+                    {/* Proof File UPLOAD Button */}
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                            Proof File / Evidence (Optional)
+                        </label>
+                        <input
+                            type="file"
+                            ref={fileInputRef}
+                            onChange={handleFileChange}
+                            accept="image/*,video/*,application/pdf"
+                            hidden
+                            disabled={isSubmitting || submitStatus === 'success' || isUploading}
+                        />
+                        <button
+                            type="button"
+                            onClick={() => fileInputRef.current?.click()}
+                            className={`w-full flex items-center justify-center gap-2 px-4 py-2 rounded-xl transition duration-300 border ${
+                                isUploading
+                                    ? 'bg-blue-100 text-blue-600 border-blue-400 cursor-wait'
+                                    : proofFileURL
+                                    ? 'bg-green-100 text-green-600 border-green-400 hover:bg-green-200'
+                                    : 'bg-gray-50 text-gray-600 border-gray-300 hover:bg-gray-100'
+                            }`}
+                            disabled={isSubmitting || submitStatus === 'success' || isUploading}
+                        >
+                            {isUploading ? (
+                                <>
+                                    <Loader2 size={20} className="animate-spin" />
+                                    Uploading...
+                                </>
+                            ) : proofFileURL ? (
+                                <>
+                                    <Paperclip size={20} />
+                                    File Uploaded: {selectedFile?.name || 'File Link Ready'}
+                                </>
+                            ) : (
+                                <>
+                                    <Upload size={20} />
+                                    Choose File (Max 10MB)
+                                </>
+                            )}
+                        </button>
+                        {proofFileURL && (
+                            <p className="text-xs text-green-600 mt-1 truncate">
+                                Proof URL generated. Ready to submit.
+                            </p>
+                        )}
+                        
+                    </div>
+                    
+                    {/* Submission Button */}
+                    <button
+                        type="submit"
+                        className={`w-full flex items-center justify-center gap-2 px-4 py-3 text-lg font-semibold rounded-xl transition duration-300 ${
+                            isSubmitting || submitStatus === 'success' || isUploading
+                                ? 'bg-gray-400 cursor-not-allowed'
+                                : 'bg-blue-600 text-white hover:bg-blue-700 shadow-md'
+                        }`}
+                        disabled={isSubmitting || submitStatus === 'success' || isUploading}
+                    >
+                        {isSubmitting ? (
+                            <>
+                                <Loader2 size={20} className="animate-spin" />
+                                Submitting Report...
+                            </>
+                        ) : submitStatus === 'success' ? (
+                            "Report Submitted!"
+                        ) : (
+                            "Submit Official Report"
+                        )}
+                    </button>
+                    
+                </form>
+
+                <div className="mt-4 text-center">
+                    <button onClick={onClose} className="text-sm text-gray-500 hover:text-gray-700 transition" disabled={isSubmitting || submitStatus === 'success' || isUploading}>
+                        Cancel
+                    </button>
+                </div>
             </div>
-          </div>
-          <div className="flex justify-end gap-2 pt-2">
-            <button
-              type="button"
-              onClick={onClose}
-              className="px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded-lg"
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              disabled={isSubmitting}
-              className="px-4 py-2 text-sm bg-[#3b82f6] text-white rounded-lg hover:bg-[#2563eb] transition"
-            >
-              {isSubmitting ? "Submitting..." : "Submit Report"}
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
-  );
+        </div>
+    );
 };
+// =========================================================
 
-// --- Main Chat Component ---
 
 const Chat: React.FC = () => {
-  // ✅ 1. Get Current Client ID (Default to 1 if not found in storage)
+  // 1. Get Current Client ID (Default to 1 if not found in storage)
   const CURRENT_USER_ID = Number(localStorage.getItem("userId")) || 1;
 
   // State
@@ -168,6 +350,7 @@ const Chat: React.FC = () => {
   const [messageInput, setMessageInput] = useState("");
   const [showMobileChat, setShowMobileChat] = useState(false);
   const [isReportModalOpen, setIsReportModalOpen] = useState(false);
+  const [isLoadingContacts, setIsLoadingContacts] = useState(true); 
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -175,42 +358,80 @@ const Chat: React.FC = () => {
   const selectedContact = contacts.find((c) => c.id === selectedContactId);
   const myAvatar = "https://i.pravatar.cc/150?u=99";
 
-  // --- 2. Fetch Contacts from DB ---
+  // --- 2. Fetch Contacts (Workers for Active Bookings) ---
   useEffect(() => {
     const fetchContacts = async () => {
+      if (!CURRENT_USER_ID) return;
+      setIsLoadingContacts(true);
+      
       try {
-        const response = await axios.get("http://localhost:8080/api/user/getAllUsers");
-        const allUsers: BackendUser[] = response.data;
+        // Step 1: Find the Client's ClientID (Needed for booking filter)
+        const clientResponse = await axios.get("http://localhost:8080/api/client/getAllClients");
+        // Assuming clientID corresponds directly to the user
+        const clientProfile = clientResponse.data.find((c: any) => c.user.userId === CURRENT_USER_ID);
+        
+        if (!clientProfile) {
+            console.warn("Client profile not found for current user ID:", CURRENT_USER_ID);
+            setContacts([]);
+            return;
+        }
+        const clientID = clientProfile.clientID;
 
-        // Filter out myself, map to UI interface
-        const mappedContacts: Contact[] = allUsers
-          .filter((u) => u.userId !== CURRENT_USER_ID)
-          .map((u) => ({
-            id: u.userId.toString(),
-            name: `${u.name.firstName} ${u.name.lastName}`,
-            status: "Active",
-            role: u.role || "User",
-            avatar: u.photoURL || `https://ui-avatars.com/api/?name=${u.name.firstName}+${u.name.lastName}&background=random`,
-            lastMessage: "Click to chat",
-            lastTime: "",
-            unread: 0,
-          }));
+        // Step 2: Fetch all bookings
+        const bookingResponse = await axios.get("http://localhost:8080/booking/getAll");
+        const allBookings: Booking[] = bookingResponse.data;
 
-        setContacts(mappedContacts);
+        // Set to store unique worker User IDs
+        const uniqueWorkerUserIds: Set<string> = new Set();
+        const workerContacts: Contact[] = [];
 
-        // Automatically select the first contact
-        if (!selectedContactId && mappedContacts.length > 0) {
-          setSelectedContactId(mappedContacts[0].id);
+        // Step 3: Filter bookings to find assigned workers for this client
+        allBookings
+            .filter(b => 
+                // Filter by my client ID AND ensure a worker is assigned
+                b.client?.clientID === clientID && 
+                b.worker !== null && 
+                b.worker.user?.userId 
+            ) 
+            .forEach(b => {
+                const workerUser = b.worker!.user;
+                const workerUserId = workerUser.userId.toString();
+
+                if (!uniqueWorkerUserIds.has(workerUserId)) {
+                    uniqueWorkerUserIds.add(workerUserId);
+                    const fullName = `${workerUser.name.firstName} ${workerUser.name.lastName}`;
+                    
+                    workerContacts.push({
+                        id: workerUserId,
+                        name: fullName,
+                        status: "Active", // Assuming Active if assigned
+                        role: workerUser.role || "Worker",
+                        avatar: workerUser.photoURL || `https://ui-avatars.com/api/?name=${fullName}&background=random`,
+                        lastMessage: "Start a conversation!",
+                        lastTime: "",
+                        unread: 0,
+                    });
+                }
+            });
+
+        setContacts(workerContacts);
+
+        // Automatically select the first worker
+        if (!selectedContactId && workerContacts.length > 0) {
+          setSelectedContactId(workerContacts[0].id);
         }
       } catch (error) {
-        console.error("Error fetching contacts:", error);
+        console.error("Error fetching worker contacts:", error);
+      } finally {
+        setIsLoadingContacts(false);
       }
     };
 
     fetchContacts();
   }, [CURRENT_USER_ID]);
 
-  // --- 3. Fetch Messages & Polling ---
+
+  // --- 3. Fetch Messages & Polling (Remains Unchanged) ---
   const fetchMessages = async () => {
     if (!selectedContactId) return;
 
@@ -252,7 +473,7 @@ const Chat: React.FC = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, showMobileChat]);
 
-  // --- 4. Send Message to DB ---
+  // --- 4. Send Message to DB (Remains Unchanged) ---
   const handleSendMessage = async () => {
     if (!messageInput.trim() || !selectedContactId) return;
 
@@ -297,13 +518,18 @@ const Chat: React.FC = () => {
           >
             <div className="flex justify-between items-center mb-4 lg:mb-6">
               <h2 className="text-xl lg:text-2xl font-bold text-gray-800">
-                Messages
+                Assigned Workers
               </h2>
             </div>
 
             <div className="flex-1 overflow-y-auto pr-1 space-y-2 custom-scrollbar min-h-0">
-              {contacts.length === 0 ? (
-                <div className="text-center text-gray-400 mt-10">Loading users...</div>
+              {isLoadingContacts ? (
+                <div className="flex items-center justify-center py-10 text-gray-500 gap-2">
+                    <Loader2 className="animate-spin" size={20} />
+                    <span>Finding assigned workers...</span>
+                </div>
+              ) : contacts.length === 0 ? (
+                <div className="text-center text-gray-400 mt-10">No assigned workers found.</div>
               ) : (
                 contacts.map((contact) => (
                   <div
@@ -475,6 +701,7 @@ const Chat: React.FC = () => {
               isOpen={isReportModalOpen}
               onClose={() => setIsReportModalOpen(false)}
               targetUser={selectedContact.name}
+              workerUserId={selectedContact.id} // Passing the worker's user ID
             />
           )}
         </div>
