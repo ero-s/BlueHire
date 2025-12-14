@@ -104,7 +104,7 @@ const AdminHeader: React.FC<HeaderProps> = ({ userName }) => {
             <Search className="absolute left-3 text-gray-400 w-4 h-4 z-10" />
             <input
               type="text"
-              placeholder="Search workers..."
+              placeholder="Search..."
               className={`pl-9 pr-4 py-2 bg-white border border-gray-200 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-[#5AB3E6] w-48 transition-all duration-300 focus:w-64 ${isSearchOpen ? "ring-2 ring-[#5AB3E6]" : ""}`}
               value={searchQuery}
               onFocus={handleSearchFocus}
