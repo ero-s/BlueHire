@@ -5,7 +5,7 @@ import {
   Star, Clock, CheckCircle, Ban, Loader2, RotateCw, Trash2, CreditCard
 } from 'lucide-react';
 
-// Import Modals
+// Import MODALS
 import PostJobModal from './PostJobModal'; 
 import PaymentModal from './PaymentModal'; 
 import ReviewModal from './ReviewModal'; 
