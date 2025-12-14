@@ -9,8 +9,7 @@ const ChatPage: React.FC = () => {
     // h-screen makes the whole page the height of the viewport
     // flex-col allows us to stack Navbar and Main content
     <div className="h-screen bg-[#F6F6F6] font-sans flex flex-col overflow-hidden">
-      <Header userName='Sherielyn Guadiana'/>
-      
+        <Header userName={fullName} />
       {/* flex-1 makes this take up all remaining space. 
           overflow-hidden prevents double scrollbars 
           pb-4 adds padding at bottom mainly for desktop aesthetics 

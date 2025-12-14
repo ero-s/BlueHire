@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Star, ThumbsUp, Filter } from 'lucide-react';
+import { Star, ThumbsUp, Filter, Loader2 } from 'lucide-react';
 
 // --- Types ---
 interface Review {
@@ -14,42 +14,7 @@ interface Review {
   serviceType: string;
 }
 
-// --- Mock Data ---
-const MOCK_REVIEWS: Review[] = [
-  { 
-    id: 'r1', 
-    jobId: '3', 
-    reviewerName: 'Marvin McKinney', 
-    reviewerAvatar: 'https://i.pravatar.cc/150?u=3',
-    rating: 5, 
-    date: 'May 16, 2025', 
-    comment: 'The cooking was absolutely delicious! Highly recommended for meal prep services. The kitchen was left spotless afterwards.',
-    serviceType: 'Cooking / Meal Prep'
-  },
-  { 
-    id: 'r2', 
-    jobId: '4', 
-    reviewerName: 'Tesla Gonzaga', 
-    reviewerAvatar: 'https://i.pravatar.cc/150?u=4',
-    rating: 4, 
-    date: 'May 16, 2025', 
-    comment: 'Great work on the garden. Very hardworking and polite. Just missed one small spot behind the shed, but overall excellent.',
-    serviceType: 'Gardening / Yard Work'
-  },
-  { 
-    id: 'r3', 
-    jobId: '99', 
-    reviewerName: 'Floyd Miles', 
-    reviewerAvatar: 'https://i.pravatar.cc/150?u=1',
-    rating: 5, 
-    date: 'Jan 10, 2025', 
-    comment: 'Always reliable. This is the 3rd time I hired him.',
-    serviceType: 'House Cleaning'
-  },
-];
-
 // --- Sub-Component: Individual Review Item ---
-// This component manages its own "Helpful" state
 const ReviewItem: React.FC<{ review: Review; filterMode: 'All' | 'Specific' }> = ({ review, filterMode }) => {
   const [isHelpful, setIsHelpful] = useState(false);
 
@@ -102,30 +67,110 @@ const ReviewsRatingsMainSection: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
   
-  const [displayedReviews, setDisplayedReviews] = useState<Review[]>(MOCK_REVIEWS);
+  const [allReviews, setAllReviews] = useState<Review[]>([]);
+  const [displayedReviews, setDisplayedReviews] = useState<Review[]>([]);
+  const [loading, setLoading] = useState(true);
   const [filterMode, setFilterMode] = useState<'All' | 'Specific'>('All');
+  const [averageRating, setAverageRating] = useState("0.0");
 
-  // --- EFFECT: Check for incoming Job ID ---
+  // --- Fetch Data ---
   useEffect(() => {
-    if (location.state && location.state.jobId) {
-      const targetJobId = location.state.jobId;
-      const specificReview = MOCK_REVIEWS.filter(r => r.jobId === targetJobId);
-      
-      if (specificReview.length > 0) {
-        setDisplayedReviews(specificReview);
-        setFilterMode('Specific');
-      }
-    } else {
-      setDisplayedReviews(MOCK_REVIEWS);
-      setFilterMode('All');
-    }
-  }, [location]);
+    const fetchReviews = async () => {
+        setLoading(true);
+        try {
+            const storedUser = localStorage.getItem("currentUser");
+            if (!storedUser) return;
+            const user = JSON.parse(storedUser);
+
+            // 1. Get Worker ID first
+            const workerRes = await fetch("http://localhost:8080/api/worker/getAllWorkers");
+            const workers = await workerRes.json();
+            const myProfile = workers.find((w: any) => w.user.userId === user.userId);
+            
+            if (!myProfile) {
+                console.warn("No worker profile found for this user.");
+                setLoading(false);
+                return;
+            }
+
+            console.log("Logged in as Worker ID:", myProfile.workerID);
+
+            // 2. Fetch All Reviews
+            const response = await fetch("http://localhost:8080/reviews");
+            if (response.ok) {
+                const rawReviews = await response.json();
+                
+                console.log("Raw Reviews from DB:", rawReviews);
+
+                // 3. Filter reviews belonging to THIS worker
+                const myReviews = rawReviews
+                    .filter((r: any) => {
+                        // Safety check: ensure the review has a booking and a worker
+                        return r.booking && r.booking.worker && r.booking.worker.workerID === myProfile.workerID;
+                    })
+                    .map((r: any) => {
+                        const client = r.booking.client.user;
+                        
+                        // FIX: Ensure we use the correct property names from Java JSON response
+                        // Java getReviewID() -> JSON "reviewID"
+                        // Java getReviewDate() -> JSON "reviewDate"
+                        
+                        return {
+                            id: (r.reviewID || r.reviewid || Math.random()).toString(), // Handle both cases + fallback
+                            jobId: r.booking.bookingID.toString(),
+                            reviewerName: `${client.name.firstName} ${client.name.lastName}`,
+                            reviewerAvatar: client.photoURL || "https://i.pravatar.cc/150?u=default",
+                            rating: r.rating,
+                            date: r.reviewDate, 
+                            comment: r.feedback || "No feedback provided.",
+                            serviceType: r.booking.serviceCategory || "General Service"
+                        };
+                    });
+
+                console.log("Processed Reviews for this Worker:", myReviews);
+
+                // Calculate Average
+                if (myReviews.length > 0) {
+                    const total = myReviews.reduce((sum: number, r: Review) => sum + r.rating, 0);
+                    setAverageRating((total / myReviews.length).toFixed(1));
+                }
+
+                setAllReviews(myReviews);
+                
+                // Check if we need to filter by a specific job immediately
+                if (location.state && location.state.jobId) {
+                    const targetJobId = location.state.jobId.toString();
+                    const specificReview = myReviews.filter((r: Review) => r.jobId === targetJobId);
+                    
+                    if (specificReview.length > 0) {
+                        setDisplayedReviews(specificReview);
+                        setFilterMode('Specific');
+                    } else {
+                        setDisplayedReviews(myReviews); 
+                    }
+                } else {
+                    setDisplayedReviews(myReviews);
+                }
+            }
+        } catch (error) {
+            console.error("Failed to load reviews:", error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    fetchReviews();
+  }, [location.state]); 
 
   const handleClearFilter = () => {
-    setDisplayedReviews(MOCK_REVIEWS);
+    setDisplayedReviews(allReviews);
     setFilterMode('All');
     navigate(location.pathname, { replace: true, state: {} });
   };
+
+  if (loading) {
+      return <div className="flex justify-center py-20"><Loader2 className="animate-spin text-[#4D7EAF]" size={32}/></div>;
+  }
 
   return (
     <div className="flex flex-col gap-6 w-full max-w-[1000px] mx-auto">
@@ -140,11 +185,11 @@ const ReviewsRatingsMainSection: React.FC = () => {
         {/* Stats Summary */}
         <div className="flex gap-4">
             <div className="bg-white px-5 py-3 rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center">
-                <span className="text-2xl font-bold text-[#4D7EAF]">4.8</span>
+                <span className="text-2xl font-bold text-[#4D7EAF]">{averageRating}</span>
                 <span className="text-xs text-gray-400">Average</span>
             </div>
             <div className="bg-white px-5 py-3 rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center">
-                <span className="text-2xl font-bold text-gray-800">{MOCK_REVIEWS.length}</span>
+                <span className="text-2xl font-bold text-gray-800">{allReviews.length}</span>
                 <span className="text-xs text-gray-400">Total</span>
             </div>
         </div>
@@ -177,9 +222,14 @@ const ReviewsRatingsMainSection: React.FC = () => {
                 />
             ))
         ) : (
-            <div className="text-center py-12 text-gray-400">
-                <p>No reviews found for this job ID.</p>
-                <button onClick={handleClearFilter} className="text-[#4D7EAF] text-sm font-bold mt-2 hover:underline">See all reviews</button>
+            <div className="text-center py-12 text-gray-400 bg-gray-50 rounded-3xl border border-dashed border-gray-200">
+                <p>No reviews found.</p>
+                <p className="text-xs mt-2">Open your Console (F12) to debug if you expected data.</p>
+                {filterMode === 'Specific' && (
+                    <button onClick={handleClearFilter} className="text-[#4D7EAF] text-sm font-bold mt-2 hover:underline">
+                        See all reviews
+                    </button>
+                )}
             </div>
         )}
       </div>

@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.time.LocalDateTime;
 
 @Entity
-public class Booking {
+public class    Booking {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -41,7 +41,7 @@ public class Booking {
 
     @ManyToOne
     @JoinColumn(name = "worker", nullable = true)
-    @JsonIgnoreProperties({"user", "skills", "coverage_areas"})
+    @JsonIgnoreProperties({"skills", "coverage_areas"})
     private Worker worker;
 
     @OneToOne(mappedBy = "booking", cascade = CascadeType.ALL)

@@ -2,11 +2,15 @@ import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { 
   ChevronDown, ChevronLeft, ChevronRight, X, MessageSquare,
-  Star, Clock, CheckCircle, Ban, Loader2, RotateCw
+  Star, Clock, CheckCircle, Ban, Loader2, RotateCw, Trash2, CreditCard
 } from 'lucide-react';
 
+// Import Modals
+import PostJobModal from './PostJobModal'; 
+import PaymentModal from './PaymentModal'; 
+import ReviewModal from './ReviewModal'; 
+
 // --- Types ---
-// Added 'Responded' to the type definition
 type BookingStatus = 'Pending' | 'Responded' | 'Client_Agreed' | 'Accepted' | 'Completed' | 'Declined' | 'Cancelled';
 
 interface Booking {
@@ -14,12 +18,14 @@ interface Booking {
   workerName: string;
   serviceType: string;
   dateTime: string;
-  duration: string;
   amount: string;
   status: BookingStatus;
   location: string;
   avatar: string;
   rawBooking: any;
+  paymentStatus: 'PENDING' | 'SUCCESS' | 'FAILED' | 'N/A';
+  paymentId: number | null;
+  hasReview: boolean; 
 }
 
 const ClientBookingManagementMainSection: React.FC = () => {
@@ -29,9 +35,17 @@ const ClientBookingManagementMainSection: React.FC = () => {
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // --- 1. Fetch Data ---
-  useEffect(() => {
-    const fetchData = async () => {
+  // --- Modal States ---
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
+  const [isReviewModalOpen, setIsReviewModalOpen] = useState(false); 
+  
+  const [rehireTarget, setRehireTarget] = useState<any>(null);
+  const [paymentTarget, setPaymentTarget] = useState<Booking | null>(null);
+  const [reviewTarget, setReviewTarget] = useState<Booking | null>(null);
+
+  // --- 1. Fetch Data Function ---
+  const fetchData = async () => {
         setLoading(true);
         try {
             const storedUser = localStorage.getItem("currentUser");
@@ -42,11 +56,16 @@ const ClientBookingManagementMainSection: React.FC = () => {
             if (!response.ok) throw new Error("Failed to fetch bookings");
             const allBookings = await response.json();
 
-            // Filter: Bookings where the logged-in user is the CLIENT
-            // AND ensure a worker is assigned
+            // Fetch Reviews
+            let reviews = [];
+            try {
+                // FIXED URL: Matches @RequestMapping("/reviews")
+                const reviewRes = await fetch("http://localhost:8080/reviews"); 
+                if (reviewRes.ok) reviews = await reviewRes.json();
+            } catch (e) { console.log("Reviews fetch optional or failed"); }
+
             const myBookings = allBookings.filter((b: any) => 
-                b.client && 
-                b.client.user && 
+                b.client && b.client.user && 
                 b.client.user.userId === user.userId &&
                 b.worker !== null 
             );
@@ -60,19 +79,30 @@ const ClientBookingManagementMainSection: React.FC = () => {
                     if (b.worker.user.photoURL) avatar = b.worker.user.photoURL;
                 }
 
+                const pStatus = b.payment ? b.payment.status : 'N/A';
+                const pId = b.payment ? b.payment.paymentID : null;
+                
+                // Check if this booking ID exists in the fetched reviews
+                // We check against rawBooking.bookingID
+                const alreadyReviewed = reviews.some((r: any) => r.booking && r.booking.bookingID === b.bookingID);
+
                 return {
                     id: b.bookingID.toString(),
                     workerName: workerName,
                     serviceType: b.serviceCategory || "General Service",
                     dateTime: new Date(b.scheduledDateTime).toLocaleDateString(),
-                    duration: "TBD",
                     amount: b.payment ? `₱${b.payment.amount.toFixed(2)}` : "₱0.00",
                     status: b.status,
                     location: b.location,
                     avatar: avatar,
-                    rawBooking: b
+                    rawBooking: b,
+                    paymentStatus: pStatus,
+                    paymentId: pId,
+                    hasReview: alreadyReviewed
                 };
             });
+
+            mappedBookings.sort((a, b) => new Date(b.rawBooking.scheduledDateTime).getTime() - new Date(a.rawBooking.scheduledDateTime).getTime());
 
             setBookings(mappedBookings);
         } catch (error) {
@@ -81,14 +111,129 @@ const ClientBookingManagementMainSection: React.FC = () => {
             setLoading(false);
         }
     };
+
+  useEffect(() => {
     fetchData();
   }, []);
 
-  // --- 2. Handle Status Updates ---
+  // --- 2. Action Handlers ---
+
+  const handleRehireClick = (booking: Booking) => {
+      if (booking.rawBooking && booking.rawBooking.worker) {
+          setRehireTarget({
+              workerId: booking.rawBooking.worker.workerID,
+              workerName: booking.workerName,
+              serviceCategory: booking.serviceType,
+              location: booking.location
+          });
+          setIsModalOpen(true);
+      } else {
+          alert("Cannot rehire: Worker profile not found.");
+      }
+  };
+
+  const handlePaymentClick = (booking: Booking) => {
+      if(!booking.paymentId) {
+          alert("No payment record found for this booking.");
+          return;
+      }
+      setPaymentTarget(booking);
+      setIsPaymentModalOpen(true);
+  };
+
+  const handleReviewClick = (booking: Booking) => {
+      setReviewTarget(booking);
+      setIsReviewModalOpen(true);
+  };
+
+  // --- SUBMIT REVIEW (ROBUST VERSION) ---
+  const submitReview = async (rating: number, feedback: string) => {
+      if (!reviewTarget) return;
+
+      const bookingID = reviewTarget.rawBooking.bookingID;
+      console.log("Submitting Review for Booking ID:", bookingID);
+
+      // Simple YYYY-MM-DD string generation to ensure Java parsing compatibility
+      const today = new Date();
+      const dateString = today.getFullYear() + '-' + 
+                         String(today.getMonth() + 1).padStart(2, '0') + '-' + 
+                         String(today.getDate()).padStart(2, '0');
+
+      try {
+          const payload = {
+              rating: rating,
+              feedback: feedback,
+              reviewDate: dateString, 
+              // Send explicit booking object structure
+              // We send BOTH keys to cover all casing possibilities in Java mapper
+              booking: { 
+                  bookingID: bookingID,
+                  bookingId: bookingID 
+              }
+          };
+
+          const response = await fetch("http://localhost:8080/reviews", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(payload)
+          });
+
+          if (response.ok) {
+              alert("Review submitted successfully!");
+              fetchData(); 
+          } else {
+              // ERROR HANDLING: Alerts the specific backend error
+              const errText = await response.text();
+              console.error("Backend Review Error:", errText);
+              alert("Server Error: " + errText);
+          }
+      } catch (error) {
+          console.error("Review Network Error:", error);
+          alert("Network connection error. Is the server running?");
+      }
+  };
+
+  // --- PROCESS PAYMENT ---
+  const processPayment = async (paymentId: number, method: string) => {
+      if (!paymentTarget) return;
+      try {
+          const payload = { 
+              paymentID: paymentId,
+              paymentMethod: method, 
+              status: "SUCCESS", 
+              amount: paymentTarget.rawBooking.payment.amount, 
+              receiptNo: paymentTarget.rawBooking.payment.receiptNo, 
+              booking: { bookingID: paymentTarget.rawBooking.bookingID } 
+          };
+
+          const response = await fetch(`http://localhost:8080/payment/update?id=${paymentId}`, {
+              method: "PUT",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(payload)
+          });
+
+          if (response.ok) {
+              alert("Payment Successful!");
+              fetchData(); 
+          } else {
+              const err = await response.text();
+              console.error("Payment Backend Error:", err);
+              alert("Payment failed: " + err); 
+          }
+      } catch (error) {
+          console.error("Payment network error", error);
+          alert("Network error processing payment.");
+      }
+  };
+
+  const handleCloseModal = () => {
+      setIsModalOpen(false);
+      setRehireTarget(null);
+  };
+
+  // --- 3. Status Updates & Delete ---
   const updateStatus = async (id: string, newStatus: string, rawBooking: any) => {
       try {
-          console.log(`Updating Booking ${id} to ${newStatus}`);
-
           const payload = {
             bookingID: rawBooking.bookingID,
             jobTitle: rawBooking.jobTitle || "", 
@@ -96,16 +241,10 @@ const ClientBookingManagementMainSection: React.FC = () => {
             location: rawBooking.location || "",
             scheduledDateTime: rawBooking.scheduledDateTime,
             serviceCategory: rawBooking.serviceCategory || "",
-            
             status: newStatus,
-
-            client: null, 
-            worker: null,
-            payment: null 
+            client: null, worker: null, payment: null 
           };
           
-          console.log("Sending Payload:", JSON.stringify(payload)); 
-
           const response = await fetch(`http://localhost:8080/booking/update?id=${id}`, {
               method: "PUT",
               headers: { "Content-Type": "application/json" },
@@ -116,44 +255,39 @@ const ClientBookingManagementMainSection: React.FC = () => {
               setBookings(prev => prev.map(b => 
                   b.id === id ? { ...b, status: newStatus as BookingStatus } : b
               ));
-          } else {
-              const errText = await response.text();
-              console.error("Backend Error Details:", errText);
-              alert(`Failed to update status. Server said: ${errText}`);
-          }
-      } catch (error) {
-          console.error("Update error:", error);
-          alert("Network error occurred.");
-      }
+          } else { alert(`Failed to update status.`); }
+      } catch (error) { console.error("Update error:", error); }
   };
 
-  // --- 3. Filter Logic ---
+  const deleteBooking = async (id: string) => {
+    if (!window.confirm("Are you sure you want to permanently remove this booking history?")) return;
+    try {
+        const response = await fetch(`http://localhost:8080/booking/delete/${id}`, { method: 'DELETE' });
+        if (response.ok) { setBookings(prev => prev.filter(b => b.id !== id)); }
+        else { alert("Failed to delete booking."); }
+    } catch (error) { console.error("Delete error:", error); }
+  };
+
+  // --- 4. Filter Logic ---
   const filteredBookings = bookings.filter(booking => {
     if (filterStatus === 'All Status') return true;
-    // Map Responded to "Ongoing" tab or create a new filter for it if you prefer
     if (filterStatus === 'Ongoing') return booking.status === 'Accepted' || booking.status === 'Responded'; 
     if (filterStatus === 'Pending') return booking.status === 'Pending';
     if (filterStatus === 'Completed') return booking.status === 'Completed';
-    if (filterStatus === 'Cancelled') return booking.status === 'Cancelled' || booking.status === 'Declined';
+    if (filterStatus === 'Declined') return booking.status === 'Declined';
+    if (filterStatus === 'Cancelled') return booking.status === 'Cancelled';
     return true;
   });
 
   // --- Helper: Status Badge ---
   const getStatusBadge = (status: BookingStatus) => {
     switch (status) {
-      case 'Pending':
-        return <span className="text-amber-600 font-medium bg-amber-50 px-3 py-1 rounded-full text-xs flex items-center gap-1 w-fit"><Clock size={12}/> Needs Approval</span>;
-      case 'Responded': // New Badge
-        return <span className="text-blue-400 font-medium bg-blue-50 px-3 py-1 rounded-full text-xs flex items-center gap-1 w-fit"><Clock size={12}/> Awaiting Worker</span>;
-      case 'Client_Agreed':
-        return <span className="text-blue-400 font-medium bg-blue-50 px-3 py-1 rounded-full text-xs flex items-center gap-1 w-fit"><Clock size={12}/> Waiting for Worker</span>;
-      case 'Accepted': 
-        return <span className="text-[#4D7EAF] font-medium bg-blue-50 px-3 py-1 rounded-full text-xs flex items-center gap-1 w-fit"><Clock size={12}/> Ongoing</span>;
-      case 'Completed':
-        return <span className="text-emerald-600 font-medium bg-emerald-50 px-3 py-1 rounded-full text-xs flex items-center gap-1 w-fit"><Star size={12}/> Completed</span>;
-      case 'Declined':
-      case 'Cancelled':
-        return <span className="text-gray-500 font-medium bg-gray-100 px-3 py-1 rounded-full text-xs flex items-center gap-1 w-fit"><X size={12}/> Cancelled</span>;
+      case 'Pending': return <span className="text-amber-600 font-medium bg-amber-50 px-3 py-1 rounded-full text-xs flex items-center gap-1 w-fit"><Clock size={12}/> Needs Approval</span>;
+      case 'Responded': return <span className="text-blue-400 font-medium bg-blue-50 px-3 py-1 rounded-full text-xs flex items-center gap-1 w-fit"><Clock size={12}/> Awaiting Worker</span>;
+      case 'Accepted': return <span className="text-[#4D7EAF] font-medium bg-blue-50 px-3 py-1 rounded-full text-xs flex items-center gap-1 w-fit"><Clock size={12}/> Ongoing</span>;
+      case 'Completed': return <span className="text-emerald-600 font-medium bg-emerald-50 px-3 py-1 rounded-full text-xs flex items-center gap-1 w-fit"><Star size={12}/> Completed</span>;
+      case 'Declined': return <span className="text-red-500 font-medium bg-red-50 px-3 py-1 rounded-full text-xs flex items-center gap-1 w-fit"><X size={12}/> Declined</span>;
+      case 'Cancelled': return <span className="text-gray-500 font-medium bg-gray-100 px-3 py-1 rounded-full text-xs flex items-center gap-1 w-fit"><Ban size={12}/> Cancelled</span>;
       default: return null;
     }
   };
@@ -175,6 +309,7 @@ const ClientBookingManagementMainSection: React.FC = () => {
               <option>Pending</option>
               <option>Ongoing</option>
               <option>Completed</option>
+              <option>Declined</option>
               <option>Cancelled</option>
             </select>
             <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-gray-500">
@@ -198,8 +333,7 @@ const ClientBookingManagementMainSection: React.FC = () => {
                 <th className="py-4 px-4 text-xs font-semibold text-gray-400 uppercase">Worker</th>
                 <th className="py-4 px-4 text-xs font-semibold text-gray-400 uppercase">Service</th>
                 <th className="py-4 px-4 text-xs font-semibold text-gray-400 uppercase">Date & Time</th>
-                <th className="py-4 px-4 text-xs font-semibold text-gray-400 uppercase">Duration</th>
-                <th className="py-4 px-4 text-xs font-semibold text-gray-400 uppercase">Price</th>
+                <th className="py-4 px-4 text-xs font-semibold text-gray-400 uppercase">Price & Payment</th>
                 <th className="py-4 px-4 text-xs font-semibold text-gray-400 uppercase">Status</th>
                 <th className="py-4 px-4 text-xs font-semibold text-gray-400 uppercase text-center w-[180px]">Actions</th>
               </tr>
@@ -218,18 +352,31 @@ const ClientBookingManagementMainSection: React.FC = () => {
                   </td>
                   <td className="py-6 px-4 text-sm text-gray-600">{booking.serviceType}</td>
                   <td className="py-6 px-4 text-sm text-gray-600">{booking.dateTime}</td>
-                  <td className="py-6 px-4 text-sm text-gray-600">{booking.duration}</td>
-                  <td className="py-6 px-4 text-sm font-bold text-[#4D7EAF]">{booking.amount}</td>
+                  
+                  {/* Price & Payment Status */}
+                  <td className="py-6 px-4">
+                    <p className="text-sm font-bold text-[#4D7EAF]">{booking.amount}</p>
+                    {booking.status === 'Completed' && (
+                        <div className="mt-1">
+                            {booking.paymentStatus === 'SUCCESS' ? (
+                                <span className="text-[10px] font-bold bg-emerald-100 text-emerald-600 px-2 py-0.5 rounded-full flex items-center gap-1 w-fit">
+                                    <CheckCircle size={10}/> PAID
+                                </span>
+                            ) : (
+                                <span className="text-[10px] font-bold bg-amber-100 text-amber-600 px-2 py-0.5 rounded-full">PENDING</span>
+                            )}
+                        </div>
+                    )}
+                  </td>
+
                   <td className="py-6 px-4">{getStatusBadge(booking.status)}</td>
                   
                   {/* Actions Column */}
                   <td className="py-6 px-4">
                     <div className="flex flex-col gap-2 items-center w-full">
                       
-                      {/* PENDING: Show Accept / Decline */}
                       {booking.status === 'Pending' && (
                         <>
-                            {/* CHANGED: Passing 'Responded' here */}
                             <button 
                                 onClick={() => updateStatus(booking.id, 'Responded', booking.rawBooking)}
                                 className="w-full flex items-center justify-center gap-2 px-3 py-1.5 rounded-lg bg-[#5AB3E6] text-white text-xs font-medium hover:bg-[#4a9bc8] shadow-sm transition-colors"
@@ -245,7 +392,6 @@ const ClientBookingManagementMainSection: React.FC = () => {
                         </>
                       )}
 
-                      {/* Other buttons remain same... */}
                       {booking.status === 'Accepted' && (
                         <button 
                             onClick={() => navigate('/client/chat')}
@@ -255,16 +401,51 @@ const ClientBookingManagementMainSection: React.FC = () => {
                         </button>
                       )}
 
-                      {/* Responded State (Waiting for Worker) */}
                       {booking.status === 'Responded' && (
-                          <span className="text-xs text-gray-400 italic">Waiting for worker confirmation...</span>
+                          <span className="text-xs text-gray-400 italic">Waiting for worker...</span>
                       )}
 
+                      {/* COMPLETED ACTIONS */}
                       {booking.status === 'Completed' && (
+                        <>
+                            {/* IF UNPAID -> Pay Now */}
+                            {booking.paymentStatus !== 'SUCCESS' ? (
+                                <button 
+                                    onClick={() => handlePaymentClick(booking)}
+                                    className="w-full flex items-center justify-center gap-2 px-3 py-1.5 rounded-lg bg-emerald-500 text-white text-xs font-medium hover:bg-emerald-600 shadow-sm transition-colors"
+                                >
+                                    <CreditCard size={14} /> Pay Now
+                                </button>
+                            ) : (
+                                /* IF PAID -> Rehire + Review */
+                                <>
+                                    <button 
+                                        onClick={() => handleRehireClick(booking)}
+                                        className="w-full flex items-center justify-center gap-2 px-3 py-1.5 rounded-lg bg-[#4D7EAF] text-white text-xs font-medium hover:bg-[#3d6691] shadow-sm transition-colors"
+                                    >
+                                        <RotateCw size={14} /> Rehire
+                                    </button>
+                                    
+                                    {/* SHOW RATE & REVIEW BUTTON (Only if not already reviewed) */}
+                                    {!booking.hasReview && (
+                                        <button 
+                                            onClick={() => handleReviewClick(booking)}
+                                            className="w-full flex items-center justify-center gap-2 px-3 py-1.5 rounded-lg border border-orange-200 bg-orange-50 text-orange-500 text-xs font-medium hover:bg-orange-100 shadow-sm transition-colors"
+                                        >
+                                            <Star size={14} /> Rate & Review
+                                        </button>
+                                    )}
+                                </>
+                            )}
+                        </>
+                      )}
+
+                      {(booking.status === 'Cancelled' || booking.status === 'Declined') && (
                         <button 
-                            className="w-full flex items-center justify-center gap-2 px-3 py-1.5 rounded-lg bg-[#4D7EAF] text-white text-xs font-medium hover:bg-[#3d6691] shadow-sm transition-colors"
+                            onClick={() => deleteBooking(booking.id)}
+                            className="w-full flex items-center justify-center gap-2 px-3 py-1.5 rounded-lg border border-red-200 text-red-500 text-xs font-medium hover:bg-red-50 hover:text-red-700 transition-colors"
                         >
-                            <RotateCw size={14} /> Rehire
+                            <Trash2 size={14} /> Remove
                         </button>
                       )}
                       
@@ -277,6 +458,31 @@ const ClientBookingManagementMainSection: React.FC = () => {
           )}
         </div>
       </div>
+
+      {/* Post Job Modal (Rehire) */}
+      <PostJobModal 
+        isOpen={isModalOpen} 
+        onClose={handleCloseModal}
+        rehireDetails={rehireTarget}
+        onSuccess={() => fetchData()} 
+      />
+
+      {/* Payment Modal */}
+      <PaymentModal 
+        isOpen={isPaymentModalOpen}
+        onClose={() => { setIsPaymentModalOpen(false); setPaymentTarget(null); }}
+        booking={paymentTarget}
+        onConfirmPayment={processPayment}
+      />
+
+      {/* Review Modal */}
+      <ReviewModal 
+        isOpen={isReviewModalOpen}
+        onClose={() => { setIsReviewModalOpen(false); setReviewTarget(null); }}
+        booking={reviewTarget}
+        onSubmit={submitReview}
+      />
+
     </div>
   );
 };
