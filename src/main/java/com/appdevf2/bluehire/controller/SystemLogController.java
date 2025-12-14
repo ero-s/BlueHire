@@ -16,27 +16,21 @@ public class SystemLogController {
     @Autowired
     private SystemLogService systemLogService;
 
-    // =========================
     // CREATE
-    // =========================
     @PostMapping
     public SystemLog createSystemLog(@RequestBody SystemLog systemLog) {
         // Do not log creation of system logs themselves
         return systemLogService.createLog(systemLog);
     }
 
-    // =========================
     // READ ALL
-    // =========================
     @GetMapping
     public List<SystemLog> getAllSystemLogs() {
         // Just return logs, avoid logging to prevent recursion
         return systemLogService.getAllLogs();
     }
 
-    // =========================
     // READ BY ID
-    // =========================
     @GetMapping("/{id}")
     public SystemLog getSystemLogById(@PathVariable Long id) {
         // Avoid logging here as well
@@ -44,18 +38,14 @@ public class SystemLogController {
                 .orElseThrow(() -> new RuntimeException("System log not found with ID: " + id));
     }
 
-    // =========================
     // UPDATE
-    // =========================
     @PutMapping("/{id}")
     public SystemLog updateSystemLog(@PathVariable Long id, @RequestBody SystemLog updatedSystemLog) {
         // Avoid logging system log updates to prevent infinite loop
         return systemLogService.updateLog(id, updatedSystemLog);
     }
 
-    // =========================
     // DELETE
-    // =========================
     @DeleteMapping("/{id}")
     public String deleteSystemLog(@PathVariable Long id) {
         // Avoid logging deletion of system logs
@@ -63,9 +53,6 @@ public class SystemLogController {
         return "System log with ID " + id + " has been deleted successfully.";
     }
 
-    // =========================
-    // EXAMPLE: LOG USER ACTION
-    // =========================
     // Use this endpoint to log normal user actions safely
     @PostMapping("/log-action")
     public String logUserAction(@RequestParam String action) {

@@ -2,8 +2,7 @@ package com.appdevf2.bluehire.model;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
 @Table(name = "documents")
@@ -13,10 +12,11 @@ public class Document {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long documentID;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false) // Foreign Key
-    @JsonIgnore 
-
+    // ✅ CHANGED: Removed @JsonIgnore so Frontend can read User Name & Role
+    // Added @JsonIgnoreProperties to prevent infinite recursion and hide password
+    @ManyToOne(fetch = FetchType.EAGER) // Changed to EAGER for simplicity in fetching
+    @JoinColumn(name = "user_id", nullable = false)
+    @JsonIgnoreProperties({"password", "documents", "hibernateLazyInitializer", "handler"}) 
     private User user;
 
     private String verifiedBy;
@@ -41,15 +41,20 @@ public class Document {
         this.user = user;
         this.documentFileURL = documentFileURL;
         this.documentType = documentType;
-        this.status = Status.PENDING; // Default status
+        this.status = Status.PENDING; 
         this.uploadedAt = LocalDateTime.now();
     }
 
-    // Add Auto Timestamp Here
     @PrePersist
     public void onCreate() {
         this.uploadedAt = LocalDateTime.now();
         if(this.status == null) this.status = Status.PENDING;
+    }
+
+    // --- Getters and Setters ---
+
+    public Long getDocumentID() {
+        return documentID;
     }
 
     public User getUser() {
@@ -58,10 +63,6 @@ public class Document {
 
     public void setUser(User user) {
         this.user = user;
-    }
-
-    public Long getDocumentID() {
-        return documentID;
     }
 
     public String getVerifiedBy() {
@@ -123,13 +124,5 @@ public class Document {
         PASSPORT,
         DRIVER_LICENSE,
         OTHER
-    }
-
-    @JsonProperty("workerName")
-    public String getWorkerName() {
-        if (user != null && user.getName() != null) {
-            return user.getName().getFirstName() + " " + user.getName().getLastName();
-        }
-        return "Unknown";
     }
 }
