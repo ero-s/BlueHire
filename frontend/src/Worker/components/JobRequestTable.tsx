@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Loader2, MapPin, Calendar, User, Clock } from 'lucide-react';
+import { Loader2, MapPin, Calendar, User, Clock, XCircle, CheckCircle } from 'lucide-react';
 
 // --- Interfaces ---
 interface JobRequest {
@@ -27,7 +27,6 @@ const JobRequestTable: React.FC = () => {
       if (storedUser) {
         const user = JSON.parse(storedUser);
         try {
-          // Fetch all workers to find the current worker's ID based on userId
           const response = await fetch("http://localhost:8080/api/worker/getAllWorkers");
           if (response.ok) {
             const workers = await response.json();
@@ -46,7 +45,7 @@ const JobRequestTable: React.FC = () => {
   // 2. Fetch Job Requests (Dependent on currentWorkerId)
   useEffect(() => {
     const fetchRequests = async () => {
-      if (!currentWorkerId) return; // Wait until worker ID is established
+      if (!currentWorkerId) return; 
       
       setLoading(true);
       try {
@@ -62,8 +61,6 @@ const JobRequestTable: React.FC = () => {
           );
 
           const mappedRequests: JobRequest[] = myRequests.map((b: any) => {
-              
-              // --- Initial/Name Extraction for Avatar Logic ---
               const firstName = b.client?.user?.name?.firstName || '';
               const lastName = b.client?.user?.name?.lastName || '';
               const fullName = `${firstName} ${lastName}`.trim();
@@ -71,12 +68,10 @@ const JobRequestTable: React.FC = () => {
               return {
                   id: b.bookingID.toString(),
                   clientName: fullName || "Unknown Client",
-                  // CORRECTED AVATAR FALLBACK: Uses initials (FirstName + LastName) for ui-avatars API
                   clientAvatar: b.client?.user?.photoURL || 
                       `https://ui-avatars.com/api/?name=${firstName}+${lastName}&background=random&color=fff&size=128&rounded=true`,
                   jobType: b.serviceCategory || "General Service",
                   location: b.location || "N/A Location",
-                  // Format the date for display
                   schedule: b.scheduledDateTime ? new Date(b.scheduledDateTime).toLocaleDateString() : "N/A Date",
                   status: 'Accept',
                   rawBooking: b
@@ -100,12 +95,9 @@ const JobRequestTable: React.FC = () => {
   // 3. Handle Accept Action
   const handleAccept = async (request: JobRequest) => {
     try {
-        // Status becomes 'Accepted' (Ongoing)
-        
-        // Minimal payload for status update
         const payload = { 
             bookingID: request.rawBooking.bookingID,
-            status: 'Accepted',
+            status: 'Accepted', // Becomes ongoing
         };
 
         const response = await fetch(`http://localhost:8080/booking/update?id=${request.id}`, {
@@ -115,17 +107,42 @@ const JobRequestTable: React.FC = () => {
         });
 
         if (response.ok) {
-            alert("Job Accepted! It has been moved to your Booking List as Ongoing.");
-            // Remove from this table locally
+            alert("Job Accepted! Moved to your Booking List.");
             setRequests(prev => prev.filter(r => r.id !== request.id));
+            if (showProfile) setShowProfile(false);
         } else {
-            const errorText = await response.text();
-            console.error("Accept failed, response:", response.status, errorText);
-            alert(`Failed to accept job. Status: ${response.status}`);
+            alert("Failed to accept job.");
         }
     } catch (error) {
         console.error("Error accepting job:", error);
-        alert("An unexpected error occurred while accepting the job.");
+    }
+  };
+
+  // 4. Handle Decline Action (NEW)
+  const handleDecline = async (request: JobRequest) => {
+    if (!window.confirm("Are you sure you want to decline this job request?")) return;
+
+    try {
+        const payload = { 
+            bookingID: request.rawBooking.bookingID,
+            status: 'Declined', // This triggers the "Remove" button on client side
+        };
+
+        const response = await fetch(`http://localhost:8080/booking/update?id=${request.id}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
+        });
+
+        if (response.ok) {
+            // Remove from list immediately
+            setRequests(prev => prev.filter(r => r.id !== request.id));
+            if (showProfile) setShowProfile(false);
+        } else {
+            alert("Failed to decline job.");
+        }
+    } catch (error) {
+        console.error("Error declining job:", error);
     }
   };
 
@@ -199,20 +216,28 @@ const JobRequestTable: React.FC = () => {
                 </td>
                 <td className="px-6 py-3 whitespace-nowrap text-sm">
                   <div className="flex gap-3">
-                    {/* Accept Button - Uses bg-[#26466F] */}
+                    {/* Accept Button */}
                     <button
                       onClick={() => handleAccept(request)}
-                      className="px-4 py-2 text-sm font-medium rounded-full text-white bg-[#26466F] shadow-md hover:bg-[#1E3A5A] transition duration-200"
+                      className="flex items-center gap-1 px-4 py-2 text-sm font-medium rounded-full text-white bg-[#26466F] shadow-md hover:bg-[#1E3A5A] transition duration-200"
                     >
-                      Accept Job
+                      <CheckCircle size={14} /> Accept
                     </button>
 
-                    {/* View Profile Button - Uses border-gray-300 */}
+                    {/* Decline Button (NEW) */}
+                    <button
+                      onClick={() => handleDecline(request)}
+                      className="flex items-center gap-1 px-4 py-2 text-sm font-medium rounded-full border border-red-200 text-red-600 bg-red-50 hover:bg-red-100 hover:text-red-700 transition duration-200"
+                    >
+                      <XCircle size={14} /> Decline
+                    </button>
+
+                    {/* View Profile Button */}
                     <button
                       onClick={() => { setSelectedClient(request); setShowProfile(true); }}
                       className="px-4 py-2 text-sm font-medium rounded-full border border-gray-300 text-gray-700 bg-white shadow-sm hover:bg-gray-50 transition duration-200"
                     >
-                      View Details
+                      View
                     </button>
                   </div>
                 </td>
@@ -264,17 +289,23 @@ const JobRequestTable: React.FC = () => {
                </div>
             </div>
 
-            <div className="mt-6 flex justify-end gap-3">
-                {/* Accept & Close Button - Uses bg-[#26466F] */}
+            <div className="mt-6 flex justify-end gap-3 pt-4 border-t border-gray-100">
+                {/* Decline Button in Modal */}
+                <button 
+                    onClick={() => handleDecline(selectedClient)}
+                    className="px-4 py-2 text-sm font-medium rounded-full text-red-600 bg-red-50 border border-red-200 hover:bg-red-100 transition"
+                >
+                    Decline
+                </button>
+
+                {/* Accept Button in Modal */}
                 <button 
                     onClick={() => handleAccept(selectedClient)}
                     className="px-4 py-2 text-sm font-medium rounded-full text-white bg-[#26466F] shadow-md hover:bg-[#1E3A5A] transition"
                 >
-                    Accept & Close
+                    Accept Job
                 </button>
-               {/* Close Button - Uses border-gray-400 */}
-               <button onClick={() => setShowProfile(false)} className="px-4 py-2 text-sm rounded-full border border-gray-400 text-gray-700 hover:bg-gray-100 transition">Close</button>
-            </div>      
+            </div>      
           </div>
         </div>
       )}
