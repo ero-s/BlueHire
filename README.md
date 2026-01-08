@@ -1,5 +1,5 @@
 # BlueHire
-This is a centralized platform for clients seeking blue-collar workers for handy jobs.
+This is a centralized platform for local clients seeking local blue-collar workers for handy jobs.
 
 Developers:
 - Shervin Dale Tabernero
