@@ -50,4 +50,8 @@ Clone this repository:
     cd BlueHire
 ```
 
+## 🌐 Live Demo
+Experience the live application deployed on Vercel: 
+**[View BlueHire Live](https://bluehire-app.vercel.app/)**
+
     
