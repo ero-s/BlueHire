@@ -3,6 +3,20 @@ This is a centralized platform for local clients seeking local blue-collar worke
 
 <p align="center">
   <img src="bluehire_img/bluehire1.png" width="300" alt="BlueHire Web Application Screenshot">
+  <img src="bluehire_img/bluehire2.png" width="300" alt="BlueHire Web Application Screenshot">
+  <img src="bluehire_img/bluehire3.png" width="300" alt="BlueHire Web Application Screenshot">
+  <img src="bluehire_img/bluehire4.png" width="300" alt="BlueHire Web Application Screenshot">
+  <img src="bluehire_img/bluehire5.png" width="300" alt="BlueHire Web Application Screenshot">
+  <img src="bluehire_img/bluehire6.png" width="300" alt="BlueHire Web Application Screenshot">
+  <img src="bluehire_img/bluehire7.png" width="300" alt="BlueHire Web Application Screenshot">
+  <img src="bluehire_img/bluehire8.png" width="300" alt="BlueHire Web Application Screenshot">
+  <img src="bluehire_img/bluehire9.png" width="300" alt="BlueHire Web Application Screenshot">
+  <img src="bluehire_img/bluehire10.png" width="300" alt="BlueHire Web Application Screenshot">
+  <img src="bluehire_img/bluehire11.png" width="300" alt="BlueHire Web Application Screenshot">
+  <img src="bluehire_img/bluehire12.png" width="300" alt="BlueHire Web Application Screenshot">
+  <img src="bluehire_img/bluehire13.png" width="300" alt="BlueHire Web Application Screenshot">
+  <img src="bluehire_img/bluehire14.png" width="300" alt="BlueHire Web Application Screenshot">
+  <img src="bluehire_img/bluehire15.png" width="300" alt="BlueHire Web Application Screenshot">
 </p>
 
 Developers:
