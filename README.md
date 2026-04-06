@@ -2,7 +2,7 @@
 This is a centralized platform for local clients seeking local blue-collar workers for handy jobs.
 
 <p align="center">
-  <img src="ultimate-tic-tac-toe.png" width="300" alt="Ultimate Tic-Tac-Toe Mobile Application Screenshot">
+  <img src="bluehire_img/bluehire1.png" width="300" alt="BlueHire Web Application Screenshot">
 </p>
 
 Developers:
